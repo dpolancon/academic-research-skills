@@ -175,88 +175,34 @@ The DA agent, after completing its checkpoint report, should:
 - Its scores are shown separately, not averaged into the existing 5-reviewer consensus
 - Significant score divergence (>15 points on any dimension) is flagged
 
-## API Call Patterns
+## Python-Based Cross-Model Client (`cross_model_client.py`)
 
-Both patterns below share the same contract: enable the provider's hosted web-search tool, and **gate the model's text on proof that a search actually happened**. If the API returns no grounding evidence (an OpenAI `web_search_call` item / a Gemini `groundingMetadata` block), the call emits `NOT_SEARCHED` and the text is discarded — a model that ignored "search the web" cannot fake an absent grounding trace, so this guard, not the prompt wording, is what prevents a from-memory guess being laundered into `VERIFIED`. Both web-search tools are hosted/server-side: one request, no client-side tool-call round-trip. `PROMPT` holds the single-reference verification prompt from step 3.
+To decouple the shell/curl commands, ARS uses a unified Python client at [cross_model_client.py](file:///c:/ReposGitHub/academic-research-skills/scripts/cross_model_client.py). This wrapper programmatically interfaces with Together AI (Qwen) and Gemini via the `llm_gateway.py` client and performs searches on bibliographic indexes using python clients (`crossref_client.py`, `openalex_client.py`, `arxiv_client.py`, and `semantic_scholar_client.py`).
 
-### OpenAI (GPT-5.4 / GPT-5.4 Pro)
+### Commands
 
-Use the **Responses API** (`/v1/responses`) — the hosted `web_search` tool lives there. (Chat Completions does not take `tools: [{type: "web_search"}]`; web search on that endpoint requires the separate `gpt-5-search-api` model, so this example targets Responses to stay model-agnostic across `gpt-5.4` / `gpt-5.4-pro`.)
+1. **Verify Academic Citation**:
+   ```bash
+   python scripts/cross_model_client.py verify \
+     --reference "Author, A. (Year). Title. Journal, Vol(Issue), Page-Page." \
+     --context "The sentence where the reference is cited in the paper." \
+     --override-provider together \
+     --override-model Qwen/Qwen2.5-72B-Instruct-Turbo
+   ```
 
-```bash
-# PROMPT holds the single-reference verification prompt (step 3). One reference per call.
-resp="$(curl -sS -w '\n%{http_code}' https://api.openai.com/v1/responses \
-  -H "Authorization: Bearer $OPENAI_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "$(jq -n --arg model "$ARS_CROSS_MODEL" --arg prompt "$PROMPT" '{
-    model: $model,
-    instructions: "You are a citation-verification assistant. Search the web before every verdict; never answer from memory. If you could not search, respond NOT_SEARCHED.",
-    input: $prompt,
-    tools: [{type: "web_search"}],
-    temperature: 0.1
-  }')")"
+2. **Devil's Advocate Critique**:
+   ```bash
+   python scripts/cross_model_client.py critique \
+     --material "Your manuscript draft or outline content to be challenged." \
+     --override-provider gemini \
+     --override-model gemini-1.5-pro
+   ```
 
-http="${resp##*$'\n'}"; body="${resp%$'\n'*}"
-# The grounding guard and source extraction are kept as canonical jq filters under
-# scripts/cross_model_verification/ so they are behavior-tested in CI (a from-memory verdict, a
-# malformed grounding index, etc.) and cannot silently stop failing closed. Reference them via
-# `jq -f` rather than inlining, so the doc and the test share one definition.
-GUARD=scripts/cross_model_verification
-if [ "$http" -lt 200 ] || [ "$http" -ge 300 ]; then
-  # Transport/API failure (401/429/5xx, or curl's 000 on a network error) — NOT the same as
-  # "searched but found nothing". Surface as a transport error so the consumer falls back to
-  # single-model (see § Graceful Degradation); never relabel it NOT_SEARCHED, which would
-  # imply a completed-but-ungrounded lookup.
-  echo "CROSS-MODEL-ERROR: openai_http_$http"
-elif ! jq -e -f "$GUARD/openai_has_completed_web_search.jq" <<<"$body" >/dev/null; then
-  echo "NOT_SEARCHED: no_web_search_call"           # no search happened at all — discard the text
-else
-  # A completed web_search_call proves *a* search ran, not that THIS reference's verdict
-  # is supported by it. Emit the verdict text together with the url_citation annotations the
-  # model attached; step 5 downgrades a VERIFIED with no citation to NOT_SEARCHED.
-  text="$(jq -r -f "$GUARD/openai_text.jq" <<<"$body")"
-  cites="$(jq -r -f "$GUARD/openai_sources.jq" <<<"$body")"
-  printf '%s\nSOURCES: %s\n' "$text" "${cites:-(none)}"
-fi
-```
+### API Call Patterns (SDK-Based Alternatives)
 
-### Google Gemini (Gemini 3.1 Pro)
-
-The hosted grounding tool is `google_search` (REST uses snake_case; the JS SDK's `googleSearch` is the same tool). A grounded response carries `candidates[].groundingMetadata`; its absence means the model did not search.
-
-```bash
-# PROMPT holds the single-reference verification prompt (step 3). One reference per call.
-resp="$(curl -sS -w '\n%{http_code}' \
-  "https://generativelanguage.googleapis.com/v1beta/models/${ARS_CROSS_MODEL}:generateContent?key=$GOOGLE_AI_API_KEY" \
-  -H "Content-Type: application/json" \
-  -d "$(jq -n --arg prompt "$PROMPT" '{
-    contents: [{parts: [{text: $prompt}]}],
-    tools: [{google_search: {}}],
-    generationConfig: {temperature: 0.1}
-  }')")"
-
-http="${resp##*$'\n'}"; body="${resp%$'\n'*}"
-# Grounding guard + source extraction are canonical jq filters under scripts/cross_model_verification/
-# (same rationale as the OpenAI block: behavior-tested, referenced via `jq -f`). The guard is
-# rederived from the source extractor: it passes iff the SAME extraction the source filter performs
-# yields at least one url AND the model issued a search (a non-empty webSearchQueries). So
-# guard-pass ⟹ a source is extractable — a groundingSupports linking to no valid chunk
-# (empty/negative/string/out-of-range/fractional index), the wrong candidate, or a non-string uri
-# all leave the extraction blank and fail the guard closed. See the .jq file headers for the full
-# contract.
-GUARD=scripts/cross_model_verification
-if [ "$http" -lt 200 ] || [ "$http" -ge 300 ]; then
-  # Transport/API failure (401/429/5xx, or curl's 000) — surface as a transport error so the
-  # consumer falls back to single-model (see § Graceful Degradation), not NOT_SEARCHED.
-  echo "CROSS-MODEL-ERROR: gemini_http_$http"
-elif ! jq -e -f "$GUARD/gemini_is_grounded.jq" <<<"$body" >/dev/null; then
-  echo "NOT_SEARCHED: no_grounding_support"           # no search, or text not supported by it — discard
-else
-  text="$(jq -r '.candidates[0].content.parts[]?.text // empty' <<<"$body")"
-  cites="$(jq -r -f "$GUARD/gemini_sources.jq" <<<"$body")"
-  printf '%s\nSOURCES: %s\n' "$text" "${cites:-(none)}"
-fi
-```
+While raw `curl` commands were initially designed to demonstrate REST execution:
+- **Together AI (OpenAI-compatible) and Gemini API routing** is handled directly via `scripts/llm_gateway.py`.
+- **Bibliographic tool-calling** is natively executed as standard functions parsed and executed within `cross_model_client.py`.
 
 > **Why `temperature: 0.1`:** reference existence/metadata checking is a deterministic factual task, so low temperature reduces run-to-run variance in the verdict. It is not a grounding control — the grounding guard above is what enforces an actual lookup.
 

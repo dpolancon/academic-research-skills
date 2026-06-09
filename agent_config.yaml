@@ -1,0 +1,10 @@
+global_settings:
+  default_provider: "together"
+  default_model: "Qwen/Qwen3.5-9B"
+
+providers:
+  together:
+    api_key_env: "TOGETHER_API_KEY"
+    base_url: "https://api.together.ai/v1"
+  gemini:
+    api_key_env: "GEMINI_API_KEY"

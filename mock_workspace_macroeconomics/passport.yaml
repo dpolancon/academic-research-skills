@@ -1,0 +1,10 @@
+pipeline_state:
+  current_stage: '2'
+  global_state: awaiting_confirmation
+  completed_stages:
+  - '1'
+  failed_attempts: {}
+  history:
+  - timestamp: '2026-06-09T17:43:50Z'
+    stage: '2'
+    state: awaiting_confirmation

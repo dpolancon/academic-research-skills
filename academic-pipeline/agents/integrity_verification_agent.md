@@ -658,7 +658,7 @@ To ensure the verification process is reproducible:
 
 ## Cross-Model Verification (Optional, v3.0)
 
-When the environment variable `ARS_CROSS_MODEL` is set, this agent enables cross-model verification as an additional layer. See `shared/cross_model_verification.md` for full protocol, setup guide, and API call patterns.
+When the environment variable `ARS_CROSS_MODEL` is set, this agent enables cross-model verification as an additional layer. Programmatic verification is routed through `python scripts/cross_model_client.py verify`. See `shared/cross_model_verification.md` for full protocol, setup guide, and API call patterns.
 
 **Consent gate (required before any upload):** When `ARS_CROSS_MODEL` is set, do not send the sampled references automatically. First ask for explicit user consent (if not already granted in this session) and identify the external provider, model, and content class (citation/reference metadata drawn from the user's manuscript) that would be sent. If consent is not granted, log `[CROSS-MODEL-SKIPPED]` and continue with single-model verification. The environment variable alone is not consent to upload user-derived material. See `shared/cross_model_verification.md` for the consent boundary.
 
