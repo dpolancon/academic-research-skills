@@ -11,10 +11,14 @@
             "id": "fb16d03598a3a05d",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "AK_WorkingPaper/ARS_Venue_Target.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "ARS_Venue_Target"
             }
           }
         ]
@@ -178,6 +182,13 @@
   },
   "active": "fb16d03598a3a05d",
   "lastOpenFiles": [
+    "AK_WorkingPaper/ARS_LaTeX_Diff_Log.md",
+    "AK_WorkingPaper/deep-research-report_publication-venues.md",
+    "AK_WorkingPaper/ARS_Venue_Target.md",
+    "AK_WorkingPaper/ARS_Adversarial_Audit.md",
+    "AK_WorkingPaper/Sin confirmar 187589.crdownload",
+    "AK_WorkingPaper/Sin confirmar 241412.crdownload",
+    "AK_WorkingPaper/Sin confirmar 533552.crdownload",
     "Compressed_ResearchStatement.md",
     "Editing_ResearchStatement/Editing_ResearchStatement.md",
     "Editing_ResearchStatement/Compressed_ResearchStatement.md",
@@ -195,8 +206,6 @@
     "phase1_research/Methodology_Blueprint.md",
     "phase1_research/RQ_Brief.md",
     "ARS/Research/RQ_Brief.md",
-    "ARS/Research",
-    "phase1_research",
-    "passport.tmp"
+    "ARS/Research"
   ]
 }
