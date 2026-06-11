@@ -4,11 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "05b3f4ee609e2279",
+        "id": "78ea26b5deb2ed42",
         "type": "tabs",
         "children": [
           {
-            "id": "f08d3f64d5900ac2",
+            "id": "fb16d03598a3a05d",
             "type": "leaf",
             "state": {
               "type": "empty",
@@ -176,16 +176,27 @@
       "bases:Create new base": false
     }
   },
-  "active": "f08d3f64d5900ac2",
+  "active": "fb16d03598a3a05d",
   "lastOpenFiles": [
+    "Compressed_ResearchStatement.md",
+    "Editing_ResearchStatement/Editing_ResearchStatement.md",
+    "Editing_ResearchStatement/Compressed_ResearchStatement.md",
+    "Editing_ResearchStatement",
+    "Nueva carpeta",
+    "AK_WorkingPaper/AK_workingpaper.pdf",
+    "AK_WorkingPaper",
+    "AK_workingpaper.pdf",
+    "Sin confirmar 518831.crdownload",
+    "Editing_ResearchStatement.md",
+    "ARS_Active_Task.md",
     "ARS/ARS_Material_Passport.md",
-    "ARS/Research/RQ_Brief.md",
     "ARS/Research/Methodology_Blueprint.md",
-    "ARS/Research",
-    "phase1_research/RQ_Brief.md",
+    "Untitled.canvas",
     "phase1_research/Methodology_Blueprint.md",
+    "phase1_research/RQ_Brief.md",
+    "ARS/Research/RQ_Brief.md",
+    "ARS/Research",
     "phase1_research",
-    "ARS/ARS_Active_Task.md",
     "passport.tmp"
   ]
 }
