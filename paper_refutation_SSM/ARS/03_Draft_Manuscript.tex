@@ -1,0 +1,283 @@
+\documentclass[12pt, a4paper]{article}
+
+% Essential Packages
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{margin=1in}
+\usepackage{setspace}
+\onehalfspacing
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{natbib}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{authblk}
+
+% Theorem and Proof Environments (Metroeconomica Style)
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\theoremstyle{definition}
+\newtheorem{assumption}{Assumption}
+\theoremstyle{remark}
+\newtheorem{remark}{Remark}
+
+% Section Formatting
+\titleformat{\section}{\large\bfseries}{\thesection.}{1em}{}
+\titleformat{\subsection}{\normalsize\bfseries}{\thesubsection.}{1em}{}
+
+% Title and Author Information
+\title{Unbalanced Growth and the Long-Run Limits of the Sraffian Supermultiplier: A Note on Capacity Transformation and Choice of Technique}
+\author{[Author Name Redacted for Double-Blind Review]}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+The Sraffian Supermultiplier (SSM) converges to a long-run steady state only if the capital-capacity ratio remains constant over time. When cost-minimizing capitalists select techniques along a Sraffian distributive schedule, the capital-capacity ratio grows at the rate $(1 - \theta)q$, where $\theta$ is the elasticity of capacity labor productivity growth with respect to mechanization and $q$ is the optimal mechanization rate. Unless the profit share happens to produce $\theta = 1$, the system is structurally unbalanced. Under unbalanced growth, the behavioral stationarity of the investment share requires $\mu^* = 1$ while the capacity utilization nullcline requires $\mu^* = 1 + g_z/(\theta\gamma) > 1$. These conditions are mutually exclusive. The vector field exhibits a singularity at $\mu = 1$ through which trajectories flow without settling. No interior steady state exists, and Harrodian instability is the generic outcome.
+\end{abstract}
+
+\noindent \textbf{Keywords:} Sraffian Supermultiplier, Harrodian Instability, Unbalanced Growth, Choice of Technique, Capacity Utilization. \\
+\textbf{JEL Codes:} E11, E12, E22, O41.
+
+\vspace{1cm}
+
+\section{Introduction}
+
+The Sraffian Supermultiplier (SSM) tames Harrodian instability by making investment endogenous to autonomous demand growth, so that the capacity utilization rate converges to its normal level in the long run \citep{serrano1995, freitas2015, serrano2017}. The mechanism is powerful: if firms adjust capital accumulation to close the gap between actual and desired utilization, and if autonomous demand grows at a constant rate, the system reaches a fully adjusted position where all growth rates equalize. The convergence proof, however, depends on a condition that is rarely stated as an assumption: the capital-capacity ratio $v$ must remain constant over time.
+
+The stability of this convergence has been debated on its own terms. \citet{allain2015} showed that convergence requires sufficiently sluggish investment adjustment, while \citet{lavoie2016} demonstrated analytically that the SSM converges under a wide range of parameter values. \citet{nah2017} extended the analysis to an open economy setting. \citet{nikiforos2013} argued that the normal rate of utilization may itself be endogenous, and \citet{skott2017} questioned whether the Harrodian mechanism can be tamed at all without introducing implausible behavioral assumptions. Throughout this debate, the constancy of $v$ has been taken for granted.
+
+But capitalists do not accumulate capital in strict proportion to capacity. Mechanization, the growth of the capital-labor ratio, transforms capacity labor productivity at a rate that depends on the prevailing technique of production. When the profit share changes, cost-minimizing firms adjust mechanization, and the capital-capacity ratio drifts. The classical literature on choice of technique \citep{kurz1995, pasinetti1981} makes clear that the relationship between mechanization and productivity growth is mediated by distribution: the technique selected under one profit share differs from the technique selected under another. The elasticity $\theta$ of capacity labor productivity growth with respect to mechanization growth is therefore not a free parameter but an outcome of cost minimization along the wage-profit schedule \citep{foley1999}.
+
+If $\theta \neq 1$, the economy experiences unbalanced growth: capital accumulation and capacity expansion move at different rates. Under these conditions, the SSM cannot converge. The investment share requires normal utilization ($\mu^* = 1$) for stationarity, while the capacity utilization nullcline requires $\mu^*$ to exceed unity by a positive margin proportional to the growth rate of autonomous demand. The two conditions are algebraically incompatible, and the vector field exhibits a singularity at $\mu = 1$ through which trajectories flow without settling. Harrodian instability is not a special case; it is the generic outcome whenever distribution selects a technique that produces unbalanced growth.
+
+\section{The Model with Choice of Technique and Capacity Transformation}
+
+Consider a closed economy with Sraffian fixed-coefficient technology. Let $K$ denote the aggregate capital stock, $Y$ denote actual output, $Y^p$ denote potential (capacity) output, and $L$ denote labor employment.
+
+The capital-capacity ratio $v$ is defined as:
+\begin{equation} \label{eq:v_def}
+    v \equiv \frac{K}{Y^p}
+\end{equation}
+Let $Q \equiv K/L$ represent mechanization (the capital-labor ratio) and $A^p \equiv Y^p/L$ represent capacity labor productivity. The capital-capacity ratio can be written as:
+\begin{equation} \label{eq:v_ratio}
+    v = \frac{K/L}{Y^p/L} = \frac{Q}{A^p}
+\end{equation}
+Taking the natural logarithm of Equation \eqref{eq:v_ratio} and differentiating with respect to time yields the growth rate of the capital-capacity ratio:
+\begin{equation} \label{eq:v_growth}
+    \hat{v} = \hat{Q} - \hat{A}^p = q - a^p
+\end{equation}
+where $q \equiv \hat{Q}$ is the rate of mechanization growth and $a^p \equiv \hat{A}^p$ is the growth rate of capacity labor productivity.
+
+Technical change is governed by a mechanization function, where capacity labor productivity growth is an increasing, concave function of mechanization growth:
+\begin{equation} \label{eq:tech_relation}
+    a^p = f(q), \quad f'(q) > 0, \quad f''(q) < 0
+\end{equation}
+Capitalists choose the rate of mechanization to minimize unit costs. Under a Sraffian distributive schedule where $\pi \in (0, 1)$ represents the profit share, the optimization problem for cost-minimizing capitalists is to maximize productivity growth net of mechanization costs:
+\begin{equation} \label{eq:capitalist_opt}
+    \max_{q} \left[ f(q) - q \pi \right]
+\end{equation}
+The first-order condition is:
+\begin{equation} \label{eq:foc}
+    f'(q^*) = \pi
+\end{equation}
+At the optimum, $a^p = \theta q$ where $\theta > 0$ is the elasticity of capacity labor productivity growth with respect to mechanization:
+\begin{equation} \label{eq:theta_def}
+    a^p = \theta q
+\end{equation}
+The growth rate of the capital-capacity ratio is then:
+\begin{equation} \label{eq:v_growth_theta}
+    \hat{v} = q - \theta q = (1 - \theta)q
+\end{equation}
+*Balanced growth* occurs when $\theta = 1$, implying $\hat{v} = 0$. If $\theta \neq 1$, the growth process is *unbalanced*, and the capital-capacity ratio varies over time.
+
+Capital accumulation is driven by an Okishio-Harrod behavioral accelerator:
+\begin{equation} \label{eq:gK_def}
+    g_K \equiv \hat{K} = \gamma(\mu - 1)
+\end{equation}
+where $\gamma > 0$ is the adjustment parameter and normal utilization is normalized to unity ($\mu_n = 1$). Since mechanization growth is $q = \hat{K} - \hat{L}$, and assuming a constant labor force for simplicity ($\hat{L} = 0$), we have $q = g_K = \gamma(\mu - 1)$. (If there were a positive, exogenous rate of labor force growth $n > 0$, the optimal mechanization rate would simply be modified to $q = g_K - n$). This yields:
+\begin{equation} \label{eq:v_growth_final}
+    \hat{v} = (1 - \theta)\gamma(\mu - 1)
+\end{equation}
+
+The investment share is defined as $\phi \equiv I/Y$. Net investment is $I = \dot{K} = g_K K$. Substituting the utilization rate $\mu \equiv Y/Y^p = v Y / K$, we obtain:
+\begin{equation} \label{eq:phi_identity}
+    \phi = \frac{g_K K}{Y} = g_K \frac{v}{\mu} = \frac{\gamma(\mu - 1)v}{\mu}
+\end{equation}
+
+To derive the law of motion for the investment share, we log-differentiate Equation \eqref{eq:phi_identity}:
+\begin{equation} \label{eq:phi_growth}
+    \hat{\phi} = \hat{g}_K + \hat{v} - \hat{\mu}
+\end{equation}
+Differentiating the accelerator function $g_K = \gamma(\mu - 1)$ gives $\dot{g}_K = \gamma \dot{\mu}$. Thus:
+\begin{equation} \label{eq:gK_growth}
+    \hat{g}_K = \frac{\dot{g}_K}{g_K} = \frac{\gamma \dot{\mu}}{\gamma(\mu - 1)} = \frac{\mu}{\mu - 1}\hat{\mu}
+\end{equation}
+Substituting Equations \eqref{eq:v_growth_final} and \eqref{eq:gK_growth} into Equation \eqref{eq:phi_growth} yields:
+\begin{equation} \label{eq:phi_dynamic}
+    \hat{\phi} = \frac{1}{\mu - 1}\hat{\mu} + (1 - \theta)\gamma(\mu - 1)
+\end{equation}
+This is the first equation of the dynamical system.
+
+To close the dynamic system, we derive the growth rate of capacity utilization from $\mu = v Y / K$:
+\begin{equation} \label{eq:mu_growth_step}
+    \hat{\mu} = \hat{v} + \hat{Y} - \hat{K}
+\end{equation}
+In the Sraffian supermultiplier framework, output is determined by autonomous demand $Z$ (growing at the exogenous rate $g_z > 0$) and leakages (saving propensity $s$ and import propensity $m$):
+\begin{equation} \label{eq:supermultiplier}
+    Y = \frac{Z}{s + m - \phi} \implies \hat{Y} = g_z + \frac{\phi}{s + m - \phi}\hat{\phi}
+\end{equation}
+Substituting $\hat{v} = (1 - \theta)\gamma(\mu - 1)$, $\hat{Y}$, and $\hat{K} = \gamma(\mu - 1)$ into Equation \eqref{eq:mu_growth_step} gives:
+\begin{equation} \label{eq:mu_dynamic}
+    \hat{\mu} = g_z + \frac{\phi}{s + m - \phi}\hat{\phi} - \theta\gamma(\mu - 1)
+\end{equation}
+Equations \eqref{eq:phi_dynamic} and \eqref{eq:mu_dynamic} represent the complete 2D dynamical system in $(\mu, \phi)$.
+
+\section{Propositions and Proofs}
+
+The system admits no long-run interior steady state under unbalanced growth ($\theta \neq 1$).
+
+\begin{proposition}[Non-Existence of a Long-Run Steady State] \label{prop:non_existence}
+Consider the dynamical system in capacity utilization $\mu$ and investment share $\phi$ defined by Equations \eqref{eq:phi_dynamic} and \eqref{eq:mu_dynamic}. Under unbalanced growth ($\theta \neq 1$), there exists no interior steady state $(\mu^*, \phi^*)$ where the capacity utilization rate and the investment share are stationary.
+\end{proposition}
+
+\begin{proof}
+An interior steady state requires the simultaneous stationarity of both state variables:
+\[
+\hat{\phi} = 0 \quad \text{and} \quad \hat{\mu} = 0
+\]
+
+\textbf{Step 1: Evaluation of the $\hat{\phi} = 0$ Nullcline.} \\
+Setting the growth rate of the investment share to zero ($\hat{\phi} = 0$) in Equation \eqref{eq:phi_dynamic} yields:
+\[
+0 = \frac{1}{\mu^* - 1}\hat{\mu} + (1 - \theta)\gamma(\mu^* - 1)
+\]
+Multiplying by $(\mu^* - 1)$ to clear the denominator and isolating $\hat{\mu}$ along this locus gives:
+\begin{equation} \label{eq:phi_null}
+    \hat{\mu} = (\theta - 1)\gamma(\mu^* - 1)^2
+\end{equation}
+
+\textbf{Step 2: Steady-State Capacity Utilization.} \\
+A steady state requires the capacity utilization growth rate to be zero ($\hat{\mu} = 0$). Substituting this into Equation \eqref{eq:phi_null} yields:
+\[
+0 = (\theta - 1)\gamma(\mu^* - 1)^2
+\]
+Since technical change is unbalanced ($\theta \neq 1$) and the investment adjustment coefficient is positive ($\gamma > 0$), the only real-valued solution to this equation is:
+\begin{equation} \label{eq:mu_star_normal}
+    \mu^* = 1
+\end{equation}
+Thus, the stationarity of the investment share requires capacity utilization to be normal.
+
+\textbf{Step 3: Evaluation of the $\hat{\mu} = 0$ Nullcline.} \\
+Now we impose the stationarity conditions $\hat{\mu} = 0$ and $\hat{\phi} = 0$ in the capacity utilization growth equation \eqref{eq:mu_dynamic}:
+\[
+0 = g_z + \frac{\phi^*}{s + m - \phi^*}(0) - \theta\gamma(\mu^* - 1)
+\]
+$$ 0 = g_z - \theta\gamma(\mu^* - 1) $$
+Isolating the utilization gap $(\mu^* - 1)$ along this nullcline yields:
+\begin{equation} \label{eq:mu_null}
+    \mu^* - 1 = \frac{g_z}{\theta\gamma}
+\end{equation}
+
+\textbf{Step 4: Algebraic Contradiction.} \\
+For an interior steady state to exist, Equations \eqref{eq:mu_star_normal} and \eqref{eq:mu_null} must be satisfied simultaneously. Substituting $\mu^* = 1$ from Step 2 into the nullcline condition \eqref{eq:mu_null} yields:
+\[
+1 - 1 = \frac{g_z}{\theta\gamma} \implies 0 = \frac{g_z}{\theta\gamma}
+\]
+Since autonomous demand growth is positive ($g_z > 0$), the accelerator parameter is positive ($\gamma > 0$), and technical progress is positive ($\theta > 0$), the term $\frac{g_z}{\theta\gamma}$ is strictly positive:
+\[
+\frac{g_z}{\theta\gamma} > 0
+\]
+This yields a direct algebraic contradiction:
+\[
+0 > 0
+\]
+Therefore, the two nullclines do not intersect in the state space, and no interior steady state exists.
+
+\textbf{Step 5: Singularity Analysis.} \\
+At $\mu = 1$, the coefficient $\frac{1}{\mu - 1}$ in the investment share dynamics \eqref{eq:phi_dynamic} diverges, presenting a singularity in the vector field. To formally analyze the neighborhood of $\mu = 1$, we rewrite the system in terms of levels:
+\[
+\dot{\phi} = \phi \left( \frac{\dot{\mu}}{\mu(\mu - 1)} + (1 - \theta)\gamma(\mu - 1) \right)
+\]
+We define a desingularized system by reparameterizing time $\tau$ such that $d\tau/dt = \frac{1}{\mu - 1}$. The desingularized equations are:
+\[
+\frac{d\phi}{d\tau} = \phi \left[ \frac{\dot{\mu}}{\mu} + (1 - \theta)\gamma(\mu - 1)^2 \right]
+\]
+\[
+\frac{d\mu}{d\tau} = \mu(\mu - 1) \left[ g_z + \frac{\phi}{s + m - \phi}\hat{\phi} - \theta\gamma(\mu - 1) \right]
+\]
+At $\mu = 1$, the desingularized vector field requires $\frac{d\mu}{d\tau} = 0$, but the investment share dynamics reduce to $\frac{d\phi}{d\tau} = \phi^* g_z \neq 0$ (since $\phi^* > 0$ and $g_z > 0$). Thus, the vector field does not vanish at $\mu = 1$, and trajectories must flow through this region. The economic intuition is that when actual utilization is exactly equal to normal capacity, the exogenous growth of autonomous demand continuously pulls actual output away from the planned capital expansion rate, preventing the system from ever resting at $\mu=1$. The system cannot converge, and must diverge over time.
+\end{proof}
+
+\section{Distribution, Technique, and the Persistence of Unbalanced Growth}
+
+The parameter $\theta$ is not imposed from outside the system. It follows from the technique that cost-minimizing capitalists select under a given distributive configuration. The profit share $\pi$, determined by class conflict, institutional bargaining, or monetary policy, is prior to the growth dynamics: it belongs to the Sraffian distributive schedule, not to the macroeconomic adjustment process \citep{kurz1995}.
+
+Given $\pi$, the first-order condition $f'(q^*) = \pi$ determines the optimal rate of mechanization $q^*(\pi)$ and the associated labor productivity growth rate $a^{p*} = f(q^*(\pi))$. The capacity transformation parameter is then:
+\begin{equation} \label{eq:theta_endogenous}
+    \theta(\pi) = \frac{f(q^*(\pi))}{q^*(\pi)}
+\end{equation}
+For a given distribution, $\theta(\pi)$ is constant. But balanced growth requires a specific profit share $\pi^*$ such that $\theta(\pi^*) = 1$, the unique configuration where labor productivity growth exactly tracks mechanization. Any other profit share locks the economy into unbalanced growth.
+
+This is the central point. The SSM treats $v$ as constant, which presupposes $\theta = 1$, which presupposes a knife-edge distributive configuration $\pi = \pi^*$. Distribution is not neutral with respect to the growth closure: it selects the technique, the technique determines $\theta$, and $\theta$ determines whether the SSM can converge. The instability demonstrated in Section 3 is not a mathematical curiosity. It is the structural consequence of any distributive outcome that deviates from the balanced-growth knife edge.
+
+\section{Concluding Remarks}
+
+The SSM converges if and only if $\theta = 1$. That condition requires a unique profit share $\pi^*$ at which cost-minimizing technique selection produces perfectly balanced growth. Under any other distribution, the capital-capacity ratio drifts, the nullclines of the dynamical system fail to intersect, and the vector field drives trajectories through the singular surface at $\mu = 1$ without permitting a stationary equilibrium.
+
+The result connects two bodies of literature that have developed largely in parallel. The SSM stability debate \citep{allain2015, lavoie2016, freitas2015, nah2017} has focused on the behavioral parameters of the investment function, taking the constancy of $v$ as given. The classical literature on choice of technique \citep{kurz1995, foley1999} has analyzed how distribution selects technology without embedding this choice in a demand-led growth model. When the two are joined, the convergence property of the SSM appears as a special case rather than a general result: it holds only at a distributive knife edge where the selected technique happens to preserve balanced growth.
+
+The analysis brackets distribution as exogenous, which is the standard Sraffian procedure for isolating the macroeconomic consequences of a given distributive configuration \citep{cesaratto2015}. Endogenizing distribution along the lines explored by \citet{palley2019} and \citet{hein2018} would not restore convergence unless the distributive dynamics themselves were attracted to $\pi^*$. Whether such attraction exists is an open question, but it cannot be assumed.
+
+\begin{thebibliography}{99}
+
+\bibitem[Allain(2015)]{allain2015}
+Allain, O. (2015). Tackling the instability of growth: A Kaleckian-Harrodian model with an autonomous expenditure component. \emph{Cambridge Journal of Economics}, 39(5):1351--1371.
+
+\bibitem[Cesaratto(2015)]{cesaratto2015}
+Cesaratto, S. (2015). Neo-Kaleckian and Sraffian controversies on the theory of accumulation. \emph{Review of Political Economy}, 27(2):154--182.
+
+\bibitem[Foley and Michl(1999)]{foley1999}
+Foley, D.K. and Michl, T.R. (1999). \emph{Growth and Distribution}. Cambridge, MA: Harvard University Press.
+
+\bibitem[Freitas and Serrano(2015)]{freitas2015}
+Freitas, F. and Serrano, F. (2015). Growth rate and level effects, the stability of the Sraffian supermultiplier model, and investment. \emph{Review of Keynesian Economics}, 3(3):258--281.
+
+\bibitem[Hein(2018)]{hein2018}
+Hein, E. (2018). Autonomous government expenditure growth, deficits, debt, and distribution in a neo-Kaleckian growth model. \emph{Journal of Post Keynesian Economics}, 41(2):316--338.
+
+\bibitem[Kurz and Salvadori(1995)]{kurz1995}
+Kurz, H.D. and Salvadori, N. (1995). \emph{Theory of Production: A Long-Period Analysis}. Cambridge: Cambridge University Press.
+
+\bibitem[Lavoie(2016)]{lavoie2016}
+Lavoie, M. (2016). Convergence towards the normal rate of capacity utilization in neo-Kaleckian models: The role of non-capacity creating autonomous expenditures. \emph{Metroeconomica}, 67(1):172--201.
+
+\bibitem[Nah and Lavoie(2017)]{nah2017}
+Nah, W.J. and Lavoie, M. (2017). Long-run convergence in a neo-Kaleckian open-economy model with autonomous export growth. \emph{Journal of Post Keynesian Economics}, 40(2):223--238.
+
+\bibitem[Nikiforos(2013)]{nikiforos2013}
+Nikiforos, M. (2013). Uncertainty and contradiction: An essay on the business cycle. \emph{Review of Radical Political Economics}, 45(1):47--64.
+
+\bibitem[Nikiforos(2018)]{nikiforos2018}
+Nikiforos, M. (2018). Some comments on the Sraffian supermultiplier approach to growth and distribution. \emph{Journal of Post Keynesian Economics}, 41(4):659--675.
+
+\bibitem[Palley(2019)]{palley2019}
+Palley, T.I. (2019). The economics of the super-multiplier: A comprehensive treatment with labor markets. \emph{Metroeconomica}, 70(2):325--340.
+
+\bibitem[Pasinetti(1981)]{pasinetti1981}
+Pasinetti, L.L. (1981). \emph{Structural Change and Economic Growth}. Cambridge: Cambridge University Press.
+
+\bibitem[Serrano(1995)]{serrano1995}
+Serrano, F. (1995). Long period effective demand and the Sraffian supermultiplier. \emph{Contributions to Political Economy}, 14(1):67--90.
+
+\bibitem[Skott(2017)]{skott2017}
+Skott, P. (2017). Autonomous demand and the Harrodian criticisms of the Kaleckian model. \emph{Metroeconomica}, 68(1):185--193.
+
+\bibitem[Serrano and Freitas(2017)]{serrano2017}
+Serrano, F. and Freitas, F. (2017). The Sraffian supermultiplier as an alternative closure for heterodox growth theory. \emph{European Journal of Economics and Economic Policies: Intervention}, 14(1):70--91.
+
+\end{thebibliography}
+
+\end{document}

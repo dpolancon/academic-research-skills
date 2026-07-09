@@ -4,21 +4,17 @@
     "type": "split",
     "children": [
       {
-        "id": "78ea26b5deb2ed42",
+        "id": "46d2929f467aeb6a",
         "type": "tabs",
         "children": [
           {
-            "id": "fb16d03598a3a05d",
+            "id": "fc7e99501b39dfa9",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "AK_WorkingPaper/ARS_Venue_Target.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "ARS_Venue_Target"
+              "title": "New tab"
             }
           }
         ]
@@ -166,8 +162,7 @@
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 300
   },
   "left-ribbon": {
     "hiddenItems": {
@@ -180,11 +175,13 @@
       "bases:Create new base": false
     }
   },
-  "active": "fb16d03598a3a05d",
+  "active": "846feff581f60c7a",
   "lastOpenFiles": [
+    "Editing_Statements/Cover_Letter.md",
+    "AK_WorkingPaper/ARS_Adversarial_Audit_Report.md",
+    "AK_WorkingPaper/ARS_Venue_Target.md",
     "AK_WorkingPaper/ARS_LaTeX_Diff_Log.md",
     "AK_WorkingPaper/deep-research-report_publication-venues.md",
-    "AK_WorkingPaper/ARS_Venue_Target.md",
     "AK_WorkingPaper/ARS_Adversarial_Audit.md",
     "AK_WorkingPaper/Sin confirmar 187589.crdownload",
     "AK_WorkingPaper/Sin confirmar 241412.crdownload",

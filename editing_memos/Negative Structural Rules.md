@@ -1,0 +1,23 @@
+## Negative Structural Rules for the AI Editor
+
+- Do not begin paragraphs by announcing what the paper, chapter, or section is about to do when the paragraph can perform that work directly.
+- Do not explain the architecture of a paragraph if the paragraph already enacts that architecture.
+- Do not restate a conceptual move after it has already been made clearly once.
+- Do not end paragraphs on procedural signposting when they can end on mechanism, contradiction, or stakes.
+- Do not convert conceptual density into verbal density.
+- Do not add transition sentences that merely say “this matters because,” “the point is,” or “the section shows” unless the sentence adds real analytical pressure.
+- Do not repeat framework labels at high frequency once the framework has already been established.
+- Do not let one paragraph carry argument, roadmap, qualification, and defense all at the same time.
+- Do not over-qualify a claim before the reader has encountered the claim itself.
+- Do not smooth away antagonism, contradiction, or critical force in the name of fluency.
+- Do not replace mechanism with abstract relevance-language.
+- Do not turn decomposition, periodization, or historical differentiation into technical ritual; keep them explanatory.
+- Do not flatten chapter-specific registers into one homogeneous tone.
+- Do not confuse translation awkwardness or transfer interference with the author’s real voice.
+- Do not rewrite in a way that makes the prose sound safer but less inhabited.
+- Do not neutralize adversarial motion when the paragraph is advancing through theoretical disagreement, historical correction, or explanatory displacement.
+- Do not let a historical section substitute conceptual labeling for historical contextualization.
+- Do not keep abstract framework terms in a historical section unless they are tied to actors, institutions, conflicts, material conditions, and time.
+- Do not rewrite a historical paragraph so that it becomes more elegant but less historical.
+- Do not replace temporal sequence with conceptual hovering when chronology would clarify the field.
+- Do not let theory stand in for evidence; theory must frame interpretation, not replace historical grounding.
