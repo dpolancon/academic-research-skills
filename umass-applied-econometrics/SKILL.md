@@ -7,6 +7,9 @@ description: "Applied econometrics guidelines in political economy, synthesizing
 
 This skill defines the distinctive UMass Amherst approach to applied econometrics and political economy writing. It functions as a layer modifying standard economics writing tips (such as Plamen Nikolov’s *IZA Writing Tips*) to ensure that quantitative work remains conceptually rich, institutionally grounded, and forensic in its rigor.
 
+> **Embedded Tools:**
+> - [Cointegration Specification Audit Protocol](file:///c:/ReposGitHub/academic-research-skills/umass-applied-econometrics/tools/cointegration_specification_audit.md): A step-by-step diagnostic tool for evaluating theoretical vs. stochastic admissibility of candidate regressors, collinearity filtering, FWL residual centering, LOESS pre-filtering, and bootstrap VECM combinatorics.
+
 ---
 
 ## 1. The Prose & Tone Layer (IZA-UMass Synthesis)
@@ -48,11 +51,36 @@ Standard econometrics treats models as neutral estimation routines. The UMass ap
 *   **The Rule:** Critique mainstream statistical indicators by revealing their underlying institutional and political-economic transmission mechanisms.
 *   **Implementation:** When using variables like "capacity utilization" or "output gaps," explain how these measures are shaped at the firm and workplace level (e.g., intensity of labor, capital conversion rates, and class conflict over work schedules) rather than treating them as neutral physical indexes.
 
+### G. Integration Order Governance as Specification Gate
+*   **The Rule:** No variable enters a long-run cointegration specification solely on theoretical grounds. Theoretical motivation is necessary but not sufficient. Integration order evidence provides the binding constraint. Execute using the embedded [Cointegration Specification Audit Protocol](file:///c:/ReposGitHub/academic-research-skills/umass-applied-econometrics/tools/cointegration_specification_audit.md).
+*   **Implementation:** For each candidate regressor:
+    1. Confirm $I(1)$ status using at least two complementary tests (e.g., ADF + KPSS) on both levels and first differences.
+    2. Check pairwise collinearity: correlations above 0.99 or condition numbers above 30 block the candidate regardless of theoretical motivation.
+    3. Check $I(2)$ risk: products, ratios, or accumulated paths of $I(1)$ variables may inherit $I(2)$. Test the candidate directly; do not assume integration order from its components.
+    4. Present a consolidated verdict table mapping each candidate to its theoretical basis, integration evidence, and final disposition (promoted / held / blocked / rejected).
+    5. Explain *why* blocked candidates fail in economic terms—the theory describes the decision mechanism; the stochastic evidence determines whether the observable proxy for that mechanism is admissible in a long-run regression.
+
+### H. Political Economy Interpretation of Econometric Parameters
+*   **The Rule:** Econometric parameters (cointegrating coefficients, error-correction speeds, interaction elasticities) are not neutral technical objects. Read them through the surplus approach, class struggle, and institutional periodization.
+*   **Implementation:**
+    1. State what the coefficient *means* in the analytical model—not just its statistical magnitude. E.g., "The cointegrating coefficient $\hat{\gamma}$ between log-machinery and log-structures recovers the long-run relative elasticity of the intensive to the extensive margin of accumulation."
+    2. Interpret sign and magnitude changes across historical sub-windows as regime signatures: $\hat{\gamma} \approx 1$ = balanced Fordist mechanization; $\hat{\gamma} \gg 1$ = decoupled post-Fordist machinery acceleration; $\hat{\gamma} < 0$ = institutional incoherence.
+    3. Connect distributional conditioning ($\omega_t$, $\pi_t$) to the induced innovation mechanism: rising wages drive mechanization through the FOC, not through exogenous technology shocks.
+    4. For peripheral economies, interpret failures to cointegrate as evidence of structural regime-switching (e.g., FX-constrained accumulation) rather than data deficiency.
+
+### I. Small-Sample Bootstrap for Short Macro Panels
+*   **The Rule:** Asymptotic critical values for Johansen trace statistics, Engle-Granger residual tests, and related cointegration tests are calibrated for $T \to \infty$. In macro panels with $N \le 30$, use residual bootstrap resampling to guard against over-rejection.
+*   **Implementation:**
+    1. For sub-sample VECMs with $N \le 30$, report both asymptotic and bootstrap $p$-values.
+    2. Use residual resampling (reshuffle estimated VAR/VECM residuals under the null of no cointegration) with at least 300 replications; 1,000 preferred.
+    3. If asymptotic trace rejects but bootstrap $p > 0.10$, flag the result as "size distortion" and do not treat it as genuine cointegration evidence.
+    4. Report bootstrap results in a dedicated table, not buried in footnotes.
+
 ---
 
 ## 3. Diagnostic Checklist for Writing & Reviewing Agents
 
-Agents auditing a manuscript must evaluate it against this 10-point checklist:
+Agents auditing a manuscript must evaluate it against this 14-point checklist:
 
 1.  **BLUF Check:** Is the core contribution stated by the second paragraph of the introduction?
 2.  **Variable Audit:** Are all mathematical parameters defined in-text immediately upon appearance?
@@ -64,3 +92,7 @@ Agents auditing a manuscript must evaluate it against this 10-point checklist:
 8.  **Descriptive Grounding Check:** Are raw growth rates of GDP, capital, and labor integrated into the narrative to contextualize the econometrics?
 9.  **Institutional Critique:** Are mainstream indicators deconstructed to show their class/political-economic transmission mechanisms?
 10. **Tone Balance:** Is the tone authoritative and critical, yet measured and free of defensive heterodox posturing?
+11. **Integration Order Gate:** Are all candidate regressors tested for $I(d)$ order on both levels and first differences? Are blocked candidates reported with economic rationale?
+12. **Coefficient PE Interpretation:** Are estimated coefficients interpreted through the political economy framework (surplus approach, class struggle, institutional periodization), not just as statistical magnitudes?
+13. **Bootstrap Sensitivity:** For sub-samples with $N \le 30$, are bootstrap $p$-values reported alongside asymptotic critical values?
+14. **Consolidated Verdict Table:** Is there a summary table mapping each candidate variable to its theoretical basis, integration order evidence, and final research disposition?
