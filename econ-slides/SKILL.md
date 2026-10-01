@@ -27,6 +27,7 @@ Identify the job first; read only the references you need.
 | Add to or polish an existing deck | `references/existing-deck-workflow.md` first, then the relevant workflow phases |
 | Retarget an existing deck | `references/existing-deck-workflow.md` §Retargeting; preserve its style |
 | Outline/notes → deck | Workflow below; treat the outline as the paper |
+| Grant / team working session deck | Workflow below + `references/working-session-grant-talks.md` |
 
 Always apply `references/slide-rules.md` (rendered layout guidance) and
 `references/exhibit-surgery.md` (tables, figures, numbers) when drafting or
