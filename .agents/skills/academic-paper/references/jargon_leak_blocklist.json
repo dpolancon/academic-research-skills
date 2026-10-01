@@ -1,0 +1,44 @@
+{
+  "project_jargon": [
+    {
+      "term": "empirical object",
+      "alternatives": ["coefficient", "series", "estimate", "measure", "benchmark", "specification"]
+    },
+    {
+      "term": "object of evaluation",
+      "alternatives": ["coefficient being replicated", "relation being tested"]
+    },
+    {
+      "term": "replication target",
+      "alternatives": ["published estimate", "reported coefficient", "Shaikh’s benchmark"]
+    },
+    {
+      "term": "interpretive move",
+      "alternatives": ["interpretation", "read the coefficient as", "treat this coefficient as"]
+    },
+    {
+      "term": "candidate transformation elasticity",
+      "alternatives": ["estimated capacity elasticity", "elasticity linking capital to capacity"]
+    },
+    {
+      "term": "system-admissibility gates",
+      "alternatives": ["VECM rank and stability checks", "joint system tests"]
+    },
+    {
+      "term": "retained criteria",
+      "alternatives": ["econometric checks", "retained VECM check"]
+    },
+    {
+      "term": "bounded implications",
+      "alternatives": ["limited implication", "narrower conclusion", "what the evidence supports"]
+    },
+    {
+      "term": "pressure points",
+      "alternatives": ["specification choices", "data choices", "model checks"]
+    },
+    {
+      "term": "empirical architecture",
+      "alternatives": ["empirical design", "sequence of tests"]
+    }
+  ]
+}

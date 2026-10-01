@@ -13,6 +13,37 @@ Academic Research Skills (ARS) is a standalone, cross-model, and repository-agno
 
 ---
 
+## Unified Agent Skills Suite (14 Skills)
+
+This repository serves as the single canonical monorepo housing the full 14-skill suite for academic economics research, empirical econometrics, paper writing, peer review, and Beamer presentations. All skills are compatible with the open [Agent Skills](https://agentskills.io) standard, Google Antigravity, Claude Code, and OpenAI Codex.
+
+| Skill | Trigger / Command | Focus & Capabilities |
+|---|---|---|
+| **`econ-write`** | `/econ-write` | Flagship economics paper writing assistant synthesizing 50+ guides by leading economists (Cochrane, McCloskey, Shapiro, Bellemare). |
+| **`umass-applied-econometrics`** | `/umass-applied-econometrics` | Applied econometrics in political economy (forensic replication, visual-first data, Marglin macro grounding, Toda–Yamamoto Amiri & Ventelou 2012 benchmark, cointegration audit). |
+| **`advisor-reviewer`** | `/advisor-reviewer` | Michael Ash advisor feedback standards, dissertation rewrite guidance, and IZA applied econometrics standards. |
+| **`PE-phd-committee`** | `/PE-phd-committee` | Dissertation committee defense simulator in political economy at UMass Amherst (Ash, Basu, Young personas). |
+| **`heterodox-economics-review`** | `/heterodox-economics-review` | Heterodox macroeconomics review & drafting guidelines (Post-Keynesian, Sraffian Supermultiplier, dynamic consistency). |
+| **`prose-register-critic`** | `/prose-register-critic` | Academic editing auditor & lexical discipline protocol (v2.1.0) purging LLM metadata leakage, throat-clearing, moralizing policy rhetoric, and translation calques. |
+| **`deep-research`** | `/deep-research` | Universal deep research agent team (13-agent pipeline for literature search, synthesis, PRISMA, meta-analysis). |
+| **`academic-paper-reviewer`** | `/academic-paper-reviewer` | Multi-perspective peer review (5-reviewer panel: EIC, field expert, methodologist, cross-disciplinary, devil's advocate). |
+| **`academic-pipeline`** | `/academic-pipeline` | Full academic research workflow orchestrator (research → write → integrity check → review → revise → finalize). |
+| **`academic-paper`** | `/academic-paper` | 12-agent academic paper writing pipeline with style calibration and writing quality checks. |
+| **`irf-plotting`** | `/irf-plotting` | Publication-grade Impulse Response Function (IRF & GIRF) plotting and reporting engine (linear VAR/SVAR & TVAR with endogenous threshold crossing). |
+| **`editor-jacobin-lat`** | `/editor-jacobin-lat` | Political economy opinion column & essay editorial revision system (Jacobin América Latina, Martín Arboleda criteria). |
+| **`latex-compilation`** | `/latex-compilation` | LaTeX workspace setup, compilation workflow (latexmk/pdflatex), and markdown backup protocol. |
+| **`econ-slides`** | `/econ-slides` | Academic economics Beamer presentation suite (turn papers into seminar, conference, or job-market talks; discussant slides; speaker scripts). |
+
+### One-Command Local Installation
+
+To install or sync all 14 skills into your global Antigravity configuration (`C:\Users\<User>\.gemini\config\skills`) and Claude Desktop/Code (`AppData\Local\Claude\skills`), run:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\install-local.ps1
+```
+
+---
+
 ## Installation & Prerequisites
 
 To run the pipeline locally, install the required Python packages:
