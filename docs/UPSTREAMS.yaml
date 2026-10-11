@@ -1,0 +1,180 @@
+# ==============================================================================
+# Academic Research Skills (ARS) - Upstream Provenance Registry
+# ==============================================================================
+# Records upstream repository lineages, base tracking commits/versions,
+# author attributions, and tracking policies.
+# ==============================================================================
+
+version: "1.0.0"
+last_updated: "2026-10-11"
+
+upstreams:
+  - id: "imbad0202-ars"
+    name: "Academic Research Skills (ARS) Core"
+    repository: "https://github.com/Imbad0202/academic-research-skills"
+    author: "Cheng-I Wu"
+    license: "CC BY-NC 4.0"
+    default_branch: "main"
+    base_version: "v3.12.0"
+    tracking_policy: "track-core"
+    components:
+      - "deep-research"
+      - "academic-paper"
+      - "academic-paper-reviewer"
+      - "academic-pipeline"
+      - "shared"
+      - "scripts/run_pipeline.py"
+      - "scripts/cross_model_client.py"
+
+  - id: "hanlulong-econ-writing"
+    name: "Economics Writing Skill"
+    repository: "https://github.com/hanlulong/econ-writing-skill"
+    author: "Lu Han"
+    license: "MIT"
+    default_branch: "main"
+    base_commit: "42f27ee"
+    tracking_policy: "track-selectively"
+    components:
+      - "econ-write"
+
+  - id: "hanlulong-econ-slides"
+    name: "Economics Slides Skill"
+    repository: "https://github.com/hanlulong/econ-slides-skill"
+    author: "Lu Han"
+    license: "MIT"
+    default_branch: "main"
+    base_commit: "42f27ee"
+    tracking_policy: "track-selectively"
+    components:
+      - "econ-slides"
+
+components_provenance:
+  deep-research:
+    upstream_id: "imbad0202-ars"
+    classification: "IMBAD_UPSTREAM"
+    upstream_version: "v2.9.4"
+    upstream_license: "CC BY-NC 4.0"
+    author: "Cheng-I Wu"
+    modification_status: "unmodified"
+    tracking_policy: "track-core"
+    confidence: "HIGH"
+
+  academic-paper:
+    upstream_id: "imbad0202-ars"
+    classification: "IMBAD_UPSTREAM"
+    upstream_version: "v3.2.0"
+    upstream_license: "CC BY-NC 4.0"
+    author: "Cheng-I Wu"
+    modification_status: "unmodified"
+    tracking_policy: "track-core"
+    confidence: "HIGH"
+
+  academic-paper-reviewer:
+    upstream_id: "imbad0202-ars"
+    classification: "IMBAD_UPSTREAM"
+    upstream_version: "v1.10.0"
+    upstream_license: "CC BY-NC 4.0"
+    author: "Cheng-I Wu"
+    modification_status: "unmodified"
+    tracking_policy: "track-core"
+    confidence: "HIGH"
+
+  academic-pipeline:
+    upstream_id: "imbad0202-ars"
+    classification: "IMBAD_UPSTREAM"
+    upstream_version: "v3.12.0"
+    upstream_license: "CC BY-NC 4.0"
+    author: "Cheng-I Wu"
+    modification_status: "unmodified"
+    tracking_policy: "track-core"
+    confidence: "HIGH"
+
+  econ-write:
+    upstream_id: "hanlulong-econ-writing"
+    classification: "HANLULONG_UPSTREAM"
+    upstream_license: "MIT"
+    author: "Lu Han"
+    modification_status: "locally_adapted"
+    tracking_policy: "track-selectively"
+    confidence: "HIGH"
+
+  econ-slides:
+    upstream_id: "hanlulong-econ-slides"
+    classification: "HANLULONG_UPSTREAM"
+    upstream_license: "MIT"
+    author: "Lu Han"
+    modification_status: "locally_adapted"
+    tracking_policy: "track-selectively"
+    confidence: "HIGH"
+
+  umass-applied-econometrics:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  heterodox-economics-review:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  advisor-reviewer:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  PE-phd-committee:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  editor-jacobin-lat:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  prose-register-critic:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  irf-plotting:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"
+
+  latex-compilation:
+    upstream_id: null
+    classification: "LOCAL_ORIGINAL"
+    upstream_license: null
+    author: "Diego Polanco"
+    modification_status: "original"
+    tracking_policy: "local-only"
+    confidence: "HIGH"

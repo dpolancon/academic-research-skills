@@ -1,6 +1,6 @@
 # Academic Research Skills (ARS) Standalone Pipeline
 
-Academic Research Skills (ARS) is a standalone, cross-model, and repository-agnostic Python pipeline designed to automate and verify the academic research lifecycle. ARS operates independently of any specific developer client and can run on any execution runner (such as CLI, Codex, or Antigravity).
+Academic Research Skills (ARS) is Diego Polanco's maintained fork and research copilot infrastructure, evolved from Cheng-I Wu's upstream agent framework with economics research specializations from Lu Han and original political economy workflows. It provides a standalone, cross-model, and repository-agnostic Python pipeline designed to automate and verify the academic research lifecycle across CLI, Codex, and Antigravity environments.
 
 ---
 
@@ -190,4 +190,4 @@ The orchestrator enforces the 10-stage lifecycle defined in [pipeline_state_mach
 
 ## License
 
-This project is licensed under the Apache 2.0 License. See the [LICENSE](LICENSE) file for details.
+Licensing and provenance vary by component. See [LICENSE](LICENSE) and [docs/PROVENANCE.md](docs/PROVENANCE.md). A repository-wide licensing reconciliation is currently on HOLD pending provenance review.

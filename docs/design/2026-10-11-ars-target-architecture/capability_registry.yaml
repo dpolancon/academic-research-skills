@@ -1,0 +1,284 @@
+# ==============================================================================
+# ARS Capability Registry
+# ==============================================================================
+# Authoritative machine-readable mapping of scholarly capabilities to canonical owners.
+# Distinguishes CURRENT operational state from TARGET architecture state.
+# Migration Status Vocabulary: CURRENT, MIGRATING, PLANNED, CANDIDATE, DEPRECATED
+# Primary Rule: One capability, one canonical owner.
+# ==============================================================================
+
+version: "1.1.0"
+last_updated: "2026-10-11"
+schema: "ars-capability-registry-v1.1"
+
+capabilities:
+  - capability_id: "literature_synthesis_search"
+    description: "Systematic literature discovery, multi-agent query synthesis, and PRISMA reporting across external academic databases."
+    current_owner: "deep-research"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "skills/core/deep-research"
+    target_owner_type: "CORE_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic-paper"
+      - "academic-pipeline"
+    forbidden_duplicate_owners: true
+    provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v2.9.4)"
+    notes: "academic-paper literature strategist consumes outputs for paper-specific gap fills; does not duplicate systematic search engine."
+
+  - capability_id: "academic_manuscript_lifecycle"
+    description: "End-to-end multi-agent academic paper structuring, section drafting, citation integration, and document assembly."
+    current_owner: "academic-paper"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "skills/core/academic-paper"
+    target_owner_type: "CORE_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic-pipeline"
+    forbidden_duplicate_owners: true
+    provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v3.2.0)"
+    notes: "Sole owner of the authoring state machine; delegates economics disciplinary rules to econ-write."
+
+  - capability_id: "simulated_external_peer_review"
+    description: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions."
+    current_owner: "academic-paper-reviewer"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "skills/core/academic-paper-reviewer"
+    target_owner_type: "CORE_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic-pipeline"
+    forbidden_duplicate_owners: true
+    provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v1.10.0)"
+    notes: "Sole owner of external peer review; consumes committee and advisor profiles for persona calibration."
+
+  - capability_id: "research_workflow_orchestration"
+    description: "Full research-to-publication 10-stage lifecycle state machine, checkpoint enforcement, and Material Passport tracking."
+    current_owner: "academic-pipeline"
+    current_owner_type: "ORCHESTRATOR"
+    target_owner: "orchestrator/academic-pipeline"
+    target_owner_type: "ORCHESTRATOR"
+    migration_status: "CURRENT"
+    consumers:
+      - "all_skills"
+    forbidden_duplicate_owners: true
+    provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v3.12.0)"
+    notes: "Control plane only; does not own substantive disciplinary reasoning."
+
+  - capability_id: "economics_prose_and_section_standards"
+    description: "Authoritative economics disciplinary writing conventions (BLUF, triangular style, model section, results presentation)."
+    current_owner: "econ-write"
+    current_owner_type: "DOMAIN_SKILL"
+    target_owner: "skills/domain/econ-write"
+    target_owner_type: "DOMAIN_SKILL"
+    migration_status: "MIGRATING"
+    consumers:
+      - "academic-paper"
+      - "econ-slides"
+    forbidden_duplicate_owners: true
+    provenance: "Han Lulong (hanlulong/econ-writing-skill) + local adaptation"
+    notes: "Currently contains overlapping slide and review guidance; refactoring planned in Wave B/C to narrow to economics disciplinary policy."
+
+  - capability_id: "applied_econometrics_political_economy"
+    description: "Applied time-series econometrics in political economy (forensic replication, integration order governance, lag selection)."
+    current_owner: "umass-applied-econometrics"
+    current_owner_type: "DOMAIN_SKILL"
+    target_owner: "skills/domain/applied-econometrics-pe"
+    target_owner_type: "DOMAIN_SKILL"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, UMass Amherst tradition)"
+    notes: "Currently contains embedded tools and forced regime-switching rule H.4; planned refactor in Wave D."
+
+  - capability_id: "heterodox_macro_modeling"
+    description: "Mathematical and dynamical systems consistency for Post-Keynesian, Marxian, Sraffian, and SFC growth and distribution models."
+    current_owner: "heterodox-economics-review"
+    current_owner_type: "DOMAIN_SKILL"
+    target_owner: "skills/domain/heterodox-macro-modeling"
+    target_owner_type: "DOMAIN_SKILL"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently a narrow 29-line check for Sraffian Supermultiplier singularities; planned expansion in Wave D."
+
+  - capability_id: "scholarly_slide_production"
+    description: "Authoritative production and verification of academic economics Beamer presentation slide decks."
+    current_owner: "econ-slides"
+    current_owner_type: "DISSEMINATION_SKILL"
+    target_owner: "skills/dissemination/econ-slides"
+    target_owner_type: "DISSEMINATION_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic_presenters"
+    forbidden_duplicate_owners: true
+    provenance: "Han Lulong (hanlulong/econ-slides-skill) + local adaptation"
+    notes: "Sole owner of Beamer decks; absorbs presentation guidance from econ-write; Fondecyt project files to be quarantined."
+
+  - capability_id: "public_scholarship_translation"
+    description: "Translation of dense academic research into accessible, non-specialized public essays and opinion columns."
+    current_owner: "editor-jacobin-lat"
+    current_owner_type: "DISSEMINATION_SKILL"
+    target_owner: "skills/dissemination/public-scholarship"
+    target_owner_type: "DISSEMINATION_SKILL"
+    migration_status: "PLANNED"
+    consumers:
+      - "public_scholars"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently conflated with Jacobin América Latina house style; planned decomposition in Wave E."
+
+  - capability_id: "prose_discipline_and_lexical_audit"
+    description: "Category A/B/C prose discipline protocol, technical vocabulary protection, and evidential claim-strength verb mapping."
+    current_owner: "prose-register-critic"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "shared/protocols/prose_discipline_protocol"
+    target_owner_type: "SHARED_PROTOCOL"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "econ-write"
+      - "public-scholarship"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, v2.1.0)"
+    notes: "Currently structured as a top-level skill; planned demotion to shared protocol and deterministic tools in Wave C."
+
+  - capability_id: "editorial_decision_persistence"
+    description: "Durable tracking of human-adjudicated editorial decisions across multi-round revisions; authorization state gating."
+    current_owner: "docs/design/2026-10-10-editorial-governance"
+    current_owner_type: "SHARED_PROTOCOL"
+    target_owner: "shared/contracts/editorial_governance"
+    target_owner_type: "SHARED_PROTOCOL"
+    migration_status: "MIGRATING"
+    consumers:
+      - "academic-pipeline"
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, Phase 1 candidate)"
+    notes: "Simplified 3-axis state model and source contract planned to be absorbed into Material Passport as an optional extension in Wave C."
+
+  - capability_id: "cointegration_specification_audit"
+    description: "Deterministic diagnostic protocol for theoretical vs stochastic regressor admissibility, collinearity, and VECM rank."
+    current_owner: "umass-applied-econometrics"
+    current_owner_type: "DOMAIN_SKILL"
+    target_owner: "tools/econometrics/cointegration_audit"
+    target_owner_type: "TOOL"
+    migration_status: "PLANNED"
+    consumers:
+      - "applied-econometrics-pe"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, embedded in umass-applied-econometrics)"
+    notes: "Embedded markdown protocol; planned extraction to tools/ in Wave D."
+
+  - capability_id: "toda_yamamoto_specification_mapping"
+    description: "Deterministic levels-augmented (k + d_max) VAR lag selection grid mapping and Modified Wald test reporting."
+    current_owner: "umass-applied-econometrics"
+    current_owner_type: "DOMAIN_SKILL"
+    target_owner: "tools/econometrics/toda_yamamoto"
+    target_owner_type: "TOOL"
+    migration_status: "PLANNED"
+    consumers:
+      - "applied-econometrics-pe"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, benchmarked on Amiri & Ventelou 2012)"
+    notes: "Embedded markdown protocol; planned extraction to tools/ in Wave D."
+
+  - capability_id: "irf_girf_generation"
+    description: "Publication-grade Impulse Response Function plotting and reporting for linear VAR/SVAR and TVAR models."
+    current_owner: "irf-plotting"
+    current_owner_type: "TOOL"
+    target_owner: "tools/plotting/irf_plotting"
+    target_owner_type: "TOOL"
+    migration_status: "PLANNED"
+    consumers:
+      - "applied-econometrics-pe"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently structured as a top-level skill folder; planned retyping to tool interface in Wave D."
+
+  - capability_id: "latex_workspace_compilation"
+    description: "Isolated LaTeX compilation (latexmk/pdflatex), auxiliary artifact gitignoring, and markdown backup generation."
+    current_owner: "latex-compilation"
+    current_owner_type: "TOOL"
+    target_owner: "tools/latex/compile_workspace"
+    target_owner_type: "TOOL"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "econ-slides"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently structured as a top-level skill folder; planned retyping to tool in Wave D."
+
+  - capability_id: "advisor_michael_ash_calibration"
+    description: "Durable research and writing preferences of advisor Michael Ash (simplicity, Marglin grounding, black box mechanisms)."
+    current_owner: "advisor-reviewer"
+    current_owner_type: "PROFILE"
+    target_owner: "profiles/advisors/michael-ash"
+    target_owner_type: "PROFILE"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently embedded with Chapter 1 dissertation specifics; planned extraction to profile in Wave C."
+
+  - capability_id: "committee_umass_pe_defense"
+    description: "Doctoral dissertation defense committee personas (Ash, Basu, Young) at UMass Amherst."
+    current_owner: "PE-phd-committee"
+    current_owner_type: "PROFILE"
+    target_owner: "profiles/committees/umass-pe"
+    target_owner_type: "PROFILE"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently includes parallel review workflow; planned extraction to profile in Wave C."
+
+  - capability_id: "venue_jacobin_lat_editorial"
+    description: "Editorial style guide, headline constraints (declarative thesis, no subtitle, max 12 words), and Martín Arboleda criteria."
+    current_owner: "editor-jacobin-lat"
+    current_owner_type: "DISSEMINATION_SKILL"
+    target_owner: "profiles/venues/jacobin-lat"
+    target_owner_type: "PROFILE"
+    migration_status: "PLANNED"
+    consumers:
+      - "public-scholarship"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently embedded within editor-jacobin-lat; planned extraction to venue profile in Wave E."
+
+  - capability_id: "author_diego_academic_voice"
+    description: "Authorial voice, preferred theoretical phrasing, citation density preferences, and bilingual Spanish-English idioms."
+    current_owner: "academic-paper"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "profiles/author/diego-academic"
+    target_owner_type: "PROFILE"
+    migration_status: "PLANNED"
+    consumers:
+      - "academic-paper"
+      - "econ-write"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation)"
+    notes: "Currently ad-hoc across style calibration and prose critic; planned formal profile in Wave C."
+
+  - capability_id: "political_economy_research_methodology"
+    description: "Comparative-historical political economy, process tracing, periodization, historical source criticism, and institutional analysis."
+    current_owner: null
+    current_owner_type: null
+    target_owner: "skills/domain/political-economy-research"
+    target_owner_type: "DOMAIN_SKILL"
+    migration_status: "CANDIDATE"
+    consumers:
+      - "academic-paper"
+    forbidden_duplicate_owners: true
+    provenance: "Proposed new domain capability"
+    notes: "Demonstrated intellectual gap; design and validate in Wave D."

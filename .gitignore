@@ -23,3 +23,22 @@ ROADMAP.md
 # Together AI credentials document
 docs/together_AI_baseURL_APIKEY.txt
 
+# LaTeX build artifacts
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+build/
+
+# Environment and credentials
+.env
+!.env.example
+
+# Client skill mirror views (generated locally via install-local.ps1)
+.agents/skills/
+.claude/skills/

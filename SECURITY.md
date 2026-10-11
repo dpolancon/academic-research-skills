@@ -13,11 +13,15 @@ Only the latest release on the `main` branch receives security fixes.
 
 If you find a security issue (e.g. prompt injection, credential exposure, unintended data exfiltration through API calls), **do not open a public issue**.
 
-Instead, use GitHub's **private vulnerability reporting**:
+If GitHub's **"Report a vulnerability"** option is available under the repository's [Security Advisories](https://github.com/dpolancon/academic-research-skills/security/advisories) page, use that private reporting channel:
 
-1. Go to the [Security Advisories](https://github.com/Imbad0202/academic-research-skills/security/advisories) page.
+1. Go to the [Security Advisories](https://github.com/dpolancon/academic-research-skills/security/advisories) page.
 2. Click **"Report a vulnerability"**.
 3. Fill in the details — what you found, how to reproduce it, and the potential impact.
+
+If private vulnerability reporting is not available, do not disclose sensitive security details in a public issue. Contact the repository maintainer privately before sharing reproduction details.
+
+For ordinary non-sensitive bugs and feature requests, use the repository's [Issues](https://github.com/dpolancon/academic-research-skills/issues) page instead.
 
 You will receive a response within 7 days. If the report is accepted, a fix will be issued and credited in the release notes. If declined, you will receive an explanation.
 
@@ -33,4 +37,5 @@ The following are in scope for security reports:
 The following are **out of scope**:
 
 - AI output quality issues (hallucinations, weak arguments) — these are research limitations, not security vulnerabilities
-- Feature requests or general bugs — use [Issues](https://github.com/Imbad0202/academic-research-skills/issues) instead
+- Feature requests or general bugs — use [Issues](https://github.com/dpolancon/academic-research-skills/issues) instead
+

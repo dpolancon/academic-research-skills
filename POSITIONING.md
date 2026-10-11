@@ -2,9 +2,10 @@
 
 ## What this is
 
-Academic Research Skills (ARS) is a **source-available academic research copilot framework** for noncommercial scholarly use. The reference distribution is a suite of Claude Code skills that assists human researchers through the full research-to-publication pipeline. Sibling distributions for other agent platforms ([e.g. Codex](https://github.com/Imbad0202/academic-research-skills-codex)) follow the same workflow content, the same human-in-the-loop design philosophy, and the same license terms; see [CONTRIBUTING.md § Platform ports](CONTRIBUTING.md#platform-ports-community-maintained-only).
+Academic Research Skills (ARS) is a **source-available academic research copilot framework** for noncommercial scholarly use. This repository (`dpolancon/academic-research-skills`) is Diego Polanco's maintained fork and research infrastructure, expanding the core pipeline with economics, political economy, and applied econometrics suites.
 
-It is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). This is not an open source license — it restricts commercial use by design, to keep the tool free for academic communities.
+The upstream ARS core framework is licensed under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/), restricting commercial use to safeguard academic access. Across this multi-lineage distribution, licensing and provenance vary by component (incorporating MIT-licensed economics modules by Lu Han and original political economy extensions by Diego Polanco). See `LICENSE` and `docs/PROVENANCE.md`. A repository-wide licensing reconciliation is currently on **HOLD** pending human provenance review.
+
 
 ## What this is not
 
