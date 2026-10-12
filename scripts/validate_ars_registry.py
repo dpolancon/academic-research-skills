@@ -125,6 +125,7 @@ def validate_registry(repo_root: Path) -> bool:
 
     # 2. Validate Capabilities
     capability_ids = set()
+    capabilities_by_id = {}
 
     for idx, cap in enumerate(capabilities_list):
         if not isinstance(cap, dict):
@@ -140,6 +141,7 @@ def validate_registry(repo_root: Path) -> bool:
         if cap_id in capability_ids:
             errors.append(f"Duplicate capability_id found: '{cap_id}'.")
         capability_ids.add(cap_id)
+        capabilities_by_id[cap_id] = cap
 
         # Required fields
         missing_cap_fields = REQUIRED_CAPABILITY_FIELDS - set(cap.keys())
@@ -168,6 +170,65 @@ def validate_registry(repo_root: Path) -> bool:
             # If current_owner and target_owner have the exact same string when paths are involved
             if cur_owner == tgt_owner and any(cur_owner.startswith(p) for p in ("skills/", "tools/", "profiles/")):
                 errors.append(f"Capability '{cap_id}' conflates target path as current_owner: '{cur_owner}'.")
+
+    # 3. Validate Wave B1 Routing & Precedence Invariants
+    routing_components = {
+        "academic-paper", "econ-write", "academic-paper-reviewer",
+        "academic-pipeline", "deep-research", "econ-slides"
+    }
+    missing_rc = routing_components - component_ids
+    if missing_rc:
+        errors.append(f"Missing essential routing component(s): {missing_rc}")
+
+    # B1 Invariant 1 & 2: runtime paths exist and never resolve to target path prefixes
+    for cid in routing_components:
+        comp = components_by_id.get(cid)
+        if comp:
+            rpath = comp.get("runtime_path", "")
+            if not (repo_root / rpath).exists():
+                errors.append(f"Routing component '{cid}' runtime path '{rpath}' does not exist on disk.")
+            if any(rpath.startswith(prefix) for prefix in ("skills/", "profiles/", "orchestrator/", "tools/", "shared/")):
+                errors.append(f"Routing component '{cid}' leaked future target path into runtime_path: '{rpath}'.")
+
+    # B1 Invariant 3: academic-paper owns generic manuscript lifecycle
+    aml_cap = capabilities_by_id.get("academic_manuscript_lifecycle")
+    if not aml_cap or aml_cap.get("current_owner") != "academic-paper":
+        errors.append("Invariant violation: 'academic_manuscript_lifecycle' must be currently owned by 'academic-paper'.")
+
+    # B1 Invariant 4: econ-write owns economics writing standards
+    econ_cap = capabilities_by_id.get("economics_prose_and_section_standards")
+    if not econ_cap or econ_cap.get("current_owner") != "econ-write":
+        errors.append("Invariant violation: 'economics_prose_and_section_standards' must be currently owned by 'econ-write'.")
+
+    # B1 Invariant 5: academic-paper-reviewer owns external peer review
+    review_cap = capabilities_by_id.get("simulated_external_peer_review")
+    if not review_cap or review_cap.get("current_owner") != "academic-paper-reviewer":
+        errors.append("Invariant violation: 'simulated_external_peer_review' must be currently owned by 'academic-paper-reviewer'.")
+
+    # B1 Invariant 6: academic-pipeline is ORCHESTRATOR
+    pipe_comp = components_by_id.get("academic-pipeline")
+    pipe_cap = capabilities_by_id.get("research_workflow_orchestration")
+    if not pipe_comp or pipe_comp.get("semantic_role") != "ORCHESTRATOR" or pipe_comp.get("current_implementation_type") != "ORCHESTRATOR":
+        errors.append("Invariant violation: 'academic-pipeline' component must have semantic_role and implementation_type 'ORCHESTRATOR'.")
+    if not pipe_cap or pipe_cap.get("current_owner") != "academic-pipeline":
+        errors.append("Invariant violation: 'research_workflow_orchestration' must be currently owned by 'academic-pipeline'.")
+
+    # B1 Invariant 7: No second canonical external-review owner exists
+    review_owners = [
+        cap.get("current_owner") for cap in capabilities_list
+        if "peer_review" in cap.get("capability_id", "") and cap.get("current_owner") is not None
+    ]
+    if len(review_owners) != 1 or review_owners[0] != "academic-paper-reviewer":
+        errors.append(f"Invariant violation: Exactly one peer review owner permitted, found {review_owners}.")
+
+    # B1 Invariant 8: Advisor and committee components are profiles, not canonical peer-review owners
+    for prof_id in ("advisor-reviewer", "PE-phd-committee"):
+        prof_comp = components_by_id.get(prof_id)
+        if not prof_comp or prof_comp.get("semantic_role") != "PROFILE":
+            errors.append(f"Invariant violation: Legacy component '{prof_id}' must have semantic_role 'PROFILE'.")
+        if review_cap and review_cap.get("current_owner") == prof_id:
+            errors.append(f"Invariant violation: Legacy component '{prof_id}' cannot be canonical owner of peer review.")
+
 
     # Final summary output
     if errors:

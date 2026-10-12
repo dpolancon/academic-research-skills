@@ -65,8 +65,18 @@ Activate `plan` mode when the user wants guidance, step-by-step planning, or exp
 | Scenario | Use Instead |
 |----------|-------------|
 | Deep research / fact-checking (not paper writing) | `deep-research` |
-| Reviewing a paper (structured review) | `academic-paper-reviewer` |
-| Full research-to-paper pipeline | `academic-pipeline` |
+| Bounded economics writing / disciplinary prose rules | `econ-write` |
+| External referee review / journal peer review simulation | `academic-paper-reviewer` |
+| Presentation slides production (Beamer decks) | `econ-slides` |
+| Full research-to-paper pipeline orchestration | `academic-pipeline` |
+
+### Capability Ownership and Precedence Rules (Wave B1)
+
+- **Semantic Role:** `CORE_SKILL`
+- **Primary Ownership:** Owns the generic academic manuscript lifecycle across all disciplines: planning, structure architecture, argumentation, drafting workflow, revision workflow, citation compliance, and generic manuscript assembly.
+- **Author-Side Self-Check vs External Review:** Phase 6 in-pair evaluator is strictly an internal author-side self-quality gate (v3.6.6 generator-evaluator contract). It does **not** substitute for simulated external peer review, which belongs exclusively to `academic-paper-reviewer`.
+- **Economics Disciplinary Delegation:** When drafting or revising economics papers, `academic-paper` retains lifecycle ownership and delegates disciplinary writing policy (BLUF, triangular style, model section structure, results presentation, causal and identification language) to `econ-write`.
+- **Orchestration:** When part of an end-to-end multi-component research workflow, execution is coordinated by `academic-pipeline`.
 
 ### Distinction from `deep-research`
 
@@ -426,9 +436,11 @@ Follows the user's language. Academic terminology is kept in English. Bilingual 
 ```
 academic-paper + tw-hei-intelligence  -> Evidence-based HEI paper with real MOE data
 academic-paper + deep-research        -> Deep research phase -> paper writing phase (auto-handoff)
+academic-paper + econ-write           -> Economics disciplinary writing standards (BLUF, identification, model section, results presentation)
+academic-paper + econ-slides          -> Presentation slides production (Beamer decks)
 academic-paper + report-to-website    -> Interactive web version of the paper
 academic-paper + notebooklm-slides-generator -> Presentation slides from paper
-academic-paper + academic-paper-reviewer -> Peer review -> revision loop
+academic-paper + academic-paper-reviewer -> External peer review -> revision loop
 ```
 
 ---

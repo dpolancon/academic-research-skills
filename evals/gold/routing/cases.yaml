@@ -1,0 +1,107 @@
+# ==============================================================================
+# ARS Wave B1 Routing Evaluation Fixture (cases.yaml)
+# ==============================================================================
+# Canonical evaluation cases testing deterministic capability precedence and
+# runtime routing decisions across the ARS monorepo.
+#
+# Schema: ars-routing-eval-v1.0
+# Baseline: 8bdc0df
+# ==============================================================================
+
+version: "1.0.0"
+benchmark: "ars-routing-precedence-v1"
+
+cases:
+  - id: "ROUTE-001"
+    prompt: "Write an academic paper from these materials."
+    category: "GENERIC_MANUSCRIPT"
+    rule: "R1"
+    primary_owner: "academic-paper"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Generic academic paper drafting and lifecycle belongs to core skill academic-paper."
+
+  - id: "ROUTE-002"
+    prompt: "Rewrite this economics results section."
+    category: "ECONOMICS_WRITING"
+    rule: "R2"
+    primary_owner: "econ-write"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Bounded economics section rewriting and disciplinary prose rules belong directly to domain skill econ-write."
+
+  - id: "ROUTE-003"
+    prompt: "Build a complete economics paper from outline through revision."
+    category: "FULL_ECONOMICS_WORKFLOW"
+    rule: "R3"
+    primary_owner: "academic-paper"
+    delegates_to:
+      - "econ-write"
+    calibration_input: null
+    expected_action: "LIFECYCLE_WITH_DOMAIN_POLICY"
+    rationale: "Complete manuscript lifecycle is owned by academic-paper, consuming econ-write for economics disciplinary conventions."
+
+  - id: "ROUTE-004"
+    prompt: "Peer review this manuscript."
+    category: "EXTERNAL_PEER_REVIEW"
+    rule: "R4"
+    primary_owner: "academic-paper-reviewer"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Simulated external journal peer review and referee reports belong solely to academic-paper-reviewer."
+
+  - id: "ROUTE-005"
+    prompt: "Review this manuscript as my advisor Michael Ash might."
+    category: "ADVISOR_CALIBRATION"
+    rule: "R5"
+    primary_owner: "academic-paper-reviewer"
+    delegates_to: []
+    calibration_input: "advisor-reviewer"
+    expected_action: "REVIEW_WITH_CALIBRATION"
+    rationale: "External review simulation is owned by academic-paper-reviewer, consuming advisor-reviewer profile for Ash persona calibration."
+
+  - id: "ROUTE-006"
+    prompt: "Simulate my PhD committee challenging Chapter 2."
+    category: "COMMITTEE_CALIBRATION"
+    rule: "R6"
+    primary_owner: "academic-paper-reviewer"
+    delegates_to: []
+    calibration_input: "PE-phd-committee"
+    expected_action: "REVIEW_WITH_CALIBRATION"
+    rationale: "Dissertation committee defense challenge is owned by academic-paper-reviewer, consuming PE-phd-committee profile for committee calibration."
+
+  - id: "ROUTE-007"
+    prompt: "Run the full research-to-publication workflow."
+    category: "ORCHESTRATION"
+    rule: "R7"
+    primary_owner: "academic-pipeline"
+    delegates_to:
+      - "deep-research"
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    calibration_input: null
+    expected_action: "WORKFLOW_ORCHESTRATION"
+    rationale: "End-to-end multi-stage research-to-publication orchestration belongs to academic-pipeline, delegating substantive stages."
+
+  - id: "ROUTE-008"
+    prompt: "Create Beamer slides for my economics seminar."
+    category: "DISSEMINATION_SLIDES"
+    rule: "R8"
+    primary_owner: "econ-slides"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Scholarly Beamer slide presentation production and verification belongs to econ-slides."
+
+  - id: "ROUTE-009"
+    prompt: "Fact-check the evidence behind these claims."
+    category: "EVIDENCE_VERIFICATION"
+    rule: "R9"
+    primary_owner: "deep-research"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Systematic literature discovery and evidence fact-checking belongs to deep-research."

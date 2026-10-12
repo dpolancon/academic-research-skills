@@ -51,7 +51,7 @@ components:
     mode_bearing: true
     target_path: "skills/core/academic-paper"
     provenance_source: "Cheng-I Wu (Imbad0202/academic-research-skills v3.2.0)"
-    notes: "Core academic manuscript structuring, section drafting, citation integration, and authoring state machine."
+    notes: "Core academic manuscript structuring, section drafting, citation integration, and authoring state machine. Sole owner of generic paper lifecycle; delegates economics disciplinary writing to econ-write; delegates simulated external peer review to academic-paper-reviewer."
 
   - component_id: "academic-paper-reviewer"
     display_name: "Academic Paper Reviewer"
@@ -62,7 +62,7 @@ components:
     mode_bearing: true
     target_path: "skills/core/academic-paper-reviewer"
     provenance_source: "Cheng-I Wu (Imbad0202/academic-research-skills v1.10.0)"
-    notes: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions."
+    notes: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions. Sole canonical owner of external peer review; consumes advisor-reviewer and PE-phd-committee as calibration profiles only."
 
   - component_id: "academic-pipeline"
     display_name: "Academic Pipeline"
@@ -73,7 +73,7 @@ components:
     mode_bearing: true
     target_path: "orchestrator/academic-pipeline"
     provenance_source: "Cheng-I Wu (Imbad0202/academic-research-skills v3.12.0)"
-    notes: "End-to-end 10-stage research-to-publication lifecycle state machine, checkpoint enforcement, and Material Passport tracking."
+    notes: "End-to-end 10-stage research-to-publication lifecycle state machine, checkpoint enforcement, and Material Passport tracking. Control plane orchestrator only; orchestration is not ownership; delegates to deep-research, academic-paper, econ-write, and academic-paper-reviewer."
 
   - component_id: "econ-write"
     display_name: "Economics Paper Writing"
@@ -84,7 +84,7 @@ components:
     mode_bearing: false
     target_path: "skills/domain/econ-write"
     provenance_source: "Lu Han (hanlulong/econ-writing-skill) + local adaptation"
-    notes: "Authoritative economics disciplinary writing conventions (BLUF, triangular style, model section, results presentation)."
+    notes: "Authoritative economics disciplinary writing conventions (BLUF, triangular style, model section, results presentation). Domain policy owner; consumed by academic-paper for full manuscripts; delegates external review to academic-paper-reviewer and slides to econ-slides."
 
   - component_id: "umass-applied-econometrics"
     display_name: "UMass Applied Econometrics"
@@ -218,7 +218,7 @@ capabilities:
       - "academic-pipeline"
     forbidden_duplicate_owners: true
     provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v3.2.0)"
-    notes: "Sole owner of the authoring state machine; delegates economics disciplinary rules to econ-write."
+    notes: "Sole owner of the generic authoring state machine; delegates economics disciplinary rules to econ-write; internal author-side self-check distinct from simulated external peer review."
 
   - capability_id: "simulated_external_peer_review"
     description: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions."
@@ -231,7 +231,7 @@ capabilities:
       - "academic-pipeline"
     forbidden_duplicate_owners: true
     provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v1.10.0)"
-    notes: "Sole owner of external peer review; consumes committee and advisor profiles for persona calibration."
+    notes: "Sole canonical owner of external peer review; consumes committee and advisor profiles for persona calibration only; advisor-reviewer and PE-phd-committee are not independent review engines."
 
   - capability_id: "research_workflow_orchestration"
     description: "Full research-to-publication 10-stage lifecycle state machine, checkpoint enforcement, and Material Passport tracking."
@@ -244,7 +244,7 @@ capabilities:
       - "all_skills"
     forbidden_duplicate_owners: true
     provenance: "Cheng-I Wu (Imbad0202/academic-research-skills v3.12.0)"
-    notes: "Control plane only; does not own substantive disciplinary reasoning."
+    notes: "Control plane only; orchestration is not ownership; does not own substantive disciplinary reasoning; delegates to deep-research, academic-paper, econ-write, and academic-paper-reviewer."
 
   - capability_id: "economics_prose_and_section_standards"
     description: "Authoritative economics disciplinary writing conventions (BLUF, triangular style, model section, results presentation)."
@@ -258,7 +258,7 @@ capabilities:
       - "econ-slides"
     forbidden_duplicate_owners: true
     provenance: "Lu Han (hanlulong/econ-writing-skill) + local adaptation"
-    notes: "Currently contains overlapping slide and review guidance; refactoring planned in Wave B/C to narrow to economics disciplinary policy."
+    notes: "Sole domain policy owner for economics writing; direct invocation for bounded economics writing; consumed by academic-paper for full manuscripts; delegates peer review to academic-paper-reviewer and slide production to econ-slides."
 
   - capability_id: "applied_econometrics_political_economy"
     description: "Applied time-series econometrics in political economy (forensic replication, integration order governance, lag selection)."

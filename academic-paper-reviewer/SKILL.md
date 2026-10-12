@@ -1,6 +1,6 @@
 ---
 name: academic-paper-reviewer
-description: "Multi-perspective academic paper review with dynamic reviewer personas. Simulates 5 independent reviewers (EIC + 3 peer reviewers + Devil's Advocate) with field-specific expertise. Supports full review, re-review (verification), quick assessment, methodology focus, Socratic guided, and calibration modes. Triggers on: review paper, peer review, manuscript review, referee report, review my paper, critique paper, simulate review, editorial review, calibrate reviewer, reviewer calibration, measure reviewer accuracy."
+description: "Sole canonical owner of simulated external peer review and journal referee evaluation. Simulates 5 independent reviewers (EIC + 3 peer reviewers + Devil's Advocate) with field-specific expertise. Consumes manuscripts from academic-paper and calibration profiles from advisor/committee inputs when requested. Modes: full, re-review (verification), quick assessment, methodology focus, Socratic guided, calibration. Triggers on: review paper, peer review, manuscript review, referee report, review my paper, critique paper, simulate review, editorial review, calibrate reviewer, reviewer calibration, measure reviewer accuracy."
 metadata:
   version: "1.10.0"
   last_updated: "2026-06-01"
@@ -20,6 +20,14 @@ Simulates a complete international journal peer review process: automatically id
 1. Added Devil's Advocate Reviewer — specifically challenges core arguments, detects logical fallacies, and identifies the strongest counter-arguments
 2. Added `re-review` mode — verification review, focused on checking whether revisions address the review comments
 3. Expanded review team from 4 to 5 members
+
+### Capability Ownership and Precedence Rules (Wave B1)
+
+- **Semantic Role:** `CORE_SKILL`
+- **Sole Canonical Review Owner:** Sole owner of simulated external peer review, journal refereeing, editorial decision synthesis, re-review verification, and independent reviewer panel simulation across the repository.
+- **No Drafting / Author-Side Revision Ownership:** Reviewer agents are strictly read-only relative to the submitted manuscript. Drafting and author-side revision implementation belong exclusively to `academic-paper`.
+- **Advisor & Committee Persona Input:** Legacy components (`advisor-reviewer`, `PE-phd-committee`) serve strictly as **calibration inputs / profiles** when advisor-specific or defense-committee angles are requested. They are not independent peer-review engines.
+- **Economics Disciplinary Standards:** For economics papers, `econ-write` informs disciplinary and methodological standards, but `academic-paper-reviewer` remains the sole owner of the review act.
 
 > **Routing discipline (v3.9.2):** see `.claude/CLAUDE.md` "Routing Discipline (v3.9.2)" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
 
@@ -51,8 +59,11 @@ Review this paper: [paste paper or provide file]
 | Scenario | Skill to Use |
 |----------|-------------|
 | Need to write a paper (not review) | `academic-paper` |
+| Bounded economics writing or section drafting | `econ-write` |
 | Need in-depth investigation of a research topic | `deep-research` |
 | Need to revise a paper (already have review comments) | `academic-paper` (revision mode) |
+| Beamer presentation slides production | `econ-slides` |
+| Full research-to-publication workflow | `academic-pipeline` |
 
 ### Quick Mode Selection Guide
 
@@ -391,6 +402,9 @@ Follows the paper's language. Academic terms remain in English. User can overrid
 | Skill | Relationship |
 |-------|-------------|
 | `academic-paper` | Upstream (provides paper) + Downstream (receives revision roadmap) |
+| `econ-write` | Disciplinary standards input (informs economics review criteria) |
+| `advisor-reviewer` | Persona calibration input (Michael Ash advisor perspective profile) |
+| `PE-phd-committee` | Persona calibration input (UMass PE PhD defense committee profile) |
 | `deep-research` | Upstream (provides research foundation) |
 | `tw-hei-intelligence` | Auxiliary (verifies higher education data accuracy) |
 | `academic-pipeline` | Orchestrated by (Stage 3 + Stage 3') |

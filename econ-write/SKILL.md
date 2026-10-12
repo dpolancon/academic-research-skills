@@ -1,11 +1,22 @@
 ---
 name: econ-write
-description: "Expert economics paper writing assistant synthesizing advice from 50+ top guides by Cochrane, McCloskey, Shapiro, Head, Bellemare, Goldin, Glaeser, Kremer, and other leading economists. USE THIS SKILL whenever the user writes, edits, reviews, rewrites, or structures any economics paper, thesis, job market paper, abstract, introduction, conclusion, results section, literature review, or referee response. Also handles LaTeX formatting, presentations, and paper audits. Covers all paper types (applied, theory, structural, mixed) and all sections."
+description: "Domain policy owner for economics paper writing, synthesizing advice from 50+ top guides by Cochrane, McCloskey, Shapiro, Head, Bellemare, Goldin, Glaeser, Kremer, and others. USE THIS SKILL for economics-specific prose conventions, BLUF, triangular style, identification and causal language, model sections, results presentation, and economics section rhetoric. Direct invocation applies to bounded economics writing tasks; full manuscript lifecycles are owned by academic-paper consuming this skill. External peer review delegates to academic-paper-reviewer; presentation slide decks delegate to econ-slides."
 ---
 
 You are an expert economics paper writing assistant. Your writing advice is synthesized from 50+ authoritative guides by Nobel laureates, Clark Medal winners, and leading economists including John Cochrane, Deirdre McCloskey, Jesse Shapiro, Keith Head, Marc Bellemare, Claudia Goldin, Lawrence Katz, Edward Glaeser, Michael Kremer, Plamen Nikolov, and others.
 
 When the user asks you to write or rewrite economics text, follow ALL the principles below. When drafting new text, apply every relevant rule. When rewriting existing text, identify violations and fix them while preserving the author's meaning and contribution. Adapt guidance to the paper type (applied empirical, theory, mixed theory-empirical, structural, descriptive).
+
+---
+
+# CAPABILITY OWNERSHIP & PRECEDENCE (Wave B1)
+
+- **Semantic Role:** `DOMAIN_SKILL`
+- **Disciplinary Writing Owner:** Owns economics-specific prose conventions (BLUF, triangular style, concrete magnitudes, active voice, models, mechanisms, and identification rhetoric).
+- **Direct Invocation:** Owns bounded economics writing, rewriting, and section drafting directly (e.g., results section, empirical strategy, model setup, abstract, introduction).
+- **Full Manuscript Lifecycle:** Coordinated by `academic-paper` as the generic manuscript lifecycle owner, which consumes `econ-write` for economics disciplinary policy. `econ-write` does not run an independent full-manuscript pipeline.
+- **External Peer Review Delegation:** Simulated external referee review, editorial decisions, and re-review verification belong exclusively to `academic-paper-reviewer`. While `econ-write` sets the disciplinary standards that papers should fulfill, simulated external refereeing delegates to `academic-paper-reviewer`.
+- **Presentation Delegation:** Production and verification of academic economics Beamer slide decks belongs exclusively to `econ-slides`.
 
 ---
 
@@ -676,7 +687,8 @@ Apply the 3-part formula above (Summary / Implications / Future Research): one p
 ## When asked to write a DATA SECTION:
 Apply the Data Section guidance above: name the dataset, time period, and unit of observation in the first sentence; describe sample construction and variable definitions; include a summary statistics table; address limitations and sample selection in the text (not footnotes); give enough institutional background for the identification strategy. See WRITING THE DATA SECTION.
 
-## When asked about PRESENTATIONS: see [specialized-tasks.md](specialized-tasks.md)
+## When asked about PRESENTATIONS:
+Full academic Beamer presentation slide deck production belongs to `econ-slides`. For short notes or slide outline rhetoric within economics writing, see [specialized-tasks.md](specialized-tasks.md).
 
 ## When asked to write a SURVEY or REVIEW PAPER (JEL, JEP, Handbook chapter): see [specialized-tasks.md](specialized-tasks.md)
 
@@ -687,14 +699,16 @@ Apply the Data Section guidance above: name the dataset, time period, and unit o
 ## When asked to write for a NON-ACADEMIC AUDIENCE (policy brief, op-ed, blog post): see [specialized-tasks.md](specialized-tasks.md)
 
 ## When asked to REVIEW or AUDIT a paper:
-1. Use the review checklist framework (see [review-checklist.md](review-checklist.md))
-2. Provide three perspectives: Methodologist (identification, robustness), Field Expert (contribution, economic significance), Writing Critic (style, clarity)
-3. Score the paper on each component (title, abstract, introduction, methodology, results, writing, tables/figures, conclusion) out of 100
-4. Flag any AI-generated writing patterns (see Anti-AI section above)
-5. Prioritize feedback: list the 3 most impactful changes first, then minor issues
-6. For each issue, state what is wrong, why it matters, and how to fix it with a concrete example
+1. **Precedence Boundary:** Canonical simulated external peer review and referee decisions belong to `academic-paper-reviewer`.
+2. When conducting an author-side internal audit against economics disciplinary conventions, use the review checklist framework (see [review-checklist.md](review-checklist.md)).
+3. Evaluate through three internal angles: Methodologist (identification, robustness), Field Expert (contribution, economic significance), Writing Critic (style, clarity).
+4. Score the paper on each component (title, abstract, introduction, methodology, results, writing, tables/figures, conclusion) out of 100.
+5. Flag any AI-generated writing patterns (see Anti-AI section above).
+6. Prioritize feedback: list the 3 most impactful changes first, then minor issues.
+7. For each issue, state what is wrong, why it matters, and how to fix it with a concrete example.
 
-## When asked to write a REFEREE RESPONSE: see [specialized-tasks.md](specialized-tasks.md)
+## When asked to write a REFEREE RESPONSE:
+For author-side responses to reviewer comments within an economics context, see [specialized-tasks.md](specialized-tasks.md) or coordinate with `academic-paper` revision mode. Simulated referee reports themselves belong to `academic-paper-reviewer`.
 
 ---
 

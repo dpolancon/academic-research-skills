@@ -19,7 +19,7 @@ Last updated: Wave B0 Governance Baseline (2026-10-12)
 |------|----------|--------|-----------|----------|
 | `full` | Balanced | APA 7.0 report, 3,000-8,000 words | High | "research [topic]", "deep research", "academic analysis" |
 | `quick` | Fidelity | Research brief, 500-1,500 words | Medium | "quick brief", "30 minute summary", "quick research" |
-| `review` | Balanced | Reviewer report on provided text | High | "review this paper", "evaluate this paper", "assess this source" |
+| `review` | Balanced | Reviewer report on provided source text (source assessment in research workflow; manuscript review belongs to academic-paper-reviewer) | High | "assess this source", "evaluate research evidence", "source assessment" |
 | `lit-review` | Fidelity | Annotated bibliography + synthesis | Medium | "literature review", "annotated bibliography" |
 | `fact-check` | Fidelity | Claim-by-claim verification report | Medium | "verify claims", "fact-check", "evidence verification" |
 | `socratic` | Originality | Research Plan Summary + INSIGHT collection | Very High | "guide my research", "help me think through", "I'm not sure what to research" |

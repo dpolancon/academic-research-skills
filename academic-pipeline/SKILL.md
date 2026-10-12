@@ -18,6 +18,18 @@ metadata:
 
 A lightweight orchestrator that manages the complete academic pipeline from research exploration to final manuscript. It does not perform substantive work — it only detects stages, recommends modes, dispatches skills, manages transitions, and tracks state.
 
+### Capability Ownership and Precedence Rules (Wave B1)
+
+- **Semantic Role:** `ORCHESTRATOR`
+- **Precedence Principle — Orchestration Is Not Ownership:** The pipeline is strictly a control plane. It owns stage sequencing, checkpoints, state transitions, and Material Passport tracking across the research-to-publication lifecycle. It does **not** own substantive writing conventions, disciplinary econometrics, or peer-review judgments.
+- **Delegation Contract:**
+  - Stage 1 (RESEARCH) delegates to `deep-research`.
+  - Stage 2, 4, 4', 5 (WRITE, REVISE, FINALIZE) delegates to `academic-paper`.
+  - Disciplinary economics writing policy delegates to `econ-write` (consumed during Stage 2 and Stage 4 when working on economics papers).
+  - Stage 3, 3' (REVIEW, RE-REVIEW) delegates exclusively to `academic-paper-reviewer`.
+  - Slide deck production delegates to `econ-slides`.
+- **No Duplicate Ownership:** The pipeline never duplicates or overrides the internal policies of the specialized skills it orchestrates.
+
 > **Routing discipline (v3.9.2):** see `.claude/CLAUDE.md` "Routing Discipline (v3.9.2)" + `shared/references/intent_clarification_protocol.md` for cross-skill routing rules. This skill assumes routing has already settled — ambiguous cross-phase materials should have been clarified upstream.
 
 **v3.6.3 (opt-in):** Set `ARS_PASSPORT_RESET=1` to promote FULL checkpoints to context-reset boundaries. Use `resume_from_passport=<hash>` in a fresh session to continue from the recorded stage. See [`references/passport_as_reset_boundary.md`](references/passport_as_reset_boundary.md).
@@ -84,7 +96,9 @@ resume_from_passport=<hash> [stage=<n>] [mode=<m>]
 |----------|-------------|
 | Only need to search materials or do a literature review | `deep-research` |
 | Only need to write a paper (no research phase needed) | `academic-paper` |
+| Bounded economics writing or section drafting | `econ-write` |
 | Only need to review a paper | `academic-paper-reviewer` |
+| Only need presentation slides (Beamer deck) | `econ-slides` |
 | Only need to check citation format | `academic-paper` (citation-check mode) |
 | Only need to convert paper format | `academic-paper` (format-convert mode) |
 
@@ -572,6 +586,7 @@ Stage 1: deep-research
 Stage 2: academic-paper
   - plan mode: Socratic chapter-by-chapter guidance
   - full mode: Complete paper writing
+  - (For economics manuscripts: delegates disciplinary writing policy to econ-write)
 
 Stage 2.5: integrity_verification_agent (Mode 1: pre-review)
 Stage 4.5: integrity_verification_agent (Mode 2: final-check)
@@ -600,7 +615,9 @@ Stage 5: academic-paper (format-convert mode)
 |-------|-------------|
 | `deep-research` | Dispatched (Stage 1 research phase) |
 | `academic-paper` | Dispatched (Stage 2 writing, Stage 4/4' revision, Stage 5 formatting) |
+| `econ-write` | Disciplinary policy (consumed during Stage 2 & Stage 4 for economics papers) |
 | `academic-paper-reviewer` | Dispatched (Stage 3 first review, Stage 3' verification review) |
+| `econ-slides` | Dissemination (Beamer presentation slide production) |
 
 ---
 
