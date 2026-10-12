@@ -736,4 +736,9 @@ Before submitting, verify:
 
 *For specialized tasks (presentations, survey/review papers, working-paper-to-journal conversion, grant proposals, policy briefs/op-eds, referee responses), see [specialized-tasks.md](specialized-tasks.md).*
 
-*This skill synthesizes advice from 50+ sources. Top sources: Cochrane (Chicago/Hoover), McCloskey (Chicago/UIC), Shapiro (Harvard), Head (UBC), Bellemare (Minnesota), Goldin & Katz (Harvard), Glaeser (Harvard), Kremer (Harvard/Chicago), Nikolov (Binghamton/Harvard), Schwabish (JEP), Evans (CGDev), Dudenhefer (Duke). Full source list: github.com/hanlulong/econ-writing-skill*
+*For before-and-after transformation examples across abstracts, introductions, literature reviews, and results, see [before-after.md](examples/before-after.md).*
+
+*For evaluation test cases and failure modes, see [test-cases.md](evals/test-cases.md).*
+
+*This skill synthesizes advice from 50+ sources ranked by authority. For the ranked bibliography and literature guide, see [SOURCES_RANKED.md](references/SOURCES_RANKED.md).*
+
