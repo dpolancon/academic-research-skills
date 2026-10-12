@@ -1,17 +1,20 @@
 # ==============================================================================
-# ARS Wave B1 Routing Evaluation Fixture (cases.yaml)
+# ARS Wave B1.1 Routing Evaluation Fixture (cases.yaml)
 # ==============================================================================
-# Canonical evaluation cases testing deterministic capability precedence and
-# runtime routing decisions across the ARS monorepo.
+# Canonical evaluation cases testing deterministic capability precedence,
+# runtime routing decisions, and adversarial boundary disambiguation across ARS.
 #
-# Schema: ars-routing-eval-v1.0
-# Baseline: 8bdc0df
+# Schema: ars-routing-eval-v1.1
+# Baseline: a87e8b2
 # ==============================================================================
 
-version: "1.0.0"
+version: "1.1.0"
 benchmark: "ars-routing-precedence-v1"
 
 cases:
+  # ----------------------------------------------------------------------------
+  # PART 1: Core Positive Invariant Cases (ROUTE-001 to ROUTE-009)
+  # ----------------------------------------------------------------------------
   - id: "ROUTE-001"
     prompt: "Write an academic paper from these materials."
     category: "GENERIC_MANUSCRIPT"
@@ -105,3 +108,125 @@ cases:
     calibration_input: null
     expected_action: "DIRECT_EXECUTION"
     rationale: "Systematic literature discovery and evidence fact-checking belongs to deep-research."
+
+  # ----------------------------------------------------------------------------
+  # PART 2: Adversarial Overlap & Disambiguation Cases (ROUTE-010 to ROUTE-017)
+  # ----------------------------------------------------------------------------
+  - id: "ROUTE-010"
+    prompt: "Peer review this economics paper."
+    category: "ADVERSARIAL_REVIEW_VS_ECON"
+    rule: "ADV-A1"
+    primary_owner: "academic-paper-reviewer"
+    domain_policy: "econ-write"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper"
+      - "econ-write"
+    expected_action: "REVIEW_WITH_DOMAIN_STANDARDS"
+    rationale: "Peer review of an economics paper belongs strictly to academic-paper-reviewer; econ-write informs disciplinary standards but must not own the review."
+
+  - id: "ROUTE-011"
+    prompt: "Review this paper as Michael Ash might."
+    category: "ADVERSARIAL_ADVISOR_CALIBRATION"
+    rule: "ADV-A2"
+    primary_owner: "academic-paper-reviewer"
+    domain_policy: null
+    delegates_to: []
+    calibration_input: "advisor-reviewer"
+    must_not_primary_owner:
+      - "advisor-reviewer"
+      - "academic-paper"
+      - "econ-write"
+    expected_action: "REVIEW_WITH_CALIBRATION"
+    rationale: "Advisor Michael Ash heuristics are calibration input only; academic-paper-reviewer is the canonical execution engine."
+
+  - id: "ROUTE-012"
+    prompt: "Write and referee my economics paper."
+    category: "ADVERSARIAL_COMPOUND_WRITE_REVIEW"
+    rule: "ADV-A3"
+    primary_owner: "academic-pipeline"
+    domain_policy: "econ-write"
+    delegates_to:
+      - "academic-paper"
+      - "econ-write"
+      - "academic-paper-reviewer"
+    calibration_input: null
+    must_include_delegates:
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    orchestrator_allowed: true
+    must_not_primary_owner:
+      - "econ-write"
+    expected_action: "SEQUENCED_ORCHESTRATION"
+    rationale: "Compound multi-stage request (write + referee) requires academic-pipeline sequencing without the orchestrator becoming substantive capability owner."
+
+  - id: "ROUTE-013"
+    prompt: "Improve the economics prose but do not rewrite the paper."
+    category: "ADVERSARIAL_BOUNDED_ECON_PROSE"
+    rule: "ADV-A4"
+    primary_owner: "econ-write"
+    domain_policy: null
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper"
+      - "academic-pipeline"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Targeted economics prose refinement belongs directly to econ-write and must not escalate to full academic-paper lifecycle."
+
+  - id: "ROUTE-014"
+    prompt: "Assess whether this cited source supports my claim."
+    category: "ADVERSARIAL_SOURCE_CLAIM_VERIFICATION"
+    rule: "ADV-A5"
+    primary_owner: "deep-research"
+    domain_policy: null
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper-reviewer"
+      - "academic-paper"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Source-level evidence and citation verification belongs to deep-research evidence assessment, not manuscript peer review."
+
+  - id: "ROUTE-015"
+    prompt: "Review this paper."
+    category: "ADVERSARIAL_AMBIGUOUS_MANUSCRIPT_REVIEW"
+    rule: "ADV-A6"
+    primary_owner: "academic-paper-reviewer"
+    domain_policy: null
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "deep-research"
+      - "academic-paper"
+      - "econ-write"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Generic review of a paper/manuscript belongs exclusively to academic-paper-reviewer; deep-research review is for source texts only."
+
+  - id: "ROUTE-016"
+    prompt: "Review the evidence behind these historical claims."
+    category: "ADVERSARIAL_EVIDENCE_REVIEW"
+    rule: "ADV-A7"
+    primary_owner: "deep-research"
+    domain_policy: null
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper-reviewer"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Evidence discovery and factual verification of claims belongs to deep-research, not manuscript peer review."
+
+  - id: "ROUTE-017"
+    prompt: "Revise this economics manuscript for journal submission."
+    category: "ADVERSARIAL_ECON_MANUSCRIPT_REVISION"
+    rule: "ADV-A8"
+    primary_owner: "academic-paper"
+    domain_policy: "econ-write"
+    delegates_to:
+      - "econ-write"
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper-reviewer"
+    expected_action: "LIFECYCLE_WITH_DOMAIN_POLICY"
+    rationale: "Author-side manuscript revision belongs to academic-paper consuming econ-write, distinct from simulated external peer review."

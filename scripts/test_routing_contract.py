@@ -2,9 +2,10 @@
 """
 scripts/test_routing_contract.py
 
-Deterministic test runner for ARS Wave B1 routing precedence contract.
+Deterministic test runner for ARS Wave B1 & B1.1 routing precedence contract.
 Validates evals/gold/routing/cases.yaml against docs/governance/ars_registry.yaml
-and verifies capability ownership invariants without invoking LLMs.
+and enforces positive ownership, delegation, calibration, and adversarial negative
+exclusion invariants without invoking LLMs.
 """
 
 import sys
@@ -43,9 +44,11 @@ def test_routing_contract(repo_root: Path) -> bool:
         print("FAIL: No cases found in cases.yaml")
         return False
 
-    print(f"Running ARS Wave B1 Routing Precedence Test Suite ({len(cases)} cases)...")
+    print(f"Running ARS Routing Precedence Test Suite ({len(cases)} cases)...")
     passed = 0
     failed = 0
+    pos_count = 0
+    adv_count = 0
 
     for case in cases:
         case_id = case.get("id")
@@ -53,7 +56,16 @@ def test_routing_contract(repo_root: Path) -> bool:
         owner = case.get("primary_owner")
         delegates = case.get("delegates_to", [])
         calib = case.get("calibration_input")
+        domain_policy = case.get("domain_policy")
+        must_not_owner = case.get("must_not_primary_owner", [])
+        must_include_del = case.get("must_include_delegates", [])
+        orchestrator_allowed = case.get("orchestrator_allowed", False)
         prompt = case.get("prompt")
+
+        if rule.startswith("ADV-"):
+            adv_count += 1
+        else:
+            pos_count += 1
 
         errors = []
 
@@ -85,56 +97,141 @@ def test_routing_contract(repo_root: Path) -> bool:
                 if calib_comp.get("semantic_role") != "PROFILE":
                     errors.append(f"calibration_input '{calib}' must have semantic_role 'PROFILE', got '{calib_comp.get('semantic_role')}'.")
 
-        # 4. Rule-specific governance assertions
-        if rule == "R1":  # Generic manuscript
+        # 4. Domain policy check
+        if domain_policy:
+            if domain_policy not in components:
+                errors.append(f"domain_policy '{domain_policy}' does not exist in registry components.")
+            else:
+                dp_comp = components[domain_policy]
+                if dp_comp.get("semantic_role") != "DOMAIN_SKILL":
+                    errors.append(f"domain_policy '{domain_policy}' must have semantic_role 'DOMAIN_SKILL', got '{dp_comp.get('semantic_role')}'.")
+
+        # 5. Negative owner assertions
+        if must_not_owner:
+            if owner in must_not_owner:
+                errors.append(f"Negative assertion violated: primary_owner '{owner}' is in must_not_primary_owner {must_not_owner}.")
+
+        # 6. Required delegates check
+        if must_include_del:
+            for req_d in must_include_del:
+                if req_d not in delegates:
+                    errors.append(f"Required delegate '{req_d}' missing from delegates_to list: {delegates}.")
+
+        # 7. Orchestration constraint check
+        if orchestrator_allowed:
+            if components.get(owner, {}).get("semantic_role") != "ORCHESTRATOR":
+                errors.append(f"orchestrator_allowed is true, but '{owner}' is not an ORCHESTRATOR.")
+            # Verify orchestrator does not own substantive capabilities
+            for sub_cap in ("academic_manuscript_lifecycle", "economics_prose_and_section_standards", "simulated_external_peer_review"):
+                if capabilities.get(sub_cap, {}).get("current_owner") == owner:
+                    errors.append(f"Orchestrator '{owner}' illegally claims substantive capability '{sub_cap}'.")
+
+        # 8. Rule-specific assertions
+        # Positive Rules R1-R9
+        if rule == "R1":
             if owner != "academic-paper":
                 errors.append(f"R1 primary owner must be 'academic-paper', got '{owner}'.")
             if capabilities.get("academic_manuscript_lifecycle", {}).get("current_owner") != "academic-paper":
                 errors.append("Registry capability 'academic_manuscript_lifecycle' owner mismatch.")
 
-        elif rule == "R2":  # Bounded economics writing
+        elif rule == "R2":
             if owner != "econ-write":
                 errors.append(f"R2 primary owner must be 'econ-write', got '{owner}'.")
             if capabilities.get("economics_prose_and_section_standards", {}).get("current_owner") != "econ-write":
                 errors.append("Registry capability 'economics_prose_and_section_standards' owner mismatch.")
 
-        elif rule == "R3":  # Full economics workflow
+        elif rule == "R3":
             if owner != "academic-paper":
                 errors.append(f"R3 primary owner must be 'academic-paper', got '{owner}'.")
             if "econ-write" not in delegates:
                 errors.append("R3 full economics workflow must delegate domain policy to 'econ-write'.")
 
-        elif rule == "R4":  # External peer review
+        elif rule == "R4":
             if owner != "academic-paper-reviewer":
                 errors.append(f"R4 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
             if capabilities.get("simulated_external_peer_review", {}).get("current_owner") != "academic-paper-reviewer":
                 errors.append("Registry capability 'simulated_external_peer_review' owner mismatch.")
 
-        elif rule == "R5":  # Advisor calibration
+        elif rule == "R5":
             if owner != "academic-paper-reviewer":
                 errors.append(f"R5 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
             if calib != "advisor-reviewer":
                 errors.append(f"R5 calibration_input must be 'advisor-reviewer', got '{calib}'.")
 
-        elif rule == "R6":  # Committee calibration
+        elif rule == "R6":
             if owner != "academic-paper-reviewer":
                 errors.append(f"R6 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
             if calib != "PE-phd-committee":
                 errors.append(f"R6 calibration_input must be 'PE-phd-committee', got '{calib}'.")
 
-        elif rule == "R7":  # Orchestration
+        elif rule == "R7":
             if owner != "academic-pipeline":
                 errors.append(f"R7 primary owner must be 'academic-pipeline', got '{owner}'.")
             if components.get("academic-pipeline", {}).get("semantic_role") != "ORCHESTRATOR":
                 errors.append("academic-pipeline must have semantic_role 'ORCHESTRATOR'.")
 
-        elif rule == "R8":  # Slides
+        elif rule == "R8":
             if owner != "econ-slides":
                 errors.append(f"R8 primary owner must be 'econ-slides', got '{owner}'.")
 
-        elif rule == "R9":  # Deep research / evidence check
+        elif rule == "R9":
             if owner != "deep-research":
                 errors.append(f"R9 primary owner must be 'deep-research', got '{owner}'.")
+
+        # Adversarial Rules ADV-A1 to ADV-A8
+        elif rule == "ADV-A1":  # Econ paper peer review
+            if owner != "academic-paper-reviewer":
+                errors.append(f"ADV-A1 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") != "academic-paper-reviewer":
+                errors.append("simulated_external_peer_review must be owned by 'academic-paper-reviewer'.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") == "econ-write":
+                errors.append("econ-write must NOT own simulated_external_peer_review.")
+
+        elif rule == "ADV-A2":  # Advisor calibrated review
+            if owner != "academic-paper-reviewer":
+                errors.append(f"ADV-A2 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
+            if calib != "advisor-reviewer":
+                errors.append(f"ADV-A2 calibration_input must be 'advisor-reviewer', got '{calib}'.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") == "advisor-reviewer":
+                errors.append("advisor-reviewer must NOT be canonical owner of simulated_external_peer_review.")
+
+        elif rule == "ADV-A3":  # Compound write + review
+            if owner != "academic-pipeline":
+                errors.append(f"ADV-A3 primary owner must be 'academic-pipeline', got '{owner}'.")
+            if capabilities.get("academic_manuscript_lifecycle", {}).get("current_owner") != "academic-paper":
+                errors.append("academic_manuscript_lifecycle must be owned by 'academic-paper'.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") != "academic-paper-reviewer":
+                errors.append("simulated_external_peer_review must be owned by 'academic-paper-reviewer'.")
+
+        elif rule == "ADV-A4":  # Bounded economics prose
+            if owner != "econ-write":
+                errors.append(f"ADV-A4 primary owner must be 'econ-write', got '{owner}'.")
+            if capabilities.get("economics_prose_and_section_standards", {}).get("current_owner") != "econ-write":
+                errors.append("economics_prose_and_section_standards must be owned by 'econ-write'.")
+
+        elif rule == "ADV-A5":  # Source / claim verification
+            if owner != "deep-research":
+                errors.append(f"ADV-A5 primary owner must be 'deep-research', got '{owner}'.")
+            if capabilities.get("literature_synthesis_search", {}).get("current_owner") != "deep-research":
+                errors.append("literature_synthesis_search must be owned by 'deep-research'.")
+
+        elif rule == "ADV-A6":  # Ambiguous paper review
+            if owner != "academic-paper-reviewer":
+                errors.append(f"ADV-A6 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") != "academic-paper-reviewer":
+                errors.append("simulated_external_peer_review must be owned by 'academic-paper-reviewer'.")
+
+        elif rule == "ADV-A7":  # Research evidence review
+            if owner != "deep-research":
+                errors.append(f"ADV-A7 primary owner must be 'deep-research', got '{owner}'.")
+
+        elif rule == "ADV-A8":  # Economics manuscript revision
+            if owner != "academic-paper":
+                errors.append(f"ADV-A8 primary owner must be 'academic-paper', got '{owner}'.")
+            if domain_policy != "econ-write":
+                errors.append(f"ADV-A8 domain_policy must be 'econ-write', got '{domain_policy}'.")
+            if capabilities.get("academic_manuscript_lifecycle", {}).get("current_owner") != "academic-paper":
+                errors.append("academic_manuscript_lifecycle must be owned by 'academic-paper'.")
 
         if errors:
             print(f"  [FAIL] {case_id} ({rule}): {prompt}")
@@ -147,8 +244,10 @@ def test_routing_contract(repo_root: Path) -> bool:
 
     print("\n------------------------------------------------------------")
     print(f"Routing Test Results: {passed} passed, {failed} failed out of {len(cases)} cases.")
+    print(f"  - Positive invariant cases: {pos_count}")
+    print(f"  - Adversarial disambiguation cases: {adv_count}")
     if failed == 0:
-        print("PASS: All routing fixtures conform to ARS capability precedence contract.")
+        print("PASS: All positive and adversarial routing fixtures conform to ARS capability precedence contract.")
         return True
     else:
         print("FAIL: One or more routing fixtures violated precedence contract.")
