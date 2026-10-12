@@ -46,10 +46,48 @@ Skills are installed into the AI agent's "local brain" (`~/.gemini/config/skills
 
 ---
 
-## Update Log
+## Update Log (Historical Sync Entries)
 
 | Entry ID | Date (UTC/Local) | Host / Machine | Component / Skill | Type | Description | Git Reference / Status |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | `REG-001` | 2026-10-01 18:50 | `desktop-bsb5hhv-swift-void` | `infra / skills` | `ARCHITECTURE` | Installed 14-skill suite in Antigravity global brain (`~/.gemini/config/skills`) & LitVault workspace via NTFS Directory Junctions. Registered `~/.gemini/config/skills.json`. | Local configured |
 | `REG-002` | 2026-10-01 18:52 | `desktop-bsb5hhv-swift-void` | `econ-slides` | `LEARNING` | Added specialized working session & research grant talk reference (`references/working-session-grant-talks.md`) for unclosed theoretical models (Fondecyt PK land-rent benchmark). | Local configured |
 | `REG-003` | 2026-10-01 18:55 | `desktop-bsb5hhv-swift-void` | `sync-tools` | `TOOLING` | Created `scripts/sync-skills.ps1` and root `sync.ps1` conflict-prevention sync harness; upgraded `install-local.ps1` to support live junctions. | Local configured |
+
+---
+
+## Governance & Learning Protocol (Wave B0+)
+
+Starting with Wave B0, `UPDATE_REGISTRY.md` serves as the authoritative human-readable governance surface for recording:
+- Upstream synchronizations and upstream-derived updates
+- Local prompt calibrations, domain heuristics, and empirical learnings
+- Evaluation findings and regression test evidence
+- Capability migrations, reassignments, and decompositions
+- Accepted vs rejected architectural lessons
+- Security and provenance updates
+
+### Prospective Schema Specification
+
+Every prospective governance or learning record should capture:
+
+| Field | Description | Allowed Values / Format |
+| :--- | :--- | :--- |
+| `date` | Date of recorded event | `YYYY-MM-DD` |
+| `component` | Affected component or subsystem | Component ID in `docs/governance/ars_registry.yaml` or subsystem name |
+| `change_type` | Type of governance/learning change | `UPSTREAM_SYNC`, `LOCAL_IMPROVEMENT`, `EVAL_FINDING`, `MIGRATION`, `CAPABILITY_REASSIGNMENT`, `PROFILE_LEARNING`, `REJECTED_CHANGE`, `SECURITY_OR_PROVENANCE` |
+| `source` | Upstream commit, paper, advisor interaction, or eval case | Reference path or commit |
+| `provenance` | Entity or author proposing/originating change | Author handle / name |
+| `lesson_or_change` | Core technical lesson or modification | Concise summary |
+| `evidence` | Supporting evaluation runs, tests, or documentation | Path to test, report, or diff |
+| `decision` | Action taken | `ACCEPTED`, `REJECTED`, `DEFERRED`, `MIGRATED` |
+| `status` | Operational status | `COMMITTED`, `STAGED`, `PLANNED` |
+| `affected_capabilities` | Capabilities impacted | Capability IDs from `ars_registry.yaml` |
+| `follow_up` | Required next step or pending wave | Next action description |
+
+### Governance & Architecture Log
+
+| Entry ID | Date | Component | Change Type | Provenance | Lesson / Change | Evidence | Decision | Status | Affected Capabilities |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| `GOV-001` | 2026-10-11 | `repo-hygiene` | `SECURITY_OR_PROVENANCE` | Diego Polanco | Untrack root `.env`, establish `.env.example`, remove 458 tracked client mirror files from index, audit upstream licenses. | `08_WAVE_A_EXECUTION_REPORT.md` | `ACCEPTED` | `COMMITTED` (63f7b33) | `G01`-`G05` hygiene |
+| `GOV-002` | 2026-10-12 | `governance` | `MIGRATION` | Diego Polanco | Establish machine-readable `docs/governance/ars_registry.yaml`, reconcile `MODE_REGISTRY.md` to mode-bearing components, add prospective learning schema. | `11_WAVE_B0_GOVERNANCE_REPORT.md` | `ACCEPTED` | `COMMITTED` | All 20 capabilities |
+

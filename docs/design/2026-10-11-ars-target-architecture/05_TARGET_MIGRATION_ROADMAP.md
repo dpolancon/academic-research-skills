@@ -59,24 +59,31 @@ WAVE F: Physical Tree Harmonization & Client Packaging (P3)
 ---
 
 ### WAVE B: Ontology, Registry & Capability Ownership Stabilization
-- **Objective:** Establish runtime capability governance; promote the machine-readable capability registry from design to active governance; reconcile `MODE_REGISTRY.md` across all 14 components; formally bind component ontology; resolve routing and precedence between overlapping skills (`econ-write` vs `academic-paper`, `academic-paper-reviewer` vs `advisor-reviewer`).
+- **Sub-wave Structure:**
+  - **Wave B0 (Integrated Governance Foundation):** Promotes the architecture into `docs/governance/ars_registry.yaml` uniting component ontology and capability ownership; reconciles `MODE_REGISTRY.md` strictly to mode-bearing components; establishes prospective governance schema in `UPDATE_REGISTRY.md`; documents non-blocking personalization backlog in `10_FUTURE_PERSONALIZATION_BACKLOG.md`; enforces runtime-truth invariant (`runtime_path`/`current_owner` governs execution until Wave F).
+  - **Wave B1 (Routing & Precedence Implementation):** Resolves operational routing, capability contracts, and precedence between overlapping skills (`econ-write` vs `academic-paper`, `academic-paper-reviewer` vs `advisor-reviewer`).
+- **Objective:** Establish runtime capability governance; promote the machine-readable combined registry (`docs/governance/ars_registry.yaml`) to active governance; reconcile `MODE_REGISTRY.md` for mode-bearing components; formally bind component ontology; resolve routing and precedence between overlapping skills.
 - **Gaps Closed:** `G06` (Component ontology), `G07` (Capability ownership), `G08` (`academic-paper` vs `econ-write`), `G09` (Peer-review duplication), `G15` (Upstream management), `G16` (Learning loop).
 - **Files / Components Affected:**
-  - `docs/design/2026-10-11-ars-target-architecture/capability_registry.yaml` (promoted to root or docs runtime governance)
-  - `MODE_REGISTRY.md` (expanded from 4 skills to all 14 components)
-  - `UPDATE_REGISTRY.md` (upgraded to structured learning protocol)
-  - `academic-paper/SKILL.md` (frontmatter & routing to `econ-write`)
-  - `econ-write/SKILL.md` (frontmatter & scoping to economics disciplinary rules)
-  - `academic-paper-reviewer/SKILL.md` (formalize external peer-review monopoly)
+  - `docs/governance/ars_registry.yaml` (authoritative combined runtime governance registry)
+  - `scripts/validate_ars_registry.py` (deterministic registry validator)
+  - `MODE_REGISTRY.md` (reconciled to catalog callable modes for mode-bearing components only)
+  - `UPDATE_REGISTRY.md` (upgraded to prospective structured governance & learning protocol)
+  - `docs/design/2026-10-11-ars-target-architecture/10_FUTURE_PERSONALIZATION_BACKLOG.md` (non-blocking future backlog)
+  - `academic-paper/SKILL.md` (Wave B1 frontmatter & routing to `econ-write`)
+  - `econ-write/SKILL.md` (Wave B1 frontmatter & scoping to economics disciplinary rules)
+  - `academic-paper-reviewer/SKILL.md` (Wave B1 formalization of external peer-review monopoly)
 - **Dependencies:** Wave A completed and verified.
 - **Risks:**
-  - Ambiguity in routing when a user asks for an economics paper.
+  - Ambiguity in routing when a user asks for an economics paper (resolved in B1).
+  - Over-broadening `MODE_REGISTRY.md` to non-mode-bearing components (prevented in B0).
 - **Tests / Evidence Required:**
-  - Validation test for `capability_registry.yaml` verifying every capability has exactly one canonical owner and distinguishes current from target state.
-  - Consistency test verifying all skills in `README.md` are accounted for in `MODE_REGISTRY.md` and `capability_registry.yaml`.
+  - Registry validation test: `python scripts/validate_ars_registry.py` passes with zero errors, verifying 14 components and all capabilities with single canonical current owners.
+  - Consistency test verifying all skills in `README.md` are accounted for in `ars_registry.yaml` and mode-bearing subsets in `MODE_REGISTRY.md`.
 - **STOP Conditions:**
   - Any single capability retains two unqualified canonical owners.
   - Human rejection of the capability ownership boundaries.
+  - Runtime execution resolves against future target paths prior to physical migration in Wave F.
 
 ---
 

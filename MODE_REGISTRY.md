@@ -1,10 +1,15 @@
 # Mode Registry
 
-Single source of truth for all modes across the ARS suite. **25 modes** across 4 skills.
+Authoritative human-readable catalog of callable modes for mode-bearing ARS components.
 
-When adding or modifying modes, update this file first — SKILL.md files and CLAUDE.md should reference this registry.
+**Contract & Scope:**
+- This registry is the authoritative human-readable catalog of callable modes exposed by mode-bearing components (`mode_bearing: true` in `docs/governance/ars_registry.yaml`).
+- Currently catalogs **25 callable modes** across **4 mode-bearing components**: `deep-research` (7 modes), `academic-paper` (10 modes), `academic-paper-reviewer` (6 modes), and `academic-pipeline` (2 modes).
+- Components without callable modes (e.g. `econ-write`, `econ-slides`, domain econometrics, profiles, protocols, and standalone tools) are intentionally absent here; their capabilities and interfaces are governed by `docs/governance/ars_registry.yaml`.
 
-Last updated: v3.12.0 (2026-06-08)
+When adding or modifying callable modes, update this file and reflect changes in `docs/governance/ars_registry.yaml`.
+
+Last updated: Wave B0 Governance Baseline (2026-10-12)
 
 ---
 

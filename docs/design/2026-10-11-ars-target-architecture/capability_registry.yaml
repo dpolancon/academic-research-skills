@@ -1,7 +1,10 @@
 # ==============================================================================
-# ARS Capability Registry
+# ARS Capability Registry (DESIGN SNAPSHOT)
 # ==============================================================================
-# Authoritative machine-readable mapping of scholarly capabilities to canonical owners.
+# DESIGN-SNAPSHOT / SUPERSEDED FOR RUNTIME GOVERNANCE
+# by: docs/governance/ars_registry.yaml
+#
+# Machine-readable mapping of scholarly capabilities to canonical owners (Wave A baseline).
 # Distinguishes CURRENT operational state from TARGET architecture state.
 # Migration Status Vocabulary: CURRENT, MIGRATING, PLANNED, CANDIDATE, DEPRECATED
 # Primary Rule: One capability, one canonical owner.
@@ -76,7 +79,7 @@ capabilities:
       - "academic-paper"
       - "econ-slides"
     forbidden_duplicate_owners: true
-    provenance: "Han Lulong (hanlulong/econ-writing-skill) + local adaptation"
+    provenance: "Lu Han (hanlulong/econ-writing-skill) + local adaptation"
     notes: "Currently contains overlapping slide and review guidance; refactoring planned in Wave B/C to narrow to economics disciplinary policy."
 
   - capability_id: "applied_econometrics_political_economy"
@@ -117,7 +120,7 @@ capabilities:
     consumers:
       - "academic_presenters"
     forbidden_duplicate_owners: true
-    provenance: "Han Lulong (hanlulong/econ-slides-skill) + local adaptation"
+    provenance: "Lu Han (hanlulong/econ-slides-skill) + local adaptation"
     notes: "Sole owner of Beamer decks; absorbs presentation guidance from econ-write; Fondecyt project files to be quarantined."
 
   - capability_id: "public_scholarship_translation"
@@ -150,18 +153,19 @@ capabilities:
 
   - capability_id: "editorial_decision_persistence"
     description: "Durable tracking of human-adjudicated editorial decisions across multi-round revisions; authorization state gating."
-    current_owner: "docs/design/2026-10-10-editorial-governance"
-    current_owner_type: "SHARED_PROTOCOL"
+    current_owner: null
+    current_owner_type: null
+    candidate_source: "docs/design/2026-10-10-editorial-governance"
     target_owner: "shared/contracts/editorial_governance"
     target_owner_type: "SHARED_PROTOCOL"
-    migration_status: "MIGRATING"
+    migration_status: "CANDIDATE"
     consumers:
       - "academic-pipeline"
       - "academic-paper"
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
     provenance: "Diego Polanco (Local creation, Phase 1 candidate)"
-    notes: "Simplified 3-axis state model and source contract planned to be absorbed into Material Passport as an optional extension in Wave C."
+    notes: "Candidate contract for revision authorization; not claimed as an active operational current owner until integrated."
 
   - capability_id: "cointegration_specification_audit"
     description: "Deterministic diagnostic protocol for theoretical vs stochastic regressor admissibility, collinearity, and VECM rank."
