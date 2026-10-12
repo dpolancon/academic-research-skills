@@ -93,7 +93,7 @@ The execution of Wave C decomposes legacy skills and candidate modules into cano
 
 ### Subwave C2 — Lightweight Editorial Governance & Passport Integration
 
-- **Objective:** Formalize the 3-axis decision state model, scoped source-role contract, and bounded-diff anchor verification from the candidate bundle into an optional Material Passport sidecar port.
+- **Objective:** Formalize the 3-axis decision state model, scoped source-role contract, and bounded-diff anchor verification from the candidate bundle into an optional Material Passport sidecar port. Release gating is strictly workspace-scoped (`optional | recommended | required`, default `optional`, gating only `RELEASE_READY`).
 - **Input Baseline:** Post-Subwave C1 commit.
 - **Authorized Paths:**
   - `shared/contracts/passport/editorial_governance.schema.json` (stage candidate)
@@ -125,34 +125,31 @@ The execution of Wave C decomposes legacy skills and candidate modules into cano
 
 ---
 
-### Subwave C3 — Advisor Profile Extraction (Michael Ash)
+### Subwave C3 — Advisor / Scholar Profile Extraction (Michael Ash)
 
-- **Objective:** Extract reusable research guidance, econometrics simplicity principles, and Marglin descriptive macro grounding from `advisor-reviewer` into a standalone static profile, while isolating Chapter 1 project overlays.
+- **Objective:** Extract reusable research guidance, econometrics simplicity principles, and Marglin descriptive macro grounding from `advisor-reviewer` into a canonical durable scholar profile (`profiles/scholars/michael-ash.md`) and an active contextual advisor role wrapper (`profiles/advisors/michael-ash.md`), while recording Chapter 1 extraction notes in documentation only.
 - **Input Baseline:** Post-Subwave C2 commit.
 - **Authorized Paths:**
+  - `profiles/scholars/michael-ash.md` (new)
   - `profiles/advisors/michael-ash.md` (new)
-  - `projects/dissertation-ch1/dissertation_rewrite_notes.md` (new - gitignored overlay)
 - **Forbidden Paths:**
   - `advisor-reviewer/*` (no edits in C3; legacy preserved until C5)
   - `academic-paper-reviewer/*`
   - `docs/governance/*`
+  - Any substantive project directory (e.g. `projects/dissertation-ch1/`)
 - **Migration Action:**
-  - Author `profiles/advisors/michael-ash.md` containing:
-    - Econometric simplicity & cointegration honesty directives.
-    - Marglin descriptive data grounding heuristics.
-    - Workplace micro-mechanism transmission requirements.
-    - Accessible literature review tone standards ("down to earth").
-    - Pedagogical numerical punchline guidelines.
-  - Quarantine Diego Polanco Chapter 1 specific references (Section 4.3, Table 1, Shaikh dataset constants, Feedback Matrix items) to `projects/dissertation-ch1/`.
+  - Author canonical scholar profile `profiles/scholars/michael-ash.md` with durable methodological priors, empirical standards, and Marglin descriptive grounding heuristics.
+  - Author contextual advisor wrapper `profiles/advisors/michael-ash.md` referencing the scholar profile and defining active supervisory review constraints (active until dissertation completion).
+  - Quarantine Diego Polanco Chapter 1 specific references (Section 4.3, Table 1, Shaikh dataset constants, Feedback Matrix items) to documentation-only extraction notes. No substantive project folder is created in ARS.
   - Purge references to phantom skills (`umass-applied-econometrics`, `heterodox-economics-review`).
 - **Tests Required:**
-  - Markdown syntax and schema frontmatter linting on `profiles/advisors/michael-ash.md`.
-  - Anti-loss check: Verify all 6 core Ash methodological directives from `advisor-reviewer/SKILL.md` are present in the new profile.
+  - Markdown syntax and schema frontmatter linting on `profiles/scholars/michael-ash.md` and `profiles/advisors/michael-ash.md`.
+  - Anti-loss check: Verify all 6 core Ash methodological directives from `advisor-reviewer/SKILL.md` are present in the new profiles.
 - **Stop Conditions:**
   - Omission of any substantive research guidance from Michael Ash.
-  - Inclusion of project-specific equation proofs in the shared profile.
+  - Inclusion of project-specific equation proofs or chapter files in the shared profile.
 - **Commit Boundary:**
-  - Commit message: `feat(profiles): extract Michael Ash advisor calibration profile`
+  - Commit message: `feat(profiles): extract Michael Ash scholar profile and advisor role wrapper`
 - **Rollback Condition:** Revert profile commit if advisor guidance is truncated or distorted.
 - **Human-Review Gate:** Verify that all durable supervisory advice from Michael Ash is fully preserved without chapter-specific contamination.
 
@@ -160,7 +157,7 @@ The execution of Wave C decomposes legacy skills and candidate modules into cano
 
 ### Subwave C4 — Committee Profiles & Composition Extraction
 
-- **Objective:** Decompose `PE-phd-committee` into individual scholar profiles (Deepankar Basu, Kevin Young), unified advisor profile reference (Michael Ash), and a declarative committee composition profile (`umass-pe`).
+- **Objective:** Decompose `PE-phd-committee` into individual scholar profiles (Deepankar Basu, Kevin Young), referencing canonical scholar Michael Ash, and author a declarative committee composition profile (`umass-pe`).
 - **Input Baseline:** Post-Subwave C3 commit.
 - **Authorized Paths:**
   - `profiles/scholars/deepankar-basu.md` (new)
@@ -173,7 +170,7 @@ The execution of Wave C decomposes legacy skills and candidate modules into cano
 - **Migration Action:**
   - Author `profiles/scholars/deepankar-basu.md` (Marxian theory, Leontief microfoundations, dimensional analysis, ODE stability).
   - Author `profiles/scholars/kevin-young.md` (Historical institutional analysis, class struggle, 1956/1974/1980 structural breaks).
-  - Author `profiles/committees/umass-pe.md` defining committee roster, Chair synthesis protocol, and defense modes (`pre-defense`, `oral-defense`).
+  - Author `profiles/committees/umass-pe.md` defining committee roster referencing scholar profiles (`michael-ash`, `deepankar-basu`, `kevin-young`), Chair synthesis protocol, and defense modes (`pre-defense`, `oral-defense`).
   - Add defense simulation protocol documentation under `academic-paper-reviewer/references/defense_mode_protocol.md`.
 - **Tests Required:**
   - Profile schema validation for all newly created scholar and committee profiles.
@@ -245,17 +242,20 @@ To maintain strict alignment with established architecture, decisions across Wav
 4. **Project Overlay Quarantine:** Isolate Chapter 1 dissertation specifics to external project overlays rather than embedding them in reusable profiles.
 5. **Execution Order:** Execute subwaves in strict sequence C1 $\to$ C2 $\to$ C3 $\to$ C4 $\to$ C5 to ensure shared infrastructure is available before persona extraction.
 
-### 4.3 REQUIRES_HUMAN_DECISION
-*Specific operational choices requiring explicit human sign-off:*
-1. **Directory Taxonomy for Extracted Personas:**
-   - *Option A:* Unified folder `profiles/scholars/<name>.md`.
-   - *Option B (Recommended):* Distinct folders `profiles/advisors/<name>.md` and `profiles/scholars/<name>.md`.
-2. **Quarantine Method for Chapter 1 Overlays:**
-   - *Option A (Recommended):* Untracked workspace directory `projects/dissertation-ch1/`.
-   - *Option B:* Documentation appendix `docs/legacy/dissertation_ch1_overlay.md`.
-3. **Editorial Governance Release Gate Status:**
-   - *Option A (Recommended):* Opt-in quality gate during Wave C; promoted to mandatory gate in Wave D.
-   - *Option B:* Mandatory release gate immediately upon Subwave C2 completion.
+### 4.3 RESOLVED_HUMAN_DECISIONS (Wave C0.1 Lock)
+*All previously open architectural choices have been formally decided and locked:*
+1. **Scholar Identity & Active Advisor Role (RESOLVED):**
+   - Dual representation model locked: canonical durable scholar identity in `profiles/scholars/<person>.md`, paired with contextual active role wrappers (`profiles/advisors/<person>.md` and `profiles/committees/<committee>.md`).
+   - Michael Ash remains an active advisor and committee member until dissertation completion. Post-dissertation, the active advisor role may be deactivated while the scholar identity remains durable.
+2. **Project Overlay & Chapter 1 Quarantine (RESOLVED):**
+   - Chapter 1 is frozen. No substantive project folder `projects/dissertation-ch1/` is created inside ARS.
+   - Chapter 1 specific references, constants, and the 68-item feedback matrix are preserved exclusively as documentation-only migration provenance and extraction notes.
+3. **Editorial Governance Release Gate Policy (RESOLVED):**
+   - There is no globally mandatory ARS release gate.
+   - Editorial governance release policy is strictly workspace-scoped (`optional | recommended | required`, default `optional`).
+   - A `required` gate affects ONLY the transition to `RELEASE_READY` and never blocks drafting, editing, compiling, or reviewing.
+4. **Workspace Abstraction (RESOLVED):**
+   - Formalized the `WORKSPACE` abstraction as the bounded research object upon which skills, tools, profiles, and protocols operate, governed by strict source-of-truth and external repository read-only invariants.
 
 ### 4.4 DEFERRED
 *Capabilities explicitly out of scope for Wave C, preserved in future backlogs:*
@@ -263,6 +263,7 @@ To maintain strict alignment with established architecture, decisions across Wav
 2. **Dynamic Author Persona Inference:** Algorithmic inference of user writing style or political economy priors.
 3. **Physical Repository Harmonization:** Moving top-level skills into nested directories `skills/core/`, `skills/domain/` (strictly scheduled for Wave F).
 4. **Distributed Cryptographic Infrastructure:** Merkle trees, multi-party signature servers, or external identity verification harnesses.
+5. **Workspace Runtime Implementation:** Physical workspace infrastructure, CLI commands, and runner integrations remain a separate future wave after Wave C decomposition.
 
 ---
 
@@ -272,6 +273,7 @@ Before authorizing Subwave C1 execution, verify:
 - [x] Wave B1.1 adversarial routing test lock passed (`a797db9`).
 - [x] Design review document `14_WAVE_C_DECOMPOSITION_DESIGN_REVIEW.md` authored and approved.
 - [x] Execution plan document `15_WAVE_C_EXECUTION_PLAN.md` authored and approved.
-- [ ] Human decision on persona directory topology and quarantine method received.
+- [x] Human decisions on persona taxonomy, Chapter 1 quarantine, and workspace model locked (`16_WAVE_C_HUMAN_DECISION_LOCK.md`).
+- [x] Conceptual workspace architecture specified (`17_WORKSPACE_CAPSULE_ARCHITECTURE.md`).
 - [ ] Working tree clean (no tracked modifications; protected candidate work untouched).
 - [ ] Subwave C1 branch or local working pass authorized.
