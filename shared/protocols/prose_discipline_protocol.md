@@ -108,17 +108,35 @@ Language that adds zero analytical or empirical content, existing solely to orga
 
 ## 8. Claim-Strength Discipline
 
-Academic writing requires precise calibration between the strength of an assertion and the underlying empirical research design. Claim verbs must strictly track evidentiary foundations:
+Academic writing requires precise calibration between the strength of an assertive claim verb and the underlying evidentiary foundation provided by the research design, source base, formal derivation, or methodological warrant.
+
+### Core Principle
+> **The strength of a claim verb must not exceed the evidentiary entitlement provided by the research design, source base, formal derivation, or other discipline-appropriate warrant.**
+
+Point estimates, empirical bounds, historical sources, and deductive proofs convey substantive analytical weight; loaded rhetorical verbs do not substitute for evidentiary warrant.
+
+### Evidentiary Entitlement and Calibrated Verb Hierarchy
 
 | Research Design / Evidentiary Foundation | Calibrated Permissible Verbs | Forbidden Over-Claims |
 | :--- | :--- | :--- |
-| **Descriptive / Stylized Trends** | `documents`, `records`, `shows`, `traces`, `is consistent with`, `indicates` | `proves`, `demonstrates conclusively`, `confirms truth of` |
-| **Granger Causality / VAR / Predictive** | `predicts`, `precedes conditionally`, `contains incremental predictive information`, `forecasts` | `causes`, `drives directly`, `forces` |
-| **Cointegration / Long-Run Relations** | `identifies a long-run relation`, `rejects the zero-rank null hypothesis`, `estimates the cointegrating vector` | `validates the true production law`, `proves the model` |
-| **Impulse Responses (IRF / GIRF)** | `conditional dynamic response`, `exhibits persistent response over reported horizons`, `decays toward baseline` | `mechanically dictates`, `proves permanent causality` |
-| **Quasi-Experimental / Identification** | `identifies the local average effect`, `estimates conditional effect under parallel trends` | `proves universal law`, `eradicates alternative mechanisms` |
+| **Descriptive / Stylized Trends** | `documents`, `records`, `traces`, `summarizes`, `describes` | `proves`, `demonstrates conclusively`, `confirms truth of` |
+| **Observational / Correlational Associations** | `is associated with`, `co-occurs with`, `covaries with`, `corresponds to` | `causes`, `drives directly`, `forces`, `proves causality` |
+| **Predictive / Conditional Forecasting** | `predicts`, `forecasts`, `precedes conditionally`, `contains predictive information` | `causes`, `governs mechanistic outcome`, `dictates` |
+| **Identified Causal / Quasi-Experimental Designs** | `estimates the causal effect of`, `identifies the conditional impact of`, `supports the hypothesis that` | `proves universal law`, `eradicates all alternative mechanisms` |
+| **Formal / Theoretical Deduction** | `establishes by construction`, `proves (under stated axioms)`, `derives`, `entails` | `empirically demonstrates`, `empirically confirms` (without data) |
+| **Historical / Archival / Qualitative Evidence** | `indicates`, `suggests`, `substantiates`, `is consistent with`, `supports the interpretation that` | `conclusively proves`, `rules out all rival accounts` |
 
-> **Core Principle:** Assertive verbs must be earned by empirical design. Point estimates, standard errors, and confidence bounds convey strength; loaded rhetorical verbs do not.
+### Domain-Delegation Boundary
+The Prose Discipline Protocol governs **linguistic and stylistic calibration only**. It does not evaluate the substantive validity, methodological rigor, or empirical credibility of the research design itself.
+
+The substantive determination of evidentiary entitlement belongs exclusively to domain-specific skills and disciplinary reasoning:
+- **Economics & Econometrics:** Substantive identification validity, specification testing, estimator properties, and disciplinary causal entitlement remain exclusively owned and evaluated by `econ-write` and relevant domain methods.
+- **Manuscript Lifecycle & Context:** Authorial synthesis and structural placement across sections remain governed by `academic-paper`.
+- **Peer Review & Evidentiary Adjudication:** Referee-side evaluation of whether evidence justifies conclusions remains governed by `academic-paper-reviewer`.
+- **Evidence Retrieval & Evaluation:** Source provenance and factual grounding remain governed by `deep-research`.
+- **Formal Theory & Historical Interpretation:** Methodological adequacy remains governed by discipline-specific theoretical or historiographical standards.
+
+Under no circumstances does this shared protocol evaluate whether an empirical specification is valid, whether identification succeeds, or whether empirical findings warrant causal interpretation.
 
 ---
 

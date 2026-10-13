@@ -184,6 +184,40 @@ def test_determinism():
     print("  [PASS] Deterministic reproducibility verified: 100% identical JSON outputs across runs.")
 
 
+def test_claim_strength_domain_boundary():
+    protocol_path = REPO_ROOT / "shared" / "protocols" / "prose_discipline_protocol.md"
+    assert protocol_path.is_file(), f"Protocol file missing: {protocol_path}"
+    content = protocol_path.read_text(encoding="utf-8")
+
+    assert "## 8. Claim-Strength Discipline" in content, "Section 8 header missing"
+    assert "## 9. Prose-Pattern Families" in content, "Section 9 header missing"
+    sec8 = content.split("## 8. Claim-Strength Discipline")[1].split("## 9. Prose-Pattern Families")[0]
+
+    forbidden_method_terms = [
+        r"\bVAR\b",
+        r"\bcointegrat\w*",
+        r"\bIRF\b",
+        r"parallel trends",
+    ]
+    import re
+    for pattern in forbidden_method_terms:
+        match = re.search(pattern, sec8, re.IGNORECASE)
+        assert match is None, (
+            f"Section 8 contains method-specific econometric term '{match.group(0) if match else ''}', "
+            "violating cross-domain ownership boundary with econ-write."
+        )
+
+    required_phrases = [
+        "The strength of a claim verb must not exceed the evidentiary entitlement",
+        "linguistic and stylistic calibration only",
+        "econ-write",
+    ]
+    for phrase in required_phrases:
+        assert phrase in sec8, f"Section 8 missing required domain-delegation statement: '{phrase}'"
+
+    print("  [PASS] Section 8 cross-domain claim boundary verified (zero method-specific leaks; domain delegation locked).")
+
+
 def main():
     print("=" * 60)
     print("Running ARS Wave C1 Prose Discipline Test Suite")
@@ -192,6 +226,7 @@ def main():
         test_protocol_exists()
         test_offline_independence()
         test_ai_authorship_non_inference()
+        test_claim_strength_domain_boundary()
         test_gold_fixtures()
         test_determinism()
         print("=" * 60)
