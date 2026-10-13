@@ -3,7 +3,7 @@
 scripts/validate_ars_registry.py
 
 Deterministic validation script for docs/governance/ars_registry.yaml.
-Enforces the architectural invariants of the ARS Integrated Governance Foundation (Wave B0).
+Enforces the architectural invariants of the ARS Governance Foundation (Wave B0 & Wave C5).
 """
 
 import os
@@ -12,7 +12,9 @@ from pathlib import Path
 import yaml
 
 # Controlled Vocabularies
-ALLOWED_IMPLEMENTATION_TYPES = {"SKILL", "LEGACY_SKILL", "ORCHESTRATOR", "TOOL"}
+ALLOWED_IMPLEMENTATION_TYPES = {
+    "SKILL", "LEGACY_SKILL", "ORCHESTRATOR", "TOOL", "SHARED_PROTOCOL", "PROFILE"
+}
 ALLOWED_SEMANTIC_ROLES = {
     "CORE_SKILL", "DOMAIN_SKILL", "DISSEMINATION_SKILL",
     "ORCHESTRATOR", "PROFILE", "TOOL", "SHARED_PROTOCOL"
@@ -66,6 +68,7 @@ def validate_registry(repo_root: Path) -> bool:
     # 1. Validate Components
     component_ids = set()
     components_by_id = {}
+    deprecated_component_ids = set()
 
     for idx, comp in enumerate(components_list):
         if not isinstance(comp, dict):
@@ -97,31 +100,40 @@ def validate_registry(repo_root: Path) -> bool:
         l_status = comp.get("lifecycle_status")
         if l_status not in ALLOWED_LIFECYCLE_STATUSES:
             errors.append(f"Component '{cid}' has invalid lifecycle_status '{l_status}'. Allowed: {ALLOWED_LIFECYCLE_STATUSES}")
+        if l_status == "DEPRECATED":
+            deprecated_component_ids.add(cid)
 
         # Vocabulary checks for implementation_type and semantic_role
         impl_type = comp.get("current_implementation_type")
         if impl_type not in ALLOWED_IMPLEMENTATION_TYPES:
-            errors.append(f"Component '{cid}' has invalid current_implementation_type '{impl_type}'.")
+            errors.append(f"Component '{cid}' has invalid current_implementation_type '{impl_type}'. Allowed: {ALLOWED_IMPLEMENTATION_TYPES}")
 
         sem_role = comp.get("semantic_role")
         if sem_role not in ALLOWED_SEMANTIC_ROLES:
-            errors.append(f"Component '{cid}' has invalid semantic_role '{sem_role}'.")
+            errors.append(f"Component '{cid}' has invalid semantic_role '{sem_role}'. Allowed: {ALLOWED_SEMANTIC_ROLES}")
 
-        # Rule 4 & 12: runtime_path exists on disk and is not a future target path
+        # Rule 4 & 12: runtime_path exists on disk and does not use future target path format
         r_path = comp.get("runtime_path")
         if not r_path:
             errors.append(f"Component '{cid}' missing runtime_path.")
         else:
-            # Check for accidental target paths (e.g. skills/core/..., profiles/..., tools/...)
-            if any(r_path.startswith(prefix) for prefix in ("skills/", "profiles/", "orchestrator/", "tools/", "shared/")):
+            # Check for accidental future target paths (Wave F owns skills/ and orchestrator/ reorganization)
+            if any(r_path.startswith(prefix) for prefix in ("skills/", "orchestrator/")):
                 errors.append(f"Component '{cid}' has future target path format as runtime_path: '{r_path}'.")
 
             disk_path = repo_root / r_path
             if not disk_path.exists():
                 errors.append(f"Component '{cid}' runtime_path '{r_path}' does not exist on disk at {disk_path}.")
 
-    if len(component_ids) != 14:
-        errors.append(f"Expected exactly 14 components in registry, found {len(component_ids)}.")
+        # Check replacement_path if present
+        rep_path = comp.get("replacement_path")
+        if rep_path:
+            disk_rep = repo_root / rep_path
+            if not disk_rep.exists():
+                errors.append(f"Component '{cid}' replacement_path '{rep_path}' does not exist on disk.")
+
+    if len(component_ids) < 14:
+        errors.append(f"Expected at least 14 components in registry, found {len(component_ids)}.")
 
     # 2. Validate Capabilities
     capability_ids = set()
@@ -158,6 +170,9 @@ def validate_registry(repo_root: Path) -> bool:
         if cur_owner is not None:
             if cur_owner not in component_ids:
                 errors.append(f"Capability '{cap_id}' has current_owner '{cur_owner}' which is not a recognized component_id.")
+            # Wave C5 Invariant: Deprecated aliases own zero canonical capabilities
+            if cur_owner in deprecated_component_ids:
+                errors.append(f"Capability '{cap_id}' is owned by deprecated component '{cur_owner}'. Deprecated aliases must own zero capabilities.")
 
         # Rule 6 & 10: No capability has two current canonical owners; no CANDIDATE capability is active current owner
         if m_status == "CANDIDATE":
@@ -167,11 +182,10 @@ def validate_registry(repo_root: Path) -> bool:
         # Rule 9: current_owner and target_owner semantics are distinguishable
         tgt_owner = cap.get("target_owner")
         if cur_owner is not None and tgt_owner is not None:
-            # If current_owner and target_owner have the exact same string when paths are involved
-            if cur_owner == tgt_owner and any(cur_owner.startswith(p) for p in ("skills/", "tools/", "profiles/")):
+            if cur_owner == tgt_owner and any(cur_owner.startswith(p) for p in ("skills/", "orchestrator/")):
                 errors.append(f"Capability '{cap_id}' conflates target path as current_owner: '{cur_owner}'.")
 
-    # 3. Validate Wave B1 Routing & Precedence Invariants
+    # 3. Validate Wave B1 / Wave C5 Routing & Precedence Invariants
     routing_components = {
         "academic-paper", "econ-write", "academic-paper-reviewer",
         "academic-pipeline", "deep-research", "econ-slides"
@@ -180,14 +194,14 @@ def validate_registry(repo_root: Path) -> bool:
     if missing_rc:
         errors.append(f"Missing essential routing component(s): {missing_rc}")
 
-    # B1 Invariant 1 & 2: runtime paths exist and never resolve to target path prefixes
+    # B1 Invariant 1 & 2: runtime paths exist and never resolve to future target path prefixes
     for cid in routing_components:
         comp = components_by_id.get(cid)
         if comp:
             rpath = comp.get("runtime_path", "")
             if not (repo_root / rpath).exists():
                 errors.append(f"Routing component '{cid}' runtime path '{rpath}' does not exist on disk.")
-            if any(rpath.startswith(prefix) for prefix in ("skills/", "profiles/", "orchestrator/", "tools/", "shared/")):
+            if any(rpath.startswith(prefix) for prefix in ("skills/", "orchestrator/")):
                 errors.append(f"Routing component '{cid}' leaked future target path into runtime_path: '{rpath}'.")
 
     # B1 Invariant 3: academic-paper owns generic manuscript lifecycle
@@ -221,14 +235,30 @@ def validate_registry(repo_root: Path) -> bool:
     if len(review_owners) != 1 or review_owners[0] != "academic-paper-reviewer":
         errors.append(f"Invariant violation: Exactly one peer review owner permitted, found {review_owners}.")
 
-    # B1 Invariant 8: Advisor and committee components are profiles, not canonical peer-review owners
-    for prof_id in ("advisor-reviewer", "PE-phd-committee"):
+    # Wave C5 Invariant: Advisor and committee components are profiles, not canonical peer-review owners
+    for prof_id in ("advisor-reviewer", "PE-phd-committee", "advisor-michael-ash", "committee-umass-pe"):
         prof_comp = components_by_id.get(prof_id)
-        if not prof_comp or prof_comp.get("semantic_role") != "PROFILE":
-            errors.append(f"Invariant violation: Legacy component '{prof_id}' must have semantic_role 'PROFILE'.")
-        if review_cap and review_cap.get("current_owner") == prof_id:
-            errors.append(f"Invariant violation: Legacy component '{prof_id}' cannot be canonical owner of peer review.")
+        if prof_comp:
+            if prof_comp.get("semantic_role") != "PROFILE":
+                errors.append(f"Invariant violation: Profile component '{prof_id}' must have semantic_role 'PROFILE'.")
+            if review_cap and review_cap.get("current_owner") == prof_id:
+                errors.append(f"Invariant violation: Profile component '{prof_id}' cannot be canonical owner of peer review.")
 
+    # Wave C5 Invariant: Editorial governance is active change-control, does not own review or writing
+    eg_comp = components_by_id.get("editorial-governance")
+    if not eg_comp or eg_comp.get("lifecycle_status") != "ACTIVE":
+        errors.append("Wave C5 violation: 'editorial-governance' must be an ACTIVE component in registry.")
+    eg_cap = capabilities_by_id.get("editorial_decision_persistence")
+    if not eg_cap or eg_cap.get("current_owner") != "editorial-governance":
+        errors.append("Wave C5 violation: 'editorial_decision_persistence' must be owned by 'editorial-governance'.")
+
+    # Wave C5 Invariant: Prose discipline is active shared protocol
+    pd_comp = components_by_id.get("prose-discipline")
+    if not pd_comp or pd_comp.get("lifecycle_status") != "ACTIVE":
+        errors.append("Wave C5 violation: 'prose-discipline' must be an ACTIVE component in registry.")
+    pd_cap = capabilities_by_id.get("prose_discipline_and_lexical_audit")
+    if not pd_cap or pd_cap.get("current_owner") != "prose-discipline":
+        errors.append("Wave C5 violation: 'prose_discipline_and_lexical_audit' must be owned by 'prose-discipline'.")
 
     # Final summary output
     if errors:

@@ -62,9 +62,9 @@ cases:
     rule: "R5"
     primary_owner: "academic-paper-reviewer"
     delegates_to: []
-    calibration_input: "advisor-reviewer"
+    calibration_input: "profiles/advisors/michael-ash.md"
     expected_action: "REVIEW_WITH_CALIBRATION"
-    rationale: "External review simulation is owned by academic-paper-reviewer, consuming advisor-reviewer profile for Ash persona calibration."
+    rationale: "External review simulation is owned by academic-paper-reviewer, consuming profiles/advisors/michael-ash.md for Ash persona calibration."
 
   - id: "ROUTE-006"
     prompt: "Simulate my PhD committee challenging Chapter 2."
@@ -72,9 +72,9 @@ cases:
     rule: "R6"
     primary_owner: "academic-paper-reviewer"
     delegates_to: []
-    calibration_input: "PE-phd-committee"
+    calibration_input: "profiles/committees/umass-pe.md"
     expected_action: "REVIEW_WITH_CALIBRATION"
-    rationale: "Dissertation committee defense challenge is owned by academic-paper-reviewer, consuming PE-phd-committee profile for committee calibration."
+    rationale: "Dissertation committee defense challenge is owned by academic-paper-reviewer, consuming profiles/committees/umass-pe.md for committee calibration."
 
   - id: "ROUTE-007"
     prompt: "Run the full research-to-publication workflow."
@@ -133,13 +133,13 @@ cases:
     primary_owner: "academic-paper-reviewer"
     domain_policy: null
     delegates_to: []
-    calibration_input: "advisor-reviewer"
+    calibration_input: "profiles/advisors/michael-ash.md"
     must_not_primary_owner:
       - "advisor-reviewer"
       - "academic-paper"
       - "econ-write"
     expected_action: "REVIEW_WITH_CALIBRATION"
-    rationale: "Advisor Michael Ash heuristics are calibration input only; academic-paper-reviewer is the canonical execution engine."
+    rationale: "Advisor Michael Ash heuristics are calibration input only via profiles/advisors/michael-ash.md; academic-paper-reviewer is the canonical execution engine."
 
   - id: "ROUTE-012"
     prompt: "Write and referee my economics paper."

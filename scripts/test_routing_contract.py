@@ -2,7 +2,7 @@
 """
 scripts/test_routing_contract.py
 
-Deterministic test runner for ARS Wave B1 & B1.1 routing precedence contract.
+Deterministic test runner for ARS Wave B1, B1.1, and C5 routing precedence contract.
 Validates evals/gold/routing/cases.yaml against docs/governance/ars_registry.yaml
 and enforces positive ownership, delegation, calibration, and adversarial negative
 exclusion invariants without invoking LLMs.
@@ -12,7 +12,7 @@ import sys
 from pathlib import Path
 import yaml
 
-TARGET_PATH_PREFIXES = ("skills/", "profiles/", "orchestrator/", "tools/", "shared/")
+TARGET_PATH_PREFIXES = ("skills/", "orchestrator/")
 
 
 def test_routing_contract(repo_root: Path) -> bool:
@@ -37,6 +37,10 @@ def test_routing_contract(repo_root: Path) -> bool:
         return False
 
     components = {c["component_id"]: c for c in reg_data.get("components", [])}
+    deprecated_components = {
+        c["component_id"] for c in reg_data.get("components", [])
+        if c.get("lifecycle_status") == "DEPRECATED"
+    }
     capabilities = {cap["capability_id"]: cap for cap in reg_data.get("capabilities", [])}
 
     cases = cases_data.get("cases", [])
@@ -77,6 +81,8 @@ def test_routing_contract(repo_root: Path) -> bool:
             rpath = owner_comp.get("runtime_path", "")
             if any(rpath.startswith(p) for p in TARGET_PATH_PREFIXES):
                 errors.append(f"primary_owner '{owner}' uses future target path format as runtime_path: '{rpath}'.")
+            if owner in deprecated_components:
+                errors.append(f"primary_owner '{owner}' is a deprecated component; deprecated aliases cannot be primary owners.")
 
         # 2. Delegates existence and target-path check
         if delegates:
@@ -90,7 +96,10 @@ def test_routing_contract(repo_root: Path) -> bool:
 
         # 3. Calibration input check
         if calib:
-            if calib not in components:
+            if calib.startswith("profiles/") or "/" in calib:
+                if not (repo_root / calib).exists():
+                    errors.append(f"calibration_input profile path '{calib}' does not exist on disk.")
+            elif calib not in components:
                 errors.append(f"calibration_input '{calib}' does not exist in registry components.")
             else:
                 calib_comp = components[calib]
@@ -155,14 +164,18 @@ def test_routing_contract(repo_root: Path) -> bool:
         elif rule == "R5":
             if owner != "academic-paper-reviewer":
                 errors.append(f"R5 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
-            if calib != "advisor-reviewer":
-                errors.append(f"R5 calibration_input must be 'advisor-reviewer', got '{calib}'.")
+            if calib != "profiles/advisors/michael-ash.md":
+                errors.append(f"R5 calibration_input must be 'profiles/advisors/michael-ash.md', got '{calib}'.")
+            if not (repo_root / calib).exists():
+                errors.append(f"R5 calibration_input path '{calib}' does not exist on disk.")
 
         elif rule == "R6":
             if owner != "academic-paper-reviewer":
                 errors.append(f"R6 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
-            if calib != "PE-phd-committee":
-                errors.append(f"R6 calibration_input must be 'PE-phd-committee', got '{calib}'.")
+            if calib != "profiles/committees/umass-pe.md":
+                errors.append(f"R6 calibration_input must be 'profiles/committees/umass-pe.md', got '{calib}'.")
+            if not (repo_root / calib).exists():
+                errors.append(f"R6 calibration_input path '{calib}' does not exist on disk.")
 
         elif rule == "R7":
             if owner != "academic-pipeline":
@@ -190,10 +203,12 @@ def test_routing_contract(repo_root: Path) -> bool:
         elif rule == "ADV-A2":  # Advisor calibrated review
             if owner != "academic-paper-reviewer":
                 errors.append(f"ADV-A2 primary owner must be 'academic-paper-reviewer', got '{owner}'.")
-            if calib != "advisor-reviewer":
-                errors.append(f"ADV-A2 calibration_input must be 'advisor-reviewer', got '{calib}'.")
+            if calib != "profiles/advisors/michael-ash.md":
+                errors.append(f"ADV-A2 calibration_input must be 'profiles/advisors/michael-ash.md', got '{calib}'.")
             if capabilities.get("simulated_external_peer_review", {}).get("current_owner") == "advisor-reviewer":
                 errors.append("advisor-reviewer must NOT be canonical owner of simulated_external_peer_review.")
+            if capabilities.get("simulated_external_peer_review", {}).get("current_owner") != "academic-paper-reviewer":
+                errors.append("simulated_external_peer_review must be owned by 'academic-paper-reviewer'.")
 
         elif rule == "ADV-A3":  # Compound write + review
             if owner != "academic-pipeline":

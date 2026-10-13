@@ -1,8 +1,8 @@
 # ARS Runtime Routing & Capability Precedence Contract
 
-- **Version:** 1.0.0
-- **Wave:** Wave B1 (Routing & Precedence Implementation)
-- **Baseline:** `8bdc0df`
+- **Version:** 1.1.0
+- **Wave:** Wave C5 (Legacy Deprecation & Governance Reconciliation)
+- **Baseline Parent:** `38f31af`
 - **Authoritative Governance Reference:** `docs/governance/ars_registry.yaml`
 
 ---
@@ -15,8 +15,10 @@ The Academic Research Skills (ARS) repository enforces deterministic capability 
 2. **Orchestration Is Not Ownership:** `academic-pipeline` manages workflow sequencing, stage transitions, and Material Passport tracking; it does not own substantive disciplinary writing, econometrics, or peer-review criteria.
 3. **Disciplinary Policy Consumption:** Generic paper production is owned by `academic-paper`. Disciplinary conventions for economics manuscripts are owned by `econ-write` and consumed by `academic-paper` during economics paper drafting and revision.
 4. **Sole Peer-Review Ownership:** `academic-paper-reviewer` is the sole canonical owner of simulated external peer review, referee reports, and editorial decision synthesis.
-5. **Profiles Are Inputs, Not Review Engines:** Legacy persona components (`advisor-reviewer`, `PE-phd-committee`) serve strictly as calibration profile inputs to `academic-paper-reviewer` when persona angles are requested; they are not independent peer-review engines.
-6. **Runtime Path Rule:** Until Wave F physical directory harmonization, all routing contracts MUST resolve to live root directories (`academic-paper`, `econ-write`, `academic-paper-reviewer`, `academic-pipeline`), never to target paths (`skills/core/...`, `skills/domain/...`).
+5. **Profiles Are Inputs, Not Review Engines:** Scholar and committee profiles (`profiles/advisors/michael-ash.md`, `profiles/committees/umass-pe.md`) serve strictly as calibration inputs to `academic-paper-reviewer`; they are not independent peer-review engines.
+6. **Shared Protocol Substrate:** Reusable cross-domain prose discipline is codified in `shared/protocols/prose_discipline_protocol.md` and verified offline via `tools/prose_checks/check_prose_patterns.py`; it does not own manuscript authoring or editing tasks.
+7. **Change Control Is Not Review:** Editorial governance (`shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md`, `scripts/revision_guard.py`) owns change-control verification only; it does not evaluate scholarly quality or authorize substantive prose changes. Default release policy is `optional`.
+8. **Runtime Path Rule:** Until Wave F physical directory harmonization, all routing contracts MUST resolve to live root directories (`academic-paper`, `econ-write`, `academic-paper-reviewer`, `academic-pipeline`, `deep-research`, `econ-slides`) and live extracted substrates (`profiles/`, `shared/`, `tools/`), never to future target paths (`skills/core/...`, `skills/domain/...`, `orchestrator/...`).
 
 ---
 
@@ -31,15 +33,27 @@ USER REQUEST
     ├── External/referee review simulation?
     │       └── academic-paper-reviewer (sole canonical review engine)
     │
-    ├── Advisor/committee perspective simulation?
+    ├── Advisor perspective simulation (Michael Ash)?
     │       └── academic-paper-reviewer
-    │              + legacy calibration input (advisor-reviewer / PE-phd-committee)
+    │              + calibration input: profiles/advisors/michael-ash.md
+    │
+    ├── Committee / defense simulation (UMass PE)?
+    │       └── academic-paper-reviewer
+    │              + calibration input: profiles/committees/umass-pe.md
     │
     ├── Bounded economics writing or section drafting?
     │       └── econ-write (direct domain skill invocation)
     │
     ├── Slide deck presentation production?
     │       └── econ-slides (Beamer deck generation and verification)
+    │
+    ├── Prose discipline / pattern scan?
+    │       ├── Diagnostic scan: tools/prose_checks/check_prose_patterns.py
+    │       └── Manuscript revision: academic-paper or econ-write
+    │              consuming shared/protocols/prose_discipline_protocol.md
+    │
+    ├── Revision verification / change control audit?
+    │       └── scripts/revision_guard.py (Material Passport Port)
     │
     └── Generic academic paper lifecycle?
             └── academic-paper
@@ -74,13 +88,15 @@ USER REQUEST
 
 ### Rule R5 — Advisor-Specific Perspective
 - **Trigger Examples:** `"Review this paper as Michael Ash would"`, `"What would my advisor object to in this chapter?"`.
-- **Routing:** `academic-paper-reviewer` + `advisor-reviewer` calibration input.
-- **Contract:** `advisor-reviewer` provides persona heuristics and research preferences; it does not operate as an independent review engine.
+- **Primary Owner:** `academic-paper-reviewer`.
+- **Calibration Input:** `profiles/advisors/michael-ash.md` (referencing `profiles/scholars/michael-ash.md`).
+- **Contract:** The advisor wrapper supplies supervisory calibration parameters; it does not operate as an independent review engine.
 
 ### Rule R6 — Committee / Defense Simulation
 - **Trigger Examples:** `"Simulate my PhD defense committee challenging Chapter 2"`, `"How would the UMass political economy committee critique this?"`.
-- **Routing:** `academic-paper-reviewer` + `PE-phd-committee` calibration input.
-- **Contract:** Committee personas (Ash, Basu, Young) calibrate the review panel's critical angle; `academic-paper-reviewer` remains the execution engine.
+- **Primary Owner:** `academic-paper-reviewer`.
+- **Calibration Input:** `profiles/committees/umass-pe.md` (referencing Ash, Basu, and Young scholar profiles).
+- **Contract:** The committee composition calibrates the panel roster; `academic-paper-reviewer` remains the sole execution engine.
 
 ### Rule R7 — Full Research-to-Publication Workflow
 - **Trigger Examples:** `"Run the academic pipeline"`, `"Take this project from research through review"`.
@@ -93,28 +109,46 @@ USER REQUEST
   - Slide Presentation Production → `econ-slides`
 - **Boundary:** Orchestration is not ownership. The pipeline does not duplicate substantive rules.
 
+### Rule R8 — Dissemination Slide Production
+- **Trigger Examples:** `"Create Beamer slides for my economics seminar"`, `"Generate conference presentation deck"`.
+- **Primary Owner:** `econ-slides`.
+- **Scope:** Authoritative production and verification of academic economics Beamer presentation slide decks.
+
+### Rule R9 — Evidence Discovery & Source Assessment
+- **Trigger Examples:** `"Fact-check the evidence behind these claims"`, `"Find systematic literature on this topic"`.
+- **Primary Owner:** `deep-research`.
+- **Scope:** Systematic literature discovery, multi-agent query synthesis, PRISMA reporting, and source-level claim assessment.
+
+### Rule R10 — Shared Prose Discipline & Pattern Audit
+- **Trigger Examples:** `"Audit this draft for AI scaffolding"`, `"Check prose patterns"`, `"Audit lexical discipline"`.
+- **Routing:**
+  - Diagnostic scan → offline tool `tools/prose_checks/check_prose_patterns.py`.
+  - Generic manuscript revision → `academic-paper` consuming `shared/protocols/prose_discipline_protocol.md`.
+  - Economics manuscript revision → `econ-write` consuming `shared/protocols/prose_discipline_protocol.md`.
+- **Boundary:** The shared protocol and checker do not own writing tasks; writing remains canonically owned by `academic-paper` or `econ-write`.
+
+### Rule R11 — Editorial Governance & Change Control Verification
+- **Trigger Examples:** `"Verify changes against reviewer decisions"`, `"Check revision sidecar compliance"`.
+- **Primary Owner:** `shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md` executed via `scripts/revision_guard.py`.
+- **Boundary:** Owns change-control verification only. Does not own peer review, writing, orchestration, or release quality judgment. Default release policy is `optional`.
+
 ---
 
-## 4. Key Architectural Distinctions
+## 4. Deprecated Compatibility Redirects
 
-### Generic Paper vs. Economics Writing
-- `academic-paper` owns the universal manuscript workflow across all academic disciplines.
-- `econ-write` owns disciplinary policy specifically for economics (e.g. BLUF, triangular structure, model section protocols, empirical identification rhetoric).
-- For economics papers, `academic-paper` delegates section-level style and identification discipline to `econ-write`.
+The following legacy skill surfaces are deprecated as of Wave C5. Calls to these surfaces are routed to canonical components:
 
-### Author-Side Self-Check vs. External Peer Review
-- `academic-paper` includes an in-pair Phase 6 evaluator under the v3.6.6 generator-evaluator contract. This is strictly an **author-side internal self-quality check** to prevent premature submission.
-- `academic-paper-reviewer` owns **simulated external peer review**, running an independent 5-referee panel, Devil's Advocate stress-testing, and editorial decision synthesis.
-
-### Advisor/Committee Components as Profiles
-- `advisor-reviewer` and `PE-phd-committee` currently exist as top-level skill directories (scheduled for physical extraction into `profiles/` in Wave C).
-- In Wave B1, they are formally defined as **calibration inputs**, never as competing peer-review engines.
+| Legacy Surface | Status | Canonical Replacement |
+|:---------------|:-------|:----------------------|
+| `advisor-reviewer` | DEPRECATED | `academic-paper-reviewer` + `profiles/advisors/michael-ash.md` |
+| `PE-phd-committee` | DEPRECATED | `academic-paper-reviewer` + `profiles/committees/umass-pe.md` |
+| `prose-register-critic` | DEPRECATED | `shared/protocols/prose_discipline_protocol.md` + `tools/prose_checks/check_prose_patterns.py` (writing: `academic-paper` / `econ-write`) |
 
 ---
 
 ## 5. Runtime Path vs. Target Path Warning
 
-> ⚠️ **CRITICAL RUNTIME WARNING (Wave B1 through Wave E):**
+> ⚠️ **CRITICAL RUNTIME WARNING (Wave C5 through Wave E):**<br>
 > All live prompts, dispatch calls, tests, and configuration MUST refer to the existing runtime paths:
 > - `academic-paper`
 > - `econ-write`
@@ -122,5 +156,8 @@ USER REQUEST
 > - `academic-pipeline`
 > - `deep-research`
 > - `econ-slides`
+> - `profiles/`
+> - `shared/`
+> - `tools/`
 >
 > Target paths such as `skills/core/academic-paper` or `skills/domain/econ-write` are architectural destinations scheduled for Wave F physical migration. Routing to nonexistent target paths during runtime is an immediate error.

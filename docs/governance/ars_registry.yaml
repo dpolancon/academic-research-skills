@@ -5,8 +5,8 @@
 # capability ownership mappings.
 #
 # Schema: ars-governance-registry-v1.0
-# Version: 1.0.0
-# Last Updated: 2026-10-12
+# Version: 1.1.0
+# Last Updated: 2026-10-13 (Wave C5 Legacy Deprecation & Governance Reconciliation)
 #
 # Core Architectural Principles:
 # 1. Components ("What exists?") and Capabilities ("What responsibility is owned?")
@@ -15,17 +15,18 @@
 # 3. Runtime truth until Wave F: runtime_path and current_owner represent live executable
 #    truth; target_path and target_owner represent architectural destinations only.
 # 4. Strict capability monopoly: Exactly one canonical current owner per capability.
+# 5. Deprecated aliases own zero canonical substantive capabilities.
 # ==============================================================================
 
-version: "1.0.0"
-last_updated: "2026-10-12"
+version: "1.1.0"
+last_updated: "2026-10-13"
 schema: "ars-governance-registry-v1.0"
 
 # ==============================================================================
 # SECTION 1: COMPONENTS (What exists in the repository)
 # ==============================================================================
 # Controlled Vocabularies:
-# current_implementation_type: [SKILL, LEGACY_SKILL, ORCHESTRATOR, TOOL]
+# current_implementation_type: [SKILL, LEGACY_SKILL, ORCHESTRATOR, TOOL, SHARED_PROTOCOL, PROFILE]
 # semantic_role: [CORE_SKILL, DOMAIN_SKILL, DISSEMINATION_SKILL, ORCHESTRATOR, PROFILE, TOOL, SHARED_PROTOCOL]
 # lifecycle_status: [ACTIVE, PLANNED_MIGRATION, CANDIDATE_DECOMPOSITION, DEPRECATED]
 # ==============================================================================
@@ -62,7 +63,7 @@ components:
     mode_bearing: true
     target_path: "skills/core/academic-paper-reviewer"
     provenance_source: "Cheng-I Wu (Imbad0202/academic-research-skills v1.10.0)"
-    notes: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions. Sole canonical owner of external peer review; consumes advisor-reviewer and PE-phd-committee as calibration profiles only."
+    notes: "Independent multi-perspective referee panel simulation, double-phase sprint contract enforcement, and editorial decisions. Sole canonical owner of external peer review; consumes advisor-michael-ash and committee-umass-pe as calibration profiles only."
 
   - component_id: "academic-pipeline"
     display_name: "Academic Pipeline"
@@ -131,37 +132,42 @@ components:
     notes: "Translation of research into accessible public essays; planned decomposition into generic public-scholarship skill + venue profile in Wave E."
 
   - component_id: "advisor-reviewer"
-    display_name: "Advisor Reviewer (Michael Ash Profile)"
+    display_name: "Advisor Reviewer (Legacy Alias)"
     runtime_path: "advisor-reviewer"
     current_implementation_type: "LEGACY_SKILL"
     semantic_role: "PROFILE"
-    lifecycle_status: "PLANNED_MIGRATION"
+    lifecycle_status: "DEPRECATED"
     mode_bearing: false
-    target_path: "profiles/advisors/michael-ash"
+    target_path: "profiles/advisors/michael-ash.md"
     provenance_source: "Diego Polanco (Local creation)"
-    notes: "Advisor feedback heuristics; planned extraction to profile in Wave C."
+    replacement_path: "profiles/advisors/michael-ash.md"
+    delegates_to: "academic-paper-reviewer"
+    notes: "DEPRECATED compatibility redirect. Canonical review engine is academic-paper-reviewer; calibration profile is profiles/advisors/michael-ash.md."
 
   - component_id: "PE-phd-committee"
-    display_name: "PE PhD Defense Committee"
+    display_name: "PE PhD Defense Committee (Legacy Alias)"
     runtime_path: "PE-phd-committee"
     current_implementation_type: "LEGACY_SKILL"
     semantic_role: "PROFILE"
-    lifecycle_status: "PLANNED_MIGRATION"
+    lifecycle_status: "DEPRECATED"
     mode_bearing: false
-    target_path: "profiles/committees/umass-pe"
+    target_path: "profiles/committees/umass-pe.md"
     provenance_source: "Diego Polanco (Local creation)"
-    notes: "Doctoral dissertation committee defense simulator (Ash, Basu, Young); planned extraction to profile in Wave C."
+    replacement_path: "profiles/committees/umass-pe.md"
+    delegates_to: "academic-paper-reviewer"
+    notes: "DEPRECATED compatibility redirect. Canonical review and defense engine is academic-paper-reviewer; calibration profile is profiles/committees/umass-pe.md."
 
   - component_id: "prose-register-critic"
-    display_name: "Prose Register Critic"
+    display_name: "Prose Register Critic (Legacy Alias)"
     runtime_path: "prose-register-critic"
     current_implementation_type: "LEGACY_SKILL"
     semantic_role: "SHARED_PROTOCOL"
-    lifecycle_status: "PLANNED_MIGRATION"
+    lifecycle_status: "DEPRECATED"
     mode_bearing: false
-    target_path: "shared/protocols/prose_discipline_protocol"
+    target_path: "shared/protocols/prose_discipline_protocol.md"
     provenance_source: "Diego Polanco (Local creation, v2.1.0)"
-    notes: "Category A/B/C prose discipline and lexical audit; planned demotion to shared protocol in Wave C."
+    replacement_path: "shared/protocols/prose_discipline_protocol.md"
+    notes: "DEPRECATED compatibility redirect. Reusable protocol extracted to shared/protocols/prose_discipline_protocol.md; diagnostic tool is tools/prose_checks/check_prose_patterns.py; writing owned by academic-paper and econ-write."
 
   - component_id: "irf-plotting"
     display_name: "IRF Plotting Engine"
@@ -184,6 +190,50 @@ components:
     target_path: "tools/latex/compile_workspace"
     provenance_source: "Diego Polanco (Local creation)"
     notes: "Isolated LaTeX compilation (latexmk/pdflatex), auxiliary artifact gitignoring, and markdown backup generation."
+
+  - component_id: "prose-discipline"
+    display_name: "Shared Prose Discipline Protocol"
+    runtime_path: "shared/protocols/prose_discipline_protocol.md"
+    current_implementation_type: "SHARED_PROTOCOL"
+    semantic_role: "SHARED_PROTOCOL"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "shared/protocols/prose_discipline_protocol.md"
+    provenance_source: "Extracted from prose-register-critic (Wave C1)"
+    notes: "Universal Category A/B/C prose discipline, technical vocabulary protection, and evidential verb mapping. Reusable shared protocol; diagnosed via tools/prose_checks/check_prose_patterns.py."
+
+  - component_id: "editorial-governance"
+    display_name: "Editorial Governance (Material Passport Port)"
+    runtime_path: "shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md"
+    current_implementation_type: "SHARED_PROTOCOL"
+    semantic_role: "SHARED_PROTOCOL"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md"
+    provenance_source: "Extracted from editorial-governance candidate (Wave C2)"
+    notes: "Lightweight revision-control contract and Material Passport verification port. Executed via scripts/revision_guard.py. Change-control verification only; default release policy is optional."
+
+  - component_id: "advisor-michael-ash"
+    display_name: "Advisor Profile: Michael Ash"
+    runtime_path: "profiles/advisors/michael-ash.md"
+    current_implementation_type: "PROFILE"
+    semantic_role: "PROFILE"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "profiles/advisors/michael-ash.md"
+    provenance_source: "Extracted from advisor-reviewer (Wave C3)"
+    notes: "Active doctoral advisor role wrapper referencing profiles/scholars/michael-ash.md. Calibration input for academic-paper-reviewer."
+
+  - component_id: "committee-umass-pe"
+    display_name: "Committee Profile: UMass Amherst PE"
+    runtime_path: "profiles/committees/umass-pe.md"
+    current_implementation_type: "PROFILE"
+    semantic_role: "PROFILE"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "profiles/committees/umass-pe.md"
+    provenance_source: "Extracted from PE-phd-committee (Wave C3)"
+    notes: "Doctoral dissertation committee composition referencing Ash, Basu, Young. Calibration input for academic-paper-reviewer."
 
 # ==============================================================================
 # SECTION 2: CAPABILITIES (What responsibilities are owned)
@@ -316,34 +366,33 @@ capabilities:
 
   - capability_id: "prose_discipline_and_lexical_audit"
     description: "Category A/B/C prose discipline protocol, technical vocabulary protection, and evidential claim-strength verb mapping."
-    current_owner: "prose-register-critic"
-    current_owner_type: "CORE_SKILL"
-    target_owner: "shared/protocols/prose_discipline_protocol"
+    current_owner: "prose-discipline"
+    current_owner_type: "SHARED_PROTOCOL"
+    target_owner: "shared/protocols/prose_discipline_protocol.md"
     target_owner_type: "SHARED_PROTOCOL"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "academic-paper"
       - "econ-write"
       - "public-scholarship"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation, v2.1.0)"
-    notes: "Currently structured as a top-level skill; planned demotion to shared protocol and deterministic tools in Wave C."
+    provenance: "Diego Polanco (Local creation, v2.1.0; extracted in Wave C1)"
+    notes: "Category A/B/C prose discipline protocol and lexical audit. Owned as shared protocol; writing owned by academic-paper and econ-write; diagnosed via tools/prose_checks/check_prose_patterns.py."
 
   - capability_id: "editorial_decision_persistence"
     description: "Durable tracking of human-adjudicated editorial decisions across multi-round revisions; authorization state gating."
-    current_owner: null
-    current_owner_type: null
-    candidate_source: "docs/design/2026-10-10-editorial-governance"
-    target_owner: "shared/contracts/editorial_governance"
+    current_owner: "editorial-governance"
+    current_owner_type: "SHARED_PROTOCOL"
+    target_owner: "shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md"
     target_owner_type: "SHARED_PROTOCOL"
-    migration_status: "CANDIDATE"
+    migration_status: "CURRENT"
     consumers:
       - "academic-pipeline"
       - "academic-paper"
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation, Phase 1 candidate)"
-    notes: "Candidate contract for revision authorization; not claimed as an active operational current owner until integrated."
+    provenance: "Diego Polanco (Local creation, Phase 1 candidate; implemented in Wave C2)"
+    notes: "Durable change-control contract (shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md) and deterministic revision verification (scripts/revision_guard.py). Owns change-control verification only; does not own manuscript review, writing, orchestration, or release quality judgment."
 
   - capability_id: "cointegration_specification_audit"
     description: "Deterministic diagnostic protocol for theoretical vs stochastic regressor admissibility, collinearity, and VECM rank."
@@ -400,30 +449,30 @@ capabilities:
 
   - capability_id: "advisor_michael_ash_calibration"
     description: "Durable research and writing preferences of advisor Michael Ash (simplicity, Marglin grounding, black box mechanisms)."
-    current_owner: "advisor-reviewer"
+    current_owner: "advisor-michael-ash"
     current_owner_type: "PROFILE"
-    target_owner: "profiles/advisors/michael-ash"
+    target_owner: "profiles/advisors/michael-ash.md"
     target_owner_type: "PROFILE"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "academic-paper"
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently embedded with Chapter 1 dissertation specifics; planned extraction to profile in Wave C."
+    provenance: "Diego Polanco (Local creation; extracted in Wave C3)"
+    notes: "Durable calibration parameters of advisor Michael Ash. Calibrates academic-paper-reviewer; does not own review capability."
 
   - capability_id: "committee_umass_pe_defense"
     description: "Doctoral dissertation defense committee personas (Ash, Basu, Young) at UMass Amherst."
-    current_owner: "PE-phd-committee"
+    current_owner: "committee-umass-pe"
     current_owner_type: "PROFILE"
-    target_owner: "profiles/committees/umass-pe"
+    target_owner: "profiles/committees/umass-pe.md"
     target_owner_type: "PROFILE"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently includes parallel review workflow; planned extraction to profile in Wave C."
+    provenance: "Diego Polanco (Local creation; extracted in Wave C3)"
+    notes: "Doctoral dissertation committee panel composition (Ash, Basu, Young). Calibrates academic-paper-reviewer; does not own review capability."
 
   - capability_id: "venue_jacobin_lat_editorial"
     description: "Editorial style guide, headline constraints (declarative thesis, no subtitle, max 12 words), and Martín Arboleda criteria."
