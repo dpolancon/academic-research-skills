@@ -1,0 +1,142 @@
+# ARS Gold Evaluation Cases: Prose Discipline & Pattern Detection
+# Specification: shared/protocols/prose_discipline_protocol.md
+# Verification: scripts/test_prose_discipline.py
+
+cases:
+  - id: CASE_A_CLEAN_TECHNICAL_PROSE
+    description: "Clean, direct econometric description without scaffolding or repetitive tropes."
+    category: "clean_technical"
+    expected_status: "PASS"
+    expected_flags_count: 0
+    forbidden_flag_families:
+      - "category_c_scaffolding"
+      - "canned_transitions"
+      - "sentence_start_repetition"
+      - "contrast_template_repetition"
+    text: |
+      We estimate the parameters of the vector error correction model using annual data from 1950 to 2015.
+      The Johansen trace test indicates the presence of a single cointegrating vector between output and capital.
+      Residual diagnostics confirm that error terms exhibit no serial correlation at conventional significance levels.
+
+  - id: CASE_B_LEGITIMATE_TECHNICAL_VOCABULARY
+    description: "Dense Category A theoretical terms that must remain protected and not flagged as jargon."
+    category: "category_a_protection"
+    expected_status: "PASS"
+    expected_flags_count: 0
+    expected_protected_terms:
+      - "supermultiplier"
+      - "rate of exploitation"
+      - "effective demand"
+    text: |
+      The Sraffian supermultiplier framework demonstrates how autonomous demand expenditures regulate the long-run growth path.
+      In this classical-Marxian model, the rate of exploitation interacts directly with autonomous investment formation.
+      Consequently, effective demand operates as the dominant constraint over physical accumulation.
+
+  - id: CASE_C_REPEATED_CONTRAST_TEMPLATES
+    description: "Paragraph overusing formulaic binary antithesis structures exceeding threshold (>= 2)."
+    category: "contrast_repetition"
+    expected_status: "REVIEW"
+    expected_flags_count: 1
+    expected_flag_families:
+      - "contrast_template_repetition"
+    text: |
+      The result is not a temporary shock, but a permanent structural break in capacity utilization.
+      Rather than reflecting monetary instability, the shift documents deep distributional conflict between labor and capital.
+      Instead of restoring equilibrium, the policy package triggered chronic underutilization across manufacturing sectors.
+
+  - id: CASE_D_REPEATED_SENTENCE_BEGINNINGS
+    description: "Mechanical repetition of the same opening pronoun across 3+ consecutive sentences."
+    category: "sentence_start_repetition"
+    expected_status: "REVIEW"
+    expected_flags_count: 1
+    expected_flag_families:
+      - "sentence_start_repetition"
+    text: |
+      This specification controls for unobserved regional heterogeneity.
+      This specification also includes sector-level fixed effects.
+      This specification demonstrates stability across alternative subsample intervals.
+
+  - id: CASE_E_REPEATED_CANNED_TRANSITIONS
+    description: "Multiple formulaic canned transitions clustered within a single paragraph."
+    category: "canned_transitions"
+    expected_status: "REVIEW"
+    expected_flags_count: 1
+    expected_flag_families:
+      - "canned_transitions"
+    text: |
+      Furthermore, the estimated elasticity remains robust when controlling for lagged output gaps.
+      Moreover, the standard errors adjust for heteroskedasticity across clusters.
+      Additionally, sensitivity checks confirm the stability of the parameter estimates.
+
+  - id: CASE_F_DELIBERATE_RHETORICAL_REPETITION
+    description: "Stylistic repetition that generates a REVIEW warning for editorial inspection without breaking build."
+    category: "deliberate_stylistic_repetition"
+    expected_status: "REVIEW"
+    expected_flags_count: 1
+    note: "Flagging indicates human inspection recommended; does not assert that author's stylistic choice is an error."
+    text: |
+      We examine whether capital accumulation responds to profitability regulation.
+      We examine whether capacity utilization converges toward its normal benchmark.
+      We examine whether wage-led growth regimes remain empirically stable over business cycles.
+
+  - id: CASE_G_ECONOMICS_TECHNICAL_PARAGRAPH
+    description: "Applied economics paragraph with econometrics terminology that must be preserved."
+    category: "economics_domain_preservation"
+    expected_status: "PASS"
+    expected_flags_count: 0
+    expected_protected_terms:
+      - "heteroskedasticity"
+      - "difference-in-differences"
+      - "parallel trends"
+    text: |
+      We employ a generalized difference-in-differences estimator to identify the employment effect of the minimum wage reform.
+      The identifying assumption requires that unobserved confounders satisfy the parallel trends condition prior to enactment.
+      Standard errors are clustered at the county level to guard against heteroskedasticity and spatial autocorrelation.
+
+  - id: CASE_H_POLITICAL_ECONOMY_PARAGRAPH
+    description: "Interdisciplinary political economy passage demonstrating cross-domain terminology protection."
+    category: "political_economy_cross_domain"
+    expected_status: "PASS"
+    expected_flags_count: 0
+    expected_protected_terms:
+      - "reserve army of labor"
+      - "balance-of-payments constraint"
+    text: |
+      The post-war accumulation regime was conditioned by the institutional strength of the reserve army of labor.
+      When domestic wage discipline weakened during the late 1960s, peripheral economies faced a severe balance-of-payments constraint.
+      State macroeconomic intervention subsequently shifted toward restrictive monetary policies.
+
+  - id: CASE_I_GENERIC_INFLATED_SCAFFOLDING
+    description: "Unedited draft laden with workflow labels and branded tournament metaphors."
+    category: "category_c_scaffolding"
+    expected_status: "REVIEW"
+    expected_flags_count: 3
+    expected_flag_families:
+      - "category_c_scaffolding"
+    text: |
+      Our empirical tournament subjects all specifications to strict admissibility gates.
+      The black-box screening protocol reveals profound institutional divergence across historical epochs.
+      This analytical move ensures that the empirical object satisfies system-admissibility criteria.
+
+  - id: CASE_J_FALSE_POSITIVE_GUARD
+    description: "Complex, sophisticated academic prose that must not be falsely flagged as AI or jargon."
+    category: "false_positive_guard"
+    expected_status: "PASS"
+    expected_flags_count: 0
+    text: |
+      Scholars have long recognized that institutional arrangements mediate the transmission of global interest rate shocks.
+      Rather than operating uniformly across jurisdictions, financial integration generates asymmetric domestic vulnerabilities.
+      Central banks in developing nations frequently adopt foreign exchange interventions to buffer domestic liquidity.
+
+  - id: CASE_K_AI_AUTHORSHIP_NON_INFERENCE_GUARD
+    description: "Invariant verification: Diagnostic output schema never generates AI authorship classifications."
+    category: "ai_non_inference"
+    expected_status: "PASS"
+    forbidden_metadata_fields:
+      - "ai_score"
+      - "machine_generated"
+      - "human_likelihood"
+      - "ai_probability"
+      - "detection_verdict"
+    text: |
+      This case verifies that neither the report schema nor any check logic contains synthetic authorship classifiers.
