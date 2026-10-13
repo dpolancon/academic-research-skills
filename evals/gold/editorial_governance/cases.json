@@ -1,0 +1,357 @@
+{
+  "version": "2.0",
+  "task": "editorial_governance",
+  "cases": [
+    {
+      "id": "EG-01",
+      "name": "exact_authorized_bounded_edit",
+      "description": "Textual modification strictly inside authorized anchor bounds produces PASS.",
+      "expected_verdict": "PASS",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-01",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-01",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Clarify baseline methodology.",
+              "scope": {
+                "artifact_id": "manuscript",
+                "locations": [
+                  {
+                    "location_id": "LOC-01",
+                    "start": "<!-- START: METHOD -->\n",
+                    "end": "\n<!-- END: METHOD -->"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "Section 1 Introduction.\n<!-- START: METHOD -->\nInitial baseline description.\n<!-- END: METHOD -->\nSection 2 Conclusion.",
+        "current_text": "Section 1 Introduction.\n<!-- START: METHOD -->\nAuthorized revised methodology text.\n<!-- END: METHOD -->\nSection 2 Conclusion."
+      }
+    },
+    {
+      "id": "EG-02",
+      "name": "unauthorized_change_outside_allowed_region",
+      "description": "Modification occurring outside authorized anchor bounds produces FAIL.",
+      "expected_verdict": "FAIL",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-02",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-02",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Permit edit in method block only.",
+              "scope": {
+                "artifact_id": "manuscript",
+                "locations": [
+                  {
+                    "location_id": "LOC-02",
+                    "start": "<!-- START: METHOD -->\n",
+                    "end": "\n<!-- END: METHOD -->"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "Section 1 Introduction.\n<!-- START: METHOD -->\nInitial baseline description.\n<!-- END: METHOD -->\nSection 2 Conclusion.",
+        "current_text": "Section 1 Introduction EDITED WITHOUT PERMISSION.\n<!-- START: METHOD -->\nAuthorized revised methodology text.\n<!-- END: METHOD -->\nSection 2 Conclusion."
+      }
+    },
+    {
+      "id": "EG-03",
+      "name": "missing_or_moved_anchor",
+      "description": "Required location anchor missing from revised text produces INDETERMINATE.",
+      "expected_verdict": "INDETERMINATE",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-03",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-03",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Anchor check.",
+              "scope": {
+                "artifact_id": "manuscript",
+                "locations": [
+                  {
+                    "location_id": "LOC-03",
+                    "start": "<!-- START: SECTION -->\n",
+                    "end": "\n<!-- END: SECTION -->"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "Preamble.\n<!-- START: SECTION -->\nOriginal content.\n<!-- END: SECTION -->\nPostscript.",
+        "current_text": "Preamble.\nRewritten content without any anchors present.\nPostscript."
+      }
+    },
+    {
+      "id": "EG-04",
+      "name": "source_hash_mismatch",
+      "description": "Baseline source content differing from declared source_hash produces INDETERMINATE.",
+      "expected_verdict": "INDETERMINATE",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-04",
+          "release_policy": "optional",
+          "source_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+          "decisions": [
+            {
+              "decision_id": "D-04",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Verify hash binding."
+            }
+          ]
+        },
+        "baseline_text": "Actual baseline content with different hash.",
+        "current_text": "Actual baseline content with different hash."
+      }
+    },
+    {
+      "id": "EG-05",
+      "name": "accepted_decision_implemented",
+      "description": "Decision marked ACCEPT and ALLOWED with IMPLEMENTED action produces PASS.",
+      "expected_verdict": "PASS",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-05",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-05",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Accepted modification.",
+              "scope": {
+                "whole_document": true
+              }
+            }
+          ]
+        },
+        "baseline_text": "Draft version 1.",
+        "current_text": "Draft version 2 with accepted changes."
+      }
+    },
+    {
+      "id": "EG-06",
+      "name": "accepted_mandatory_decision_not_implemented",
+      "description": "Mandatory decision marked NOT_IMPLEMENTED produces FAIL.",
+      "expected_verdict": "FAIL",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-06",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-06",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "NOT_IMPLEMENTED",
+              "rationale": "Mandatory change required by reviewer that was skipped."
+            }
+          ]
+        },
+        "baseline_text": "Draft version 1.",
+        "current_text": "Draft version 1 unchanged."
+      }
+    },
+    {
+      "id": "EG-07",
+      "name": "rejected_change_absent",
+      "description": "Forbidden change rejected by author does not appear in text; produces PASS.",
+      "expected_verdict": "PASS",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-07",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-07",
+              "resolution": "REJECT",
+              "authorization": "FORBIDDEN",
+              "action": "NOT_IMPLEMENTED",
+              "rationale": "Reject reviewer suggestion to delete footnote 4.",
+              "scope": {
+                "locations": [
+                  {
+                    "location_id": "LOC-07",
+                    "forbidden_text": "DELETED_FOOTNOTE_4"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "Manuscript retains footnote 4.",
+        "current_text": "Manuscript retains footnote 4."
+      }
+    },
+    {
+      "id": "EG-08",
+      "name": "rejected_change_appears",
+      "description": "Change explicitly marked FORBIDDEN appears in revision; produces FAIL.",
+      "expected_verdict": "FAIL",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-08",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-08",
+              "resolution": "REJECT",
+              "authorization": "FORBIDDEN",
+              "action": "OUT_OF_SCOPE_CHANGE",
+              "rationale": "Do not introduce speculative causal claim.",
+              "scope": {
+                "locations": [
+                  {
+                    "location_id": "LOC-08",
+                    "forbidden_text": "we conclusively prove causal primacy"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "Results show positive association.",
+        "current_text": "Results show that we conclusively prove causal primacy across sectors."
+      }
+    },
+    {
+      "id": "EG-09",
+      "name": "unresolved_decision_remains",
+      "description": "Decision with UNRESOLVED status surfaces in count without silently failing build.",
+      "expected_verdict": "INDETERMINATE",
+      "expected_unresolved_count": 1,
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-09",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-09",
+              "resolution": "UNRESOLVED",
+              "authorization": "NOT_SPECIFIED",
+              "action": "PARTIAL",
+              "rationale": "Pending co-author feedback on equation 3."
+            }
+          ]
+        },
+        "baseline_text": "Equation 3 formulation.",
+        "current_text": "Equation 3 formulation."
+      }
+    },
+    {
+      "id": "EG-10",
+      "name": "scholarly_quality_independence",
+      "description": "Revision obeying change boundaries passes governance even with poor prose.",
+      "expected_verdict": "PASS",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-10",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-10",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Update paragraph 2 within bounds.",
+              "scope": {
+                "locations": [
+                  {
+                    "location_id": "LOC-10",
+                    "start": "<!-- P2 -->\n",
+                    "end": "\n<!-- /P2 -->"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "baseline_text": "<!-- P1 -->\nGood prose.\n<!-- /P1 -->\n<!-- P2 -->\nInitial text.\n<!-- /P2 -->",
+        "current_text": "<!-- P1 -->\nGood prose.\n<!-- /P1 -->\n<!-- P2 -->\nCrucially, profound and stark empirical tournaments profoundly stress-test admissibility gates.\n<!-- /P2 -->"
+      }
+    },
+    {
+      "id": "EG-11",
+      "name": "semantic_ambiguity",
+      "description": "Complex semantic decision requiring human interpretation produces INDETERMINATE.",
+      "expected_verdict": "INDETERMINATE",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-11",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-11",
+              "resolution": "ACCEPT",
+              "authorization": "CONDITIONAL",
+              "action": "PARTIAL",
+              "rationale": "Permitted only if historical tone is adequately balanced."
+            }
+          ]
+        },
+        "baseline_text": "Historical summary draft.",
+        "current_text": "Modified historical summary draft."
+      }
+    },
+    {
+      "id": "EG-12",
+      "name": "deterministic_reproducibility",
+      "description": "Identical inputs executed repeatedly produce identical verification outputs.",
+      "expected_verdict": "PASS",
+      "input": {
+        "governance": {
+          "schema_version": "1.0",
+          "governance_id": "gov-eg-12",
+          "release_policy": "optional",
+          "decisions": [
+            {
+              "decision_id": "D-12",
+              "resolution": "ACCEPT",
+              "authorization": "ALLOWED",
+              "action": "IMPLEMENTED",
+              "rationale": "Deterministic verification benchmark.",
+              "scope": {
+                "whole_document": true
+              }
+            }
+          ]
+        },
+        "baseline_text": "Reproducibility benchmark baseline.",
+        "current_text": "Reproducibility benchmark revision."
+      }
+    }
+  ]
+}

@@ -1,0 +1,438 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dpolancon/academic-research-skills/shared/contracts/passport/editorial_governance.schema.json",
+  "title": "Editorial Governance Sidecar Ledger v1.0",
+  "description": "Lightweight shared change-control sidecar contract. Verifies bounded revision authorization, source identity, and unresolved decisions without judging scholarly merit.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "governance_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "release_policy": {
+      "enum": [
+        "optional",
+        "recommended",
+        "required"
+      ],
+      "default": "optional"
+    },
+    "source_artifact_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "active_decision_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unresolved_decision_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/decision"
+      }
+    },
+    "approval_events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/approval"
+      }
+    },
+    "metadata": {
+      "type": "object"
+    }
+  },
+  "required": [
+    "schema_version",
+    "governance_id",
+    "decisions"
+  ],
+  "$defs": {
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "resolution": {
+          "enum": [
+            "ACCEPT",
+            "REJECT",
+            "DEFER",
+            "UNRESOLVED"
+          ]
+        },
+        "authorization": {
+          "enum": [
+            "ALLOWED",
+            "FORBIDDEN",
+            "CONDITIONAL",
+            "NOT_SPECIFIED"
+          ]
+        },
+        "action": {
+          "enum": [
+            "IMPLEMENTED",
+            "NOT_IMPLEMENTED",
+            "PARTIAL",
+            "OUT_OF_SCOPE_CHANGE"
+          ]
+        },
+        "concern_resolution_status": {
+          "anyOf": [
+            {
+              "enum": [
+                "RESOLVED",
+                "DELIBERATE_LIMITATION",
+                "UNRESOLVABLE",
+                "REVIEWER_DISAGREE"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "authorization_status": {
+          "enum": [
+            "AUTHORIZED",
+            "HELD",
+            "BLOCKED",
+            "PROPOSAL_ONLY"
+          ]
+        },
+        "adjudicated_action": {
+          "enum": [
+            "RETAIN",
+            "REWRITE",
+            "RELOCATE",
+            "REMOVE"
+          ]
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        },
+        "scope": {
+          "$ref": "#/$defs/scope"
+        },
+        "source_contract": {
+          "$ref": "#/$defs/source_contract"
+        },
+        "permitted_changes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/permitted_change"
+          }
+        },
+        "invariants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/invariant"
+          }
+        },
+        "retired_invariant_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "uniqueItems": true
+        },
+        "predecessor_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "approval_status": {
+          "enum": [
+            "CANDIDATE",
+            "HUMAN_LOCKED"
+          ]
+        },
+        "approval_event_id": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "payload": {
+          "type": "object"
+        }
+      },
+      "required": [
+        "decision_id"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locations": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/location"
+          }
+        },
+        "anchors": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/location"
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "whole_document": {
+          "type": "boolean"
+        }
+      }
+    },
+    "location": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "location_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_text": {
+          "type": "string"
+        },
+        "authorized_replacement": {
+          "type": "string"
+        },
+        "forbidden_text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id"
+      ]
+    },
+    "source_contract": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "source_role": {
+              "enum": [
+                "DIRECT_EVIDENCE",
+                "HISTORICAL_CONTEXT",
+                "THEORETICAL_MOTIVATION",
+                "METHOD_SOURCE",
+                "INTERPRETIVE_FRAMEWORK",
+                "COUNTERARGUMENT",
+                "DATA_SOURCE"
+              ]
+            },
+            "citation_key": {
+              "type": "string",
+              "minLength": 1
+            },
+            "supports": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "does_not_support": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "ownership_boundary": {
+              "type": "object"
+            },
+            "allowed_attribution_strength": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "forbidden_attribution_strength": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          },
+          "required": [
+            "source_role"
+          ]
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "permitted_change": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operation": {
+          "enum": [
+            "modify_region",
+            "add_reference",
+            "remove_reference"
+          ]
+        },
+        "target_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "operation",
+        "target_id"
+      ]
+    },
+    "invariant": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "invariant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rule": {
+          "type": "string",
+          "minLength": 1
+        },
+        "polarity": {
+          "enum": [
+            "must",
+            "must_not"
+          ]
+        },
+        "intent": {
+          "enum": [
+            "PRESERVE",
+            "DO_NOT_RESTORE"
+          ]
+        },
+        "required_layers": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "source",
+              "rendered_text",
+              "visual"
+            ]
+          },
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "invariant_id",
+        "rule",
+        "polarity"
+      ]
+    },
+    "approval": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "event_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "actor_type": {
+          "const": "human"
+        },
+        "actor_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "recorded_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "evidence_locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "payload_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "required": [
+        "event_id",
+        "decision_id",
+        "actor_type",
+        "actor_id",
+        "recorded_at"
+      ]
+    }
+  }
+}

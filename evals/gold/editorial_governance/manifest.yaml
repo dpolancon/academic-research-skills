@@ -1,0 +1,49 @@
+task_name: editorial_governance
+manifest_version: "2.0"
+task_type: regression-fixture
+provenance: synthetic-gold
+case_count: 12
+cases_path: cases.json
+deterministic_entrypoint: scripts.revision_guard.verify
+release_certification: false
+canonical_cases:
+  - id: EG-01
+    name: exact_authorized_bounded_edit
+    expected_verdict: PASS
+  - id: EG-02
+    name: unauthorized_change_outside_allowed_region
+    expected_verdict: FAIL
+  - id: EG-03
+    name: missing_or_moved_anchor
+    expected_verdict: INDETERMINATE
+  - id: EG-04
+    name: source_hash_mismatch
+    expected_verdict: INDETERMINATE
+  - id: EG-05
+    name: accepted_decision_implemented
+    expected_verdict: PASS
+  - id: EG-06
+    name: accepted_mandatory_decision_not_implemented
+    expected_verdict: FAIL
+  - id: EG-07
+    name: rejected_change_absent
+    expected_verdict: PASS
+  - id: EG-08
+    name: rejected_change_appears
+    expected_verdict: FAIL
+  - id: EG-09
+    name: unresolved_decision_remains
+    expected_verdict: INDETERMINATE
+  - id: EG-10
+    name: scholarly_quality_independence
+    expected_verdict: PASS
+  - id: EG-11
+    name: semantic_ambiguity
+    expected_verdict: INDETERMINATE
+  - id: EG-12
+    name: deterministic_reproducibility
+    expected_verdict: PASS
+notes:
+  - Evaluates change-control compliance only; does not evaluate scholarly correctness or prose quality.
+  - Uncertainty is represented conservatively as INDETERMINATE rather than false FAIL.
+  - Deterministic reproducibility guarantees identical output across repeated invocations.

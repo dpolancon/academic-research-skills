@@ -1,0 +1,219 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/dpolancon/academic-research-skills/shared/contracts/passport/revision_verification.schema.json",
+  "title": "Editorial Governance Revision Verification Report v1.0",
+  "description": "Read-only change-control verification report with Material Passport summary port. Verifies bounded change compliance without evaluating scholarly merit.",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0"
+    },
+    "verifier_version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "governance_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "assurance_scope": {
+      "enum": [
+        "CORE_ONLY",
+        "CHANGE_CONTROL"
+      ]
+    },
+    "release_certified": {
+      "const": false
+    },
+    "release_policy": {
+      "enum": [
+        "optional",
+        "recommended",
+        "required"
+      ]
+    },
+    "overall": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INDETERMINATE"
+      ]
+    },
+    "verdict": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "INDETERMINATE"
+      ]
+    },
+    "passport_summary": {
+      "$ref": "#/$defs/passport_summary"
+    },
+    "summary": {
+      "$ref": "#/$defs/passport_summary"
+    },
+    "freshness": {
+      "enum": [
+        "CURRENT",
+        "STALE",
+        "NOT_EVALUATED"
+      ]
+    },
+    "bindings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "active_invariant_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "unresolved_decisions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "FAIL",
+              "INDETERMINATE",
+              "NOT_REQUIRED"
+            ]
+          },
+          "detail": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "check_id",
+          "status",
+          "detail"
+        ]
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/evidence"
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "verifier_version",
+    "governance_id",
+    "overall",
+    "passport_summary",
+    "checks"
+  ],
+  "$defs": {
+    "passport_summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "governance_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verification_verdict": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INDETERMINATE"
+          ]
+        },
+        "active_decision_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_decision_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "source_hash": {
+          "anyOf": [
+            {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "governance_id",
+        "verification_verdict",
+        "active_decision_count",
+        "unresolved_decision_count",
+        "source_hash"
+      ]
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "invariant_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "layer": {
+          "enum": [
+            "source",
+            "rendered_text",
+            "visual"
+          ]
+        },
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "INDETERMINATE",
+            "NOT_REQUIRED"
+          ]
+        },
+        "artifact_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "observed_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "evidence_locator": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "invariant_id",
+        "layer",
+        "status",
+        "artifact_id",
+        "observed_sha256",
+        "evidence_locator"
+      ]
+    }
+  }
+}
