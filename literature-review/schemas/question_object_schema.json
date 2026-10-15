@@ -1,0 +1,38 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "QuestionObject",
+  "type": "object",
+  "properties": {
+    "question_id": { "type": "string", "pattern": "^Q_[A-Z0-9_]+$" },
+    "question": { "type": "string" },
+    "origins": {
+      "type": "object",
+      "properties": {
+        "project": { "type": "string" },
+        "legacy": { "type": "string" },
+        "source_discovered": { "type": "string" }
+      }
+    },
+    "paragraphs_served": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "applicable_sources": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "expected_answer_format": {
+      "type": "string",
+      "enum": ["EXPLICIT / PARTIAL / NOT LOCATED", "BOUNDED PROPOSITION", "COMPARATIVE MATRIX"]
+    },
+    "required_provenance": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "exclusions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "required": ["question_id", "question", "expected_answer_format", "required_provenance"]
+}

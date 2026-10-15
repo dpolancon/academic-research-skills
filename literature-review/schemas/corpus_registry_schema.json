@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CorpusRegistryEntry",
+  "type": "object",
+  "properties": {
+    "source_key": { "type": "string", "pattern": "^SRC_[A-Z0-9_]+$" },
+    "filename": { "type": "string" },
+    "bibliographic_key": { "type": "string" },
+    "author": { "type": "string" },
+    "year": { "type": "integer" },
+    "local_path": { "type": "string" },
+    "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+    "notebooklm_source_id": { "type": "string" },
+    "source_type": { "type": "string", "enum": ["PDF", "URL", "TEXT", "DOCX"] },
+    "authority_class": {
+      "type": "string",
+      "enum": ["EXTERNAL_LITERATURE", "POLANCO_METHOD", "DATASET_IMPLEMENTATION", "PAPER_ARCHITECTURE"]
+    },
+    "literature_role": { "type": "string" },
+    "ingestion_status": { "type": "string", "enum": ["INGESTED", "LOCAL_ONLY", "PENDING_INGESTION"] },
+    "readiness_status": { "type": "string", "enum": ["READY", "PROCESSING", "FAILED"] },
+    "notes": { "type": "string" }
+  },
+  "required": ["source_key", "filename", "author", "year", "authority_class", "readiness_status"]
+}
