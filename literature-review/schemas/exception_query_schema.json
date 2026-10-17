@@ -1,0 +1,42 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ExceptionQueryRecord",
+  "type": "object",
+  "properties": {
+    "exception_id": { "type": "string", "pattern": "^EXC_[A-Z0-9_]+$" },
+    "trigger_type": {
+      "type": "string",
+      "enum": [
+        "REQUIRED_CLAIM_NOT_LOCATED",
+        "CONFLICT",
+        "PROVENANCE_GAP",
+        "CLAIM_EXCEEDS_NOTE",
+        "ATTRIBUTION_AMBIGUITY",
+        "NEW_QUESTION"
+      ]
+    },
+    "triggered_by_artifact": { "type": "string" },
+    "target_source_keys": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "pattern": "^SRC_[A-Z0-9_]+$" }
+    },
+    "atomic_question_id": { "type": "string", "pattern": "^Q_[A-Z0-9_]+$" },
+    "justification": { "type": "string" },
+    "durable_notes_updated": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "date": { "type": "string" }
+  },
+  "required": [
+    "exception_id",
+    "trigger_type",
+    "triggered_by_artifact",
+    "target_source_keys",
+    "atomic_question_id",
+    "justification",
+    "durable_notes_updated"
+  ]
+}

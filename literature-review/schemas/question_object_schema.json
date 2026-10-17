@@ -4,6 +4,7 @@
   "type": "object",
   "properties": {
     "question_id": { "type": "string", "pattern": "^Q_[A-Z0-9_]+$" },
+    "query_pack_id": { "type": "string", "pattern": "^QP_[A-Z0-9_]+$" },
     "question": { "type": "string" },
     "origins": {
       "type": "object",
@@ -34,5 +35,5 @@
       "items": { "type": "string" }
     }
   },
-  "required": ["question_id", "question", "expected_answer_format", "required_provenance"]
+  "required": ["question_id", "query_pack_id", "question", "expected_answer_format", "required_provenance"]
 }

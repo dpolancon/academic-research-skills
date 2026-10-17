@@ -1,0 +1,62 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ClusterCitationChunkContract",
+  "type": "object",
+  "properties": {
+    "cluster_key": { "type": "string", "pattern": "^CLUS_[A-Z0-9_]+$" },
+    "saturation_status": {
+      "type": "string",
+      "enum": ["IN_PROGRESS", "ADJUDICATION_SATURATED", "EXCEPTION_PENDING"]
+    },
+    "citation_chunk_contracts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "chunk_id": { "type": "string", "pattern": "^CHUNK_[A-Z0-9_]+$" },
+          "candidate_proposition": { "type": "string" },
+          "source_supports": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_key": { "type": "string", "pattern": "^SRC_[A-Z0-9_]+$" },
+                "atomic_question_id": { "type": "string", "pattern": "^Q_[A-Z0-9_]+$" },
+                "support_summary": { "type": "string" },
+                "locator": { "type": "string" }
+              },
+              "required": ["source_key", "atomic_question_id", "support_summary", "locator"]
+            }
+          },
+          "common_denominator": { "type": "string" },
+          "meaningful_differences": { "type": "string" },
+          "permitted_citation_chunk": { "type": "string" },
+          "excluded_members_when_narrowed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "source_key": { "type": "string" },
+                "exclusion_reason": { "type": "string" }
+              },
+              "required": ["source_key", "exclusion_reason"]
+            }
+          },
+          "prohibited_stronger_formulation": { "type": "string" }
+        },
+        "required": [
+          "chunk_id",
+          "candidate_proposition",
+          "source_supports",
+          "common_denominator",
+          "meaningful_differences",
+          "permitted_citation_chunk",
+          "prohibited_stronger_formulation"
+        ]
+      }
+    }
+  },
+  "required": ["cluster_key", "saturation_status", "citation_chunk_contracts"]
+}

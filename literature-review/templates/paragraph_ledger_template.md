@@ -5,32 +5,33 @@
 **Date:** {{DATE}}  
 **Manuscript Section:** {{SECTION}}  
 **Reader Question:** {{READER_QUESTION}}  
+**Exception Queries Triggered:** `NONE` (Consumes upstream saturated notes) / `EXC_{{ID}}`  
 **Prose Drafting Status:** `DO NOT DRAFT (Awaiting Human Ratification)`  
 
 ---
 
-## 1. Paragraph Function & Architectural Context
+## 1. Paragraph Function & Architectural Context (Loop E)
 {{EXPLANATION_OF_PARAGRAPH_ROLE}}
 
 ---
 
-## 2. Evidence Perimeter
+## 2. Upstream Saturated Evidence Perimeter
 
-| Evidence Artifact | Role in {{PARAGRAPH_ID}} | Admissibility Status |
-|---|---|---|
-| `SRC_{{KEY_1}}` | {{ROLE_1}} | `LOCK` |
-| `SRC_{{KEY_2}}` | {{ROLE_2}} | `LOCK` |
-| `SYNTH_{{KEY}}_HINGE` | {{HINGE_ROLE}} | `LOCK` |
+| Evidence Artifact | Saturation / Lock Status | Role in {{PARAGRAPH_ID}} | Admissibility Status |
+|---|---|---|---|
+| `SRC_{{KEY_1}}` | `EXTRACTION_SATURATED` | {{ROLE_1}} | `LOCK` |
+| `CLUS_{{KEY_1}}` | `ADJUDICATION_SATURATED` | {{CLUSTER_CHUNK_ROLE}} (`CHUNK_{{KEY}}_001`) | `LOCK` |
+| `SYNTH_{{KEY}}_HINGE` | `RATIFIED_HINGE` | {{HINGE_ROLE}} | `LOCK` |
 
 ---
 
 ## 3. Sentence-Level Claim & Evidence Ledger
 
-| Sentence Plan | Core Claim Content | Provenance Label | Source Grounding | Boundary / Exclusion |
+| Sentence Plan | Core Claim Content | Provenance Label | Upstream Grounding (`SRC` / `CLUS` / `SYNTH` + `Q_ID`) | Boundary / Exclusion |
 |---|---|---|---|---|
 | **S1 (Opener)** | {{CLAIM_1}} | `AUTHORIAL SYNTHESIS` / `TRANSITION` | {{GROUNDING_1}} | {{BOUNDARY_1}} |
-| **S2 (Primary Claim)** | {{CLAIM_2}} | `DIRECT SOURCE CLAIM` | `SRC_{{KEY_1}}` (p. {{PAGE}}) | {{BOUNDARY_2}} |
-| **S3 (Supporting Claim)**| {{CLAIM_3}} | `DIRECT SOURCE CLAIM` | `SRC_{{KEY_2}}` (p. {{PAGE}}) | {{BOUNDARY_3}} |
+| **S2 (Primary Claim)** | {{CLAIM_2}} | `DIRECT SOURCE CLAIM` | `SRC_{{KEY_1}}` (`{{Q_ID_1}}`, p. {{PAGE}}) | {{BOUNDARY_2}} |
+| **S3 (Cluster Chunk)** | {{CLAIM_3}} | `CLUSTER CITATION CHUNK` | `CLUS_{{KEY_1}}` (`CHUNK_{{KEY}}_001`) | {{BOUNDARY_3}} |
 | **S4 (Hinge Claim)** | {{CLAIM_4}} | `ADJUDICATED CROSS-LITERATURE HINGE` | `SYNTH_{{KEY}}_HINGE` | {{BOUNDARY_4}} |
 | **S5 (Closer/Transition)**| {{CLAIM_5}} | `TRANSITION` | {{TRANSITION_LOGIC}} | {{BOUNDARY_5}} |
 
@@ -43,8 +44,8 @@
 
 ---
 
-## 5. Human Gate Check
-- [x] Canonical source notes verified and locked.
-- [x] Adjudicated hinge verified and locked.
-- [x] Sentence ledger audited against primary text.
+## 5. Exception Query & Human Gate Check
+- [x] Assembled from `EXTRACTION_SATURATED` source notes and `ADJUDICATION_SATURATED` cluster notes.
+- [x] Zero unlogged paragraph-specific backend queries executed.
+- [x] Sentence ledger audited against primary text anchors and `CITATION_CHUNK_CONTRACT` exclusions.
 - [ ] **HUMAN RATIFICATION GATE:** Awaiting explicit user approval before drafting manuscript prose.

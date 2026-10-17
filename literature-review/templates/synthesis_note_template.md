@@ -2,14 +2,15 @@
 
 **Synthesis Key:** `SYNTH_{{KEY}}_HINGE`  
 **Status:** `ADJUDICATED & RATIFIED HINGE` / `THEMATIC RESONANCE ONLY — DO NOT INTERWEAVE`  
-**Sources Joined:**  
-- `SRC_{{KEY_A}}` ({{SOURCE_A_TITLE}})  
-- `SRC_{{KEY_B}}` ({{SOURCE_B_TITLE}})  
-**Target Paragraph(s):** {{PARAGRAPHS}}  
+**Date:** {{DATE}}  
+**Upstream Saturated Artifacts Joined:**  
+- `SRC_{{KEY_A}}` / `CLUS_{{KEY_A}}` ({{SOURCE_A_TITLE}})  
+- `SRC_{{KEY_B}}` / `CLUS_{{KEY_B}}` ({{SOURCE_B_TITLE}})  
+**Target Paragraph(s) / Sections Served:** {{PARAGRAPHS}}  
 
 ---
 
-## 1. Adjudication of Cross-Literature Hinge Criteria
+## 1. Adjudication of Cross-Literature Hinge Criteria (Loop D)
 
 | Condition | Assessment | Evidence / Rationale |
 |---|---|---|
@@ -33,7 +34,7 @@
 
 ---
 
-## 4. Provenance Labels for Downstream Paragraphs
+## 4. Provenance Labels for Downstream Paragraph Ledgers
 - {{SENTENCE_TYPE_A}}: `DIRECT SOURCE CLAIM` (`SRC_{{KEY_A}}`)
 - {{SENTENCE_TYPE_B}}: `DIRECT SOURCE CLAIM` (`SRC_{{KEY_B}}`)
 - {{SENTENCE_TYPE_HINGE}}: `ADJUDICATED CROSS-LITERATURE HINGE` (`SYNTH_{{KEY}}_HINGE`)
