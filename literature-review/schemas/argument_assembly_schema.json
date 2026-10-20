@@ -1,0 +1,178 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ArgumentAssemblySchema",
+  "description": "Schema for first-class Argument Assembly intermediate representation between paragraph ledgers and staged prose.",
+  "type": "object",
+  "properties": {
+    "unit_id": {
+      "type": "string",
+      "description": "Identifier for the argumentative unit or paragraph (e.g., P01, UNIT_INTRO_01)."
+    },
+    "argumentative_job": {
+      "type": "string",
+      "description": "The precise argumentative function this unit performs in the manuscript spine."
+    },
+    "reason_for_inclusion": {
+      "type": "string",
+      "description": "Why the broader paper narrative requires this unit here."
+    },
+    "incoming_dependency": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Units, claims, or contracts that must be established prior to this unit."
+    },
+    "opening_move": {
+      "type": "string",
+      "description": "The rhetorical and conceptual entry point of the paragraph."
+    },
+    "foreground_claims": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Primary substantive claims emphasized in this unit."
+    },
+    "subordinate_claims": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Supporting, contextual, or qualifying claims."
+    },
+    "internal_claim_order": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "Ordered sequence of slot IDs or proposition keys (e.g., S1, S2, S3)."
+    },
+    "cross_literature_weave_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "hinge_id": { "type": "string" },
+          "literatures_bridged": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "permitted_weave_scope": { "type": "string" },
+          "justification": { "type": "string" }
+        },
+        "required": ["hinge_id", "literatures_bridged", "permitted_weave_scope", "justification"]
+      },
+      "description": "Explicit decisions permitting interweaving across distinct literatures under an adjudicated hinge."
+    },
+    "do_not_weave_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "sources_or_traditions": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "reason_for_separation": { "type": "string" },
+          "prohibited_conflation": { "type": "string" }
+        },
+        "required": ["sources_or_traditions", "reason_for_separation", "prohibited_conflation"]
+      },
+      "description": "Explicit boundaries prohibiting the blending of distinct traditions or claims lacking an adjudicated hinge."
+    },
+    "citation_choreography": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "claim_id": { "type": "string" },
+          "permitted_citation_keys": {
+            "type": "array",
+            "items": { "type": "string" }
+          },
+          "joint_citation_permitted": { "type": "boolean" },
+          "placement_guidance": { "type": "string" }
+        },
+        "required": ["claim_id", "permitted_citation_keys", "joint_citation_permitted"]
+      },
+      "description": "Instructions for positioning citations without creating unearned joint claims."
+    },
+    "source_ownership_boundaries": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "concept_or_metric": { "type": "string" },
+          "governing_authority": { "type": "string" },
+          "ownership_rule": { "type": "string" }
+        },
+        "required": ["concept_or_metric", "governing_authority", "ownership_rule"]
+      },
+      "description": "Rules attributing concepts to external literature vs internal methodology vs current manuscript."
+    },
+    "required_qualifications": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Necessary caveats, empirical scope limits, or theoretical conditions that must accompany claims."
+    },
+    "terminology_to_preserve": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Exact technical or author-specific terms that must not be paraphrased away."
+    },
+    "terms_to_avoid": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Misleading, conflating, or overclaiming terms forbidden in this unit."
+    },
+    "transition_from_previous": {
+      "type": "string",
+      "description": "How this unit bridges from the preceding argumentative unit."
+    },
+    "exit_transition_forward": {
+      "type": "string",
+      "description": "How this unit exits into the subsequent unit."
+    },
+    "rhetorical_pressure_point": {
+      "type": "string",
+      "description": "The exact conceptual tension or critical distinction that must be resolved clearly."
+    },
+    "expected_density": {
+      "type": "string",
+      "enum": ["COMPACT", "MODERATE", "DETAILED_TECHNICAL", "EXTENDED_EXPOSITION"],
+      "description": "Target analytical density and proportional length."
+    },
+    "natural_prose_risk_flags": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Known risks (e.g. topic-sentence monotony, false equivalence, metadiscourse leakage)."
+    },
+    "prohibited_stronger_argument": {
+      "type": "string",
+      "description": "The strong, illicit claim that this argument must explicitly refrain from making."
+    },
+    "evidence_lock_references": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1,
+      "description": "References to locked paragraph ledgers, cluster notes, or citation contracts."
+    },
+    "human_status": {
+      "type": "string",
+      "enum": ["DRAFT", "PROPOSED", "RATIFICATION_READY", "LOCK"],
+      "description": "Human sovereignty status of this argument assembly unit."
+    }
+  },
+  "required": [
+    "unit_id",
+    "argumentative_job",
+    "reason_for_inclusion",
+    "opening_move",
+    "foreground_claims",
+    "internal_claim_order",
+    "cross_literature_weave_decisions",
+    "do_not_weave_boundaries",
+    "citation_choreography",
+    "source_ownership_boundaries",
+    "required_qualifications",
+    "terminology_to_preserve",
+    "prohibited_stronger_argument",
+    "evidence_lock_references",
+    "human_status"
+  ]
+}

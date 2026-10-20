@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ControlBundleManifestSchema",
+  "description": "Schema for the declarative manifest defining a project literature review control bundle.",
+  "type": "object",
+  "properties": {
+    "bundle_name": { "type": "string" },
+    "bundle_version": { "type": "string" },
+    "project_scope": { "type": "string" },
+    "governance_artifacts": {
+      "type": "object",
+      "properties": {
+        "class_a_human_sovereign": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 5
+        },
+        "class_b_evidence_governed": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 3
+        },
+        "class_c_machine_state": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 2
+        }
+      },
+      "required": ["class_a_human_sovereign", "class_b_evidence_governed", "class_c_machine_state"]
+    },
+    "human_reserved_powers": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 5
+    },
+    "bounded_autonomous_operations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 5
+    },
+    "max_repair_iterations": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 10,
+      "default": 4
+    }
+  },
+  "required": [
+    "bundle_name",
+    "bundle_version",
+    "project_scope",
+    "governance_artifacts",
+    "human_reserved_powers",
+    "bounded_autonomous_operations"
+  ]
+}

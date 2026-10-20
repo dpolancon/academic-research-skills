@@ -1,0 +1,46 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CorpusRegistryEntry",
+  "type": "object",
+  "properties": {
+    "source_key": { "type": "string", "pattern": "^SRC_[A-Z0-9_]+$" },
+    "filename": { "type": "string" },
+    "bibliographic_key": { "type": "string" },
+    "author": { "type": "string" },
+    "year": { "type": "integer" },
+    "local_path": { "type": "string" },
+    "sha256": { "type": "string" },
+    "notebooklm_source_id": { "type": "string" },
+    "source_type": { "type": "string", "enum": ["PDF", "URL", "TEXT", "DOCX", "REPO"] },
+    "authority_class": {
+      "type": "string",
+      "enum": ["EXTERNAL_LITERATURE", "INTERNAL_METHODOLOGY", "DATASET_IMPLEMENTATION", "PAPER_ARCHITECTURE"]
+    },
+    "source_tier": {
+      "type": "string",
+      "enum": ["TIER_A_CORE", "TIER_B_SUPPORTING", "TIER_C_CONTEXTUAL", "TIER_D_INTERNAL_AUTHORITY"]
+    },
+    "literature_role": { "type": "string" },
+    "assigned_query_packs": {
+      "type": "array",
+      "items": { "type": "string", "pattern": "^(QP_[A-Z0-9_]+|LOOP_A_DIRECT_AUTHORITY)$" }
+    },
+    "ingestion_status": { "type": "string", "enum": ["INGESTED", "LOCAL_ONLY", "PENDING_INGESTION"] },
+    "readiness_status": { "type": "string", "enum": ["READY", "PROCESSING", "FAILED"] },
+    "saturation_status": {
+      "type": "string",
+      "enum": ["UNQUERIED", "IN_PROGRESS", "EXTRACTION_SATURATED", "EXCEPTION_PENDING"]
+    },
+    "notes": { "type": "string" }
+  },
+  "required": [
+    "source_key",
+    "filename",
+    "author",
+    "year",
+    "authority_class",
+    "source_tier",
+    "readiness_status",
+    "saturation_status"
+  ]
+}

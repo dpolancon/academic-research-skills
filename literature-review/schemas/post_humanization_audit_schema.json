@@ -1,0 +1,95 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PostHumanizationClaimImmobilityAuditSchema",
+  "description": "Schema for mandatory verification that stylistic humanization/polishing did not alter evidentiary bounds or strengthen claims.",
+  "type": "object",
+  "properties": {
+    "unit_id": { "type": "string" },
+    "manuscript_ref": { "type": "string" },
+    "audit_verdict": {
+      "type": "string",
+      "enum": ["PASS", "FAIL", "REPAIR_REQUIRED"]
+    },
+    "sentences_audited": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "sentence_index": { "type": "integer" },
+          "sentence_text": { "type": "string" },
+          "classification": {
+            "type": "string",
+            "enum": [
+              "SUPPORTED",
+              "TRANSITION",
+              "PURE_RHETORICAL_CONNECTIVE",
+              "UNSUPPORTED"
+            ]
+          },
+          "mapped_ledger_slot": {
+            "type": "string",
+            "description": "The exact ledger slot warranted (e.g. P02.S5). Required if SUPPORTED."
+          },
+          "mapped_argument_assembly_move": {
+            "type": "string",
+            "description": "The approved move ID or category in argument assembly."
+          },
+          "claim_immobility_check": {
+            "type": "object",
+            "properties": {
+              "causal_direction_unchanged": { "type": "boolean" },
+              "quantifiers_not_amplified": { "type": "boolean" },
+              "prohibited_claim_avoided": { "type": "boolean" },
+              "attribution_unaltered": { "type": "boolean" },
+              "qualifications_intact": { "type": "boolean" }
+            },
+            "required": [
+              "causal_direction_unchanged",
+              "quantifiers_not_amplified",
+              "prohibited_claim_avoided",
+              "attribution_unaltered",
+              "qualifications_intact"
+            ]
+          },
+          "notes": { "type": "string" }
+        },
+        "required": [
+          "sentence_index",
+          "sentence_text",
+          "classification",
+          "claim_immobility_check"
+        ]
+      }
+    },
+    "summary_metrics": {
+      "type": "object",
+      "properties": {
+        "total_sentences": { "type": "integer" },
+        "supported_count": { "type": "integer" },
+        "transition_count": { "type": "integer" },
+        "rhetorical_count": { "type": "integer" },
+        "unsupported_count": { "type": "integer" },
+        "claim_strengthening_detected": { "type": "boolean" }
+      },
+      "required": [
+        "total_sentences",
+        "supported_count",
+        "transition_count",
+        "rhetorical_count",
+        "unsupported_count",
+        "claim_strengthening_detected"
+      ]
+    },
+    "auditor": { "type": "string" },
+    "timestamp": { "type": "string" }
+  },
+  "required": [
+    "unit_id",
+    "manuscript_ref",
+    "audit_verdict",
+    "sentences_audited",
+    "summary_metrics",
+    "auditor"
+  ]
+}
