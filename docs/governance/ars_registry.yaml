@@ -5,8 +5,8 @@
 # capability ownership mappings.
 #
 # Schema: ars-governance-registry-v1.0
-# Version: 1.1.0
-# Last Updated: 2026-10-13 (Wave C5 Legacy Deprecation & Governance Reconciliation)
+# Version: 1.3.0
+# Last Updated: 2026-10-19 (Wave E Dissemination Architecture Reconciliation)
 #
 # Core Architectural Principles:
 # 1. Components ("What exists?") and Capabilities ("What responsibility is owned?")
@@ -18,8 +18,8 @@
 # 5. Deprecated aliases own zero canonical substantive capabilities.
 # ==============================================================================
 
-version: "1.1.0"
-last_updated: "2026-10-13"
+version: "1.3.0"
+last_updated: "2026-10-19"
 schema: "ars-governance-registry-v1.0"
 
 # ==============================================================================
@@ -96,7 +96,7 @@ components:
     mode_bearing: false
     target_path: "skills/domain/applied-econometrics-pe"
     provenance_source: "Diego Polanco (Local creation, UMass Amherst tradition)"
-    notes: "Applied time-series econometrics in political economy (forensic replication, integration order governance, lag selection)."
+    notes: "Applied time-series econometrics in political economy (forensic replication, integration order governance, Toda-Yamamoto lag selection, cointegration rank audits). Refactored in Wave D2: eliminated forced regime switching; bounded strictly to implemented PE time-series methods; does not claim micro causal inference (DID, IV, RDD) or non-linear state-space estimators; preserves empirical non-findings without narrative override."
 
   - component_id: "heterodox-economics-review"
     display_name: "Heterodox Economics Review"
@@ -107,7 +107,7 @@ components:
     mode_bearing: false
     target_path: "skills/domain/heterodox-macro-modeling"
     provenance_source: "Diego Polanco (Local creation)"
-    notes: "Mathematical and dynamical systems consistency for Post-Keynesian, Marxian, Sraffian, and SFC growth and distribution models."
+    notes: "Formal mathematical modeling, dynamical systems, and accounting consistency for heterodox macroeconomics (Goodwin predator-prey, Post-Keynesian, Marxian, and Stock-Flow Consistent models). Implemented in Wave D3 with Jacobian/eigenvalue stability derivations, phase diagrams, and SFC accounting closures. Derives testable restrictions and theoretical state variables; does not own empirical estimator selection or econometric testing."
 
   - component_id: "econ-slides"
     display_name: "Economics Slides"
@@ -120,16 +120,40 @@ components:
     provenance_source: "Lu Han (hanlulong/econ-slides-skill) + local adaptation"
     notes: "Authoritative production and verification of academic economics Beamer presentation slide decks."
 
-  - component_id: "editor-jacobin-lat"
-    display_name: "Editor Jacobin América Latina"
-    runtime_path: "editor-jacobin-lat"
+  - component_id: "public-scholarship"
+    display_name: "Public Scholarship"
+    runtime_path: "public-scholarship"
     current_implementation_type: "SKILL"
     semantic_role: "DISSEMINATION_SKILL"
-    lifecycle_status: "PLANNED_MIGRATION"
+    lifecycle_status: "ACTIVE"
     mode_bearing: false
     target_path: "skills/dissemination/public-scholarship"
+    provenance_source: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Translation of research into accessible public essays across multiple genres (op-eds, policy briefs, explainers); enforces des-specialization without banalization and empirical claim discipline; consumes venue profiles for outlet calibration."
+
+  - component_id: "editor-jacobin-lat"
+    display_name: "Editor Jacobin América Latina (Legacy Alias)"
+    runtime_path: "editor-jacobin-lat"
+    current_implementation_type: "LEGACY_SKILL"
+    semantic_role: "DISSEMINATION_SKILL"
+    lifecycle_status: "DEPRECATED"
+    mode_bearing: false
+    target_path: "profiles/venues/jacobin-lat.md"
     provenance_source: "Diego Polanco (Local creation)"
-    notes: "Translation of research into accessible public essays; planned decomposition into generic public-scholarship skill + venue profile in Wave E."
+    replacement_path: "profiles/venues/jacobin-lat.md"
+    delegates_to: "public-scholarship"
+    notes: "DEPRECATED compatibility redirect. Canonical dissemination skill is public-scholarship; calibration profile is profiles/venues/jacobin-lat.md."
+
+  - component_id: "venue-jacobin-lat"
+    display_name: "Venue Profile: Jacobin América Latina"
+    runtime_path: "profiles/venues/jacobin-lat.md"
+    current_implementation_type: "PROFILE"
+    semantic_role: "PROFILE"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "profiles/venues/jacobin-lat.md"
+    provenance_source: "Extracted from editor-jacobin-lat (Wave E)"
+    notes: "Venue editorial profile for Jacobin América Latina (Martín Arboleda criteria, 12-word declarative headline, no subtitles, anti-agitprop blacklist). Calibrates public-scholarship."
 
   - component_id: "advisor-reviewer"
     display_name: "Advisor Reviewer (Legacy Alias)"
@@ -235,6 +259,28 @@ components:
     provenance_source: "Extracted from PE-phd-committee (Wave C3)"
     notes: "Doctoral dissertation committee composition referencing Ash, Basu, Young. Calibration input for academic-paper-reviewer."
 
+  - component_id: "political-economy-research"
+    display_name: "Political Economy Research"
+    runtime_path: "political-economy-research"
+    current_implementation_type: "SKILL"
+    semantic_role: "DOMAIN_SKILL"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "skills/domain/political-economy-research"
+    provenance_source: "Diego Polanco (Local creation, Wave D1/D4)"
+    notes: "Comparative-historical political economy, mechanism reasoning, periodization, and institutional analysis. Preserves strict boundaries: delegates formal modeling to heterodox-economics-review, econometric estimation to umass-applied-econometrics, source discovery to deep-research, manuscript writing to academic-paper/econ-write, and external review to academic-paper-reviewer."
+
+  - component_id: "historical-source-criticism"
+    display_name: "Historical Source Criticism Protocol"
+    runtime_path: "shared/protocols/historical_source_criticism_protocol.md"
+    current_implementation_type: "SHARED_PROTOCOL"
+    semantic_role: "SHARED_PROTOCOL"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "shared/protocols/historical_source_criticism_protocol.md"
+    provenance_source: "Diego Polanco (Local creation, Wave D4)"
+    notes: "Claim-relative historical source criticism standard (14 diagnostic dimensions, 4 canonical verdicts: SUPPORTS, UNDERMINES, SILENT, INDETERMINATE; no universal hierarchy; no causal inference leak). Governing shared standard, not an autonomous executable skill; consumed conditionally within requesting workflows (e.g. political-economy-research or deep-research)."
+
 # ==============================================================================
 # SECTION 2: CAPABILITIES (What responsibilities are owned)
 # ==============================================================================
@@ -311,32 +357,32 @@ capabilities:
     notes: "Sole domain policy owner for economics writing; direct invocation for bounded economics writing; consumed by academic-paper for full manuscripts; delegates peer review to academic-paper-reviewer and slide production to econ-slides."
 
   - capability_id: "applied_econometrics_political_economy"
-    description: "Applied time-series econometrics in political economy (forensic replication, integration order governance, lag selection)."
+    description: "Applied time-series econometrics in political economy (forensic replication, integration order governance, Toda-Yamamoto lag selection, cointegration rank audits)."
     current_owner: "umass-applied-econometrics"
     current_owner_type: "DOMAIN_SKILL"
     target_owner: "skills/domain/applied-econometrics-pe"
     target_owner_type: "DOMAIN_SKILL"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "academic-paper"
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
     provenance: "Diego Polanco (Local creation, UMass Amherst tradition)"
-    notes: "Currently contains embedded tools and forced regime-switching rule H.4; planned refactor in Wave D."
+    notes: "Time-series econometrics for political economy. Implements forensic replication, integration order governance (ADF/KPSS), Toda-Yamamoto (k+d_max) lag selection, and rank audits. Refactored in Wave D2: eliminated forced regime switching; bounded strictly to implemented linear VAR/VECM methods; does not claim micro causal inference (DID/IV/RDD) or general non-linear estimators."
 
   - capability_id: "heterodox_macro_modeling"
-    description: "Mathematical and dynamical systems consistency for Post-Keynesian, Marxian, Sraffian, and SFC growth and distribution models."
+    description: "Formal dynamical modeling, stability analysis (Jacobian/eigenvalues), and SFC balance-sheet/transaction-flow accounting consistency for heterodox macroeconomics."
     current_owner: "heterodox-economics-review"
     current_owner_type: "DOMAIN_SKILL"
     target_owner: "skills/domain/heterodox-macro-modeling"
     target_owner_type: "DOMAIN_SKILL"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "academic-paper"
       - "academic-paper-reviewer"
     forbidden_duplicate_owners: true
     provenance: "Diego Polanco (Local creation)"
-    notes: "Currently a narrow 29-line check for Sraffian Supermultiplier singularities; planned expansion in Wave D."
+    notes: "Expanded in Wave D3 to full heterodox macro-modeling architecture (canonical Goodwin baseline, 2D Jacobian stability, SFC closures, and testable theoretical restrictions). Distinct from applied econometrics: theoretical models do not automatically select estimators or substitute for empirical testing."
 
   - capability_id: "scholarly_slide_production"
     description: "Authoritative production and verification of academic economics Beamer presentation slide decks."
@@ -352,17 +398,17 @@ capabilities:
     notes: "Sole owner of Beamer decks; absorbs presentation guidance from econ-write; Fondecyt project files quarantined from core distribution."
 
   - capability_id: "public_scholarship_translation"
-    description: "Translation of dense academic research into accessible, non-specialized public essays and opinion columns."
-    current_owner: "editor-jacobin-lat"
+    description: "Translation of dense academic research into accessible, non-specialized public essays, op-eds, policy briefs, and educational explainers."
+    current_owner: "public-scholarship"
     current_owner_type: "DISSEMINATION_SKILL"
     target_owner: "skills/dissemination/public-scholarship"
     target_owner_type: "DISSEMINATION_SKILL"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "public_scholars"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently conflated with Jacobin América Latina house style; planned decomposition in Wave E."
+    provenance: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Sole canonical owner of public scholarship translation; decomposes into generic public craft and consumes venue profiles for specific outlets."
 
   - capability_id: "prose_discipline_and_lexical_audit"
     description: "Category A/B/C prose discipline protocol, technical vocabulary protection, and evidential claim-strength verb mapping."
@@ -405,7 +451,7 @@ capabilities:
       - "applied-econometrics-pe"
     forbidden_duplicate_owners: true
     provenance: "Diego Polanco (Local creation, embedded in umass-applied-econometrics)"
-    notes: "Embedded markdown protocol; planned extraction to tools/ in Wave D."
+    notes: "Deterministic diagnostic protocol for theoretical vs stochastic regressor admissibility, collinearity, and VECM rank audit. Refactored in Wave D2 to decouple stochastic admissibility from theoretical mechanism plausibility."
 
   - capability_id: "toda_yamamoto_specification_mapping"
     description: "Deterministic levels-augmented (k + d_max) VAR lag selection grid mapping and Modified Wald test reporting."
@@ -418,7 +464,7 @@ capabilities:
       - "applied-econometrics-pe"
     forbidden_duplicate_owners: true
     provenance: "Diego Polanco (Local creation, benchmarked on Amiri & Ventelou 2012)"
-    notes: "Embedded markdown protocol; planned extraction to tools/ in Wave D."
+    notes: "Deterministic levels-augmented (k + d_max) VAR lag selection grid mapping and Modified Wald test reporting. Refactored in Wave D2 to enforce lag order verification without conflating Granger causality with structural causal proof."
 
   - capability_id: "irf_girf_generation"
     description: "Publication-grade Impulse Response Function plotting and reporting for linear VAR/SVAR and TVAR models."
@@ -476,16 +522,16 @@ capabilities:
 
   - capability_id: "venue_jacobin_lat_editorial"
     description: "Editorial style guide, headline constraints (declarative thesis, no subtitle, max 12 words), and Martín Arboleda criteria."
-    current_owner: "editor-jacobin-lat"
-    current_owner_type: "DISSEMINATION_SKILL"
-    target_owner: "profiles/venues/jacobin-lat"
+    current_owner: "venue-jacobin-lat"
+    current_owner_type: "PROFILE"
+    target_owner: "profiles/venues/jacobin-lat.md"
     target_owner_type: "PROFILE"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "public-scholarship"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently embedded within editor-jacobin-lat; planned extraction to venue profile in Wave E."
+    provenance: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Durable editorial preferences of Jacobin América Latina (Martín Arboleda criteria). Calibrates public-scholarship; does not own translation capability."
 
   - capability_id: "author_diego_academic_voice"
     description: "Authorial voice, preferred theoretical phrasing, citation density preferences, and bilingual Spanish-English idioms."
@@ -502,15 +548,45 @@ capabilities:
     notes: "Currently ad-hoc across style calibration and prose critic; planned formal profile in Wave C."
 
   - capability_id: "political_economy_research_methodology"
-    description: "Comparative-historical political economy, process tracing, periodization, historical source criticism, and institutional analysis."
-    current_owner: null
-    current_owner_type: null
-    candidate_source: null
+    description: "Comparative-historical political economy, mechanism reasoning, periodization, and institutional analysis."
+    current_owner: "political-economy-research"
+    current_owner_type: "DOMAIN_SKILL"
     target_owner: "skills/domain/political-economy-research"
     target_owner_type: "DOMAIN_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic-paper"
+      - "academic-pipeline"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, Wave D1/D4)"
+    notes: "Sole canonical owner of comparative-historical political economy methodology. Implemented in Wave D4. Delegates theoretical models to heterodox-economics-review, econometric tests to umass-applied-econometrics, source retrieval to deep-research, and manuscript drafting to academic-paper/econ-write."
+
+  - capability_id: "claim_relative_source_criticism"
+    description: "Governing standard for claim-relative historical source criticism, 14-dimension diagnostic repertoire, and evidentiary warrant calibration."
+    current_owner: "historical-source-criticism"
+    current_owner_type: "SHARED_PROTOCOL"
+    target_owner: "shared/protocols/historical_source_criticism_protocol.md"
+    target_owner_type: "SHARED_PROTOCOL"
+    migration_status: "CURRENT"
+    consumers:
+      - "political-economy-research"
+      - "deep-research"
+      - "academic-paper"
+      - "academic-paper-reviewer"
+    forbidden_duplicate_owners: true
+    provenance: "Diego Polanco (Local creation, Wave D4)"
+    notes: "Shared protocol governing source assessment relative to specific claims. Not an autonomous routable skill or agent; executed conditionally within requesting workflows. Does not assess stochastic admissibility."
+
+  - capability_id: "causal_inference_microeconometrics"
+    description: "Micro-econometric causal inference (difference-in-differences, instrumental variables, regression discontinuity, synthetic controls, staggered adoption)."
+    current_owner: null
+    current_owner_type: null
+    target_owner: null
     migration_status: "CANDIDATE"
     consumers:
       - "academic-paper"
+      - "academic-pipeline"
     forbidden_duplicate_owners: true
-    provenance: "Proposed new domain capability"
-    notes: "Demonstrated intellectual gap; design and validate in Wave D."
+    provenance: "Acknowledged absence (Wave D2 / D4.1 / D5.1 / D6); CANDIDATE FUTURE CAPABILITY GAP — NOT AUTHORIZED"
+    notes: "NO CURRENT CANONICAL OWNER. Bounded out of umass-applied-econometrics (which owns time-series methods only) and econ-write (which owns writing only). Requests for causal identification must acknowledge this gap and not misroute to existing skills."

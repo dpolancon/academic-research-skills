@@ -34,25 +34,12 @@ REQUIRED_CAPABILITY_FIELDS = {
 }
 
 
-def validate_registry(repo_root: Path) -> bool:
-    registry_path = repo_root / "docs" / "governance" / "ars_registry.yaml"
-    if not registry_path.exists():
-        print(f"FAIL: Registry file not found at {registry_path}")
-        return False
-
-    try:
-        with open(registry_path, "r", encoding="utf-8") as f:
-            data = yaml.safe_load(f)
-    except Exception as e:
-        print(f"FAIL: YAML parsing error: {e}")
-        return False
-
+def validate_registry_data(data: dict, repo_root: Path) -> list[str]:
     errors = []
 
     # Check top-level structure
     if not isinstance(data, dict):
-        print("FAIL: Root of registry must be a mapping/dict.")
-        return False
+        return ["Root of registry must be a mapping/dict."]
 
     components_list = data.get("components")
     capabilities_list = data.get("capabilities")
@@ -260,13 +247,104 @@ def validate_registry(repo_root: Path) -> bool:
     if not pd_cap or pd_cap.get("current_owner") != "prose-discipline":
         errors.append("Wave C5 violation: 'prose_discipline_and_lexical_audit' must be owned by 'prose-discipline'.")
 
-    # Final summary output
+    # 4. Validate Wave D6 Domain Governance Invariants
+    # Invariant D6-1: political-economy-research is an ACTIVE domain skill owning political_economy_research_methodology
+    pe_comp = components_by_id.get("political-economy-research")
+    if not pe_comp or pe_comp.get("lifecycle_status") != "ACTIVE" or pe_comp.get("semantic_role") != "DOMAIN_SKILL":
+        errors.append("Wave D6 violation: 'political-economy-research' must be an ACTIVE DOMAIN_SKILL in registry.")
+    pe_cap = capabilities_by_id.get("political_economy_research_methodology")
+    if not pe_cap or pe_cap.get("current_owner") != "political-economy-research" or pe_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave D6 violation: 'political_economy_research_methodology' must be currently owned by 'political-economy-research'.")
+
+    # Invariant D6-2: historical-source-criticism is an ACTIVE shared protocol owning claim_relative_source_criticism
+    hsc_comp = components_by_id.get("historical-source-criticism")
+    if not hsc_comp or hsc_comp.get("lifecycle_status") != "ACTIVE" or hsc_comp.get("semantic_role") != "SHARED_PROTOCOL":
+        errors.append("Wave D6 violation: 'historical-source-criticism' must be an ACTIVE SHARED_PROTOCOL in registry.")
+    hsc_cap = capabilities_by_id.get("claim_relative_source_criticism")
+    if not hsc_cap or hsc_cap.get("current_owner") != "historical-source-criticism" or hsc_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave D6 violation: 'claim_relative_source_criticism' must be owned by 'historical-source-criticism'.")
+
+    # Invariant D6-3: umass-applied-econometrics owns applied_econometrics_political_economy with CURRENT migration_status
+    ae_comp = components_by_id.get("umass-applied-econometrics")
+    if not ae_comp or ae_comp.get("lifecycle_status") != "ACTIVE" or ae_comp.get("semantic_role") != "DOMAIN_SKILL":
+        errors.append("Wave D6 violation: 'umass-applied-econometrics' must be an ACTIVE DOMAIN_SKILL in registry.")
+    ae_cap = capabilities_by_id.get("applied_econometrics_political_economy")
+    if not ae_cap or ae_cap.get("current_owner") != "umass-applied-econometrics" or ae_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave D6 violation: 'applied_econometrics_political_economy' must be currently owned by 'umass-applied-econometrics'.")
+
+    # Invariant D6-4: heterodox-economics-review owns heterodox_macro_modeling with CURRENT migration_status
+    macro_comp = components_by_id.get("heterodox-economics-review")
+    if not macro_comp or macro_comp.get("lifecycle_status") != "ACTIVE" or macro_comp.get("semantic_role") != "DOMAIN_SKILL":
+        errors.append("Wave D6 violation: 'heterodox-economics-review' must be an ACTIVE DOMAIN_SKILL in registry.")
+    macro_cap = capabilities_by_id.get("heterodox_macro_modeling")
+    if not macro_cap or macro_cap.get("current_owner") != "heterodox-economics-review" or macro_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave D6 violation: 'heterodox_macro_modeling' must be currently owned by 'heterodox-economics-review'.")
+
+    # Invariant D6-5: causal_inference_microeconometrics is preserved as unassigned capability gap (CANDIDATE, current_owner: null)
+    ci_cap = capabilities_by_id.get("causal_inference_microeconometrics")
+    if not ci_cap:
+        errors.append("Wave D6 violation: 'causal_inference_microeconometrics' capability must exist in registry.")
+    elif ci_cap.get("current_owner") is not None or ci_cap.get("migration_status") != "CANDIDATE":
+        errors.append("Wave D6 violation: 'causal_inference_microeconometrics' must have current_owner: null and migration_status: CANDIDATE.")
+
+    # 5. Validate Wave E Dissemination Governance Invariants
+    # Invariant E-1: public-scholarship is an ACTIVE DISSEMINATION_SKILL owning public_scholarship_translation
+    ps_comp = components_by_id.get("public-scholarship")
+    if not ps_comp or ps_comp.get("lifecycle_status") != "ACTIVE" or ps_comp.get("semantic_role") != "DISSEMINATION_SKILL":
+        errors.append("Wave E violation: 'public-scholarship' must be an ACTIVE DISSEMINATION_SKILL in registry.")
+    ps_cap = capabilities_by_id.get("public_scholarship_translation")
+    if not ps_cap or ps_cap.get("current_owner") != "public-scholarship" or ps_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave E violation: 'public_scholarship_translation' must be currently owned by 'public-scholarship'.")
+
+    # Invariant E-2: venue-jacobin-lat is an ACTIVE PROFILE owning venue_jacobin_lat_editorial
+    vj_comp = components_by_id.get("venue-jacobin-lat")
+    if not vj_comp or vj_comp.get("lifecycle_status") != "ACTIVE" or vj_comp.get("semantic_role") != "PROFILE":
+        errors.append("Wave E violation: 'venue-jacobin-lat' must be an ACTIVE PROFILE in registry.")
+    vj_cap = capabilities_by_id.get("venue_jacobin_lat_editorial")
+    if not vj_cap or vj_cap.get("current_owner") != "venue-jacobin-lat" or vj_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave E violation: 'venue_jacobin_lat_editorial' must be owned by 'venue-jacobin-lat'.")
+
+    # Invariant E-3: editor-jacobin-lat is a DEPRECATED LEGACY_SKILL delegating to public-scholarship
+    ej_comp = components_by_id.get("editor-jacobin-lat")
+    if not ej_comp or ej_comp.get("lifecycle_status") != "DEPRECATED" or ej_comp.get("current_implementation_type") != "LEGACY_SKILL":
+        errors.append("Wave E violation: 'editor-jacobin-lat' must be a DEPRECATED LEGACY_SKILL in registry.")
+    if ej_comp and ej_comp.get("delegates_to") != "public-scholarship":
+        errors.append("Wave E violation: 'editor-jacobin-lat' must delegate_to 'public-scholarship'.")
+    if ej_comp and ej_comp.get("replacement_path") != "profiles/venues/jacobin-lat.md":
+        errors.append("Wave E violation: 'editor-jacobin-lat' replacement_path must be 'profiles/venues/jacobin-lat.md'.")
+
+    return errors
+
+
+def validate_registry(repo_root: Path) -> bool:
+    registry_path = repo_root / "docs" / "governance" / "ars_registry.yaml"
+    if not registry_path.exists():
+        print(f"FAIL: Registry file not found at {registry_path}")
+        return False
+
+    try:
+        with open(registry_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f)
+    except Exception as e:
+        print(f"FAIL: YAML parsing error: {e}")
+        return False
+
+    errors = validate_registry_data(data, repo_root)
+
     if errors:
         print(f"FAIL: {len(errors)} validation errors found in ars_registry.yaml:")
         for err in errors:
             print(f"  - {err}")
         return False
 
+    component_ids = {
+        c["component_id"] for c in data.get("components", [])
+        if isinstance(c, dict) and "component_id" in c
+    }
+    capability_ids = {
+        c["capability_id"] for c in data.get("capabilities", [])
+        if isinstance(c, dict) and "capability_id" in c
+    }
     print("PASS: ars_registry.yaml is valid.")
     print(f"  - Components validated: {len(component_ids)}")
     print(f"  - Capabilities validated: {len(capability_ids)}")

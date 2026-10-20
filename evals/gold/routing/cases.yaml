@@ -1,14 +1,14 @@
 # ==============================================================================
-# ARS Wave B1.1 Routing Evaluation Fixture (cases.yaml)
+# ARS Wave B1.1 / Wave D6 Routing Evaluation Fixture (cases.yaml)
 # ==============================================================================
 # Canonical evaluation cases testing deterministic capability precedence,
 # runtime routing decisions, and adversarial boundary disambiguation across ARS.
 #
-# Schema: ars-routing-eval-v1.1
-# Baseline: a87e8b2
+# Schema: ars-routing-eval-v1.2
+# Baseline: aa5283e
 # ==============================================================================
 
-version: "1.1.0"
+version: "1.2.0"
 benchmark: "ars-routing-precedence-v1"
 
 cases:
@@ -230,3 +230,204 @@ cases:
       - "academic-paper-reviewer"
     expected_action: "LIFECYCLE_WITH_DOMAIN_POLICY"
     rationale: "Author-side manuscript revision belongs to academic-paper consuming econ-write, distinct from simulated external peer review."
+
+  # ----------------------------------------------------------------------------
+  # PART 3: Wave D Domain Architecture & Behavioral Reconciliation (ROUTE-018 to ROUTE-026)
+  # ----------------------------------------------------------------------------
+  - id: "ROUTE-018"
+    prompt: "Explain which mechanism best explains this historical sequence of capital-control abandonment."
+    category: "POLITICAL_ECONOMY_MECHANISM"
+    rule: "R12"
+    d5_source_case: "E6-E"
+    primary_owner: "political-economy-research"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Comparative-historical mechanism adjudication and institutional analysis belong to political-economy-research."
+
+  - id: "ROUTE-019"
+    prompt: "Derive local stability conditions for this accumulation model."
+    category: "HETERODOX_MACRO_STABILITY"
+    rule: "R13"
+    d5_source_case: "E6-F"
+    primary_owner: "heterodox-economics-review"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Formal dynamic modeling, Jacobian derivation, and stability conditions belong to heterodox-economics-review."
+
+  - id: "ROUTE-020"
+    prompt: "Determine whether these variables are cointegrated."
+    category: "APPLIED_ECONOMETRICS_COINTEGRATION"
+    rule: "R14"
+    d5_source_case: "E6-G"
+    primary_owner: "umass-applied-econometrics"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Stochastic admissibility, integration order testing, and cointegration determination belong to umass-applied-econometrics."
+
+  - id: "ROUTE-021"
+    prompt: "Find archival documents about the 1931 suspension of the gold standard."
+    category: "ADVERSARIAL_ARCHIVAL_RETRIEVAL"
+    rule: "ADV-D1"
+    d5_source_case: "E6-C"
+    primary_owner: "deep-research"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "political-economy-research"
+      - "historical-source-criticism"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Source search and retrieval belong to deep-research; political-economy-research analyzes provided sources and never searches."
+
+  - id: "ROUTE-022"
+    prompt: "Assess whether this cabinet memo supports the claim that policy X was considered."
+    category: "ADVERSARIAL_SOURCE_CLAIM_SUPPORT"
+    rule: "ADV-D2"
+    d5_source_case: "E6-D"
+    primary_owner: "political-economy-research"
+    governing_protocol: "historical-source-criticism"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "academic-paper-reviewer"
+      - "umass-applied-econometrics"
+      - "historical-source-criticism"
+    expected_action: "WORKFLOW_WITH_PROTOCOL"
+    rationale: "Claim-relative documentary assessment is governed by the shared protocol and executed within the requesting workflow; the protocol is not an autonomous executable skill."
+
+  - id: "ROUTE-023"
+    prompt: "Coordinate all of these steps — archival retrieval, mechanism adjudication, cointegration tests, and a stability derivation — into one research workflow."
+    category: "ADVERSARIAL_MULTI_STEP_ORCHESTRATION"
+    rule: "ADV-D3"
+    d5_source_case: "E6-H"
+    primary_owner: "academic-pipeline"
+    delegates_to:
+      - "deep-research"
+      - "political-economy-research"
+      - "umass-applied-econometrics"
+      - "heterodox-economics-review"
+    calibration_input: null
+    must_include_delegates:
+      - "deep-research"
+      - "political-economy-research"
+      - "umass-applied-econometrics"
+      - "heterodox-economics-review"
+    orchestrator_allowed: true
+    must_not_primary_owner:
+      - "political-economy-research"
+      - "umass-applied-econometrics"
+    expected_action: "SEQUENCED_ORCHESTRATION"
+    rationale: "Multi-step research orchestration belongs to academic-pipeline; the orchestrator sequences and delegates, owning no substantive inferential method."
+
+  - id: "ROUTE-024"
+    prompt: "This is a political-economy paper on the wage share. Please test whether the wage share has a unit root."
+    category: "ADVERSARIAL_TOPIC_VS_OPERATION"
+    rule: "ADV-D4"
+    d5_source_case: "E6-I"
+    primary_owner: "umass-applied-econometrics"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "political-economy-research"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Inferential operation, not topical framing, selects the owner; unit root testing is an econometric operation owned by umass-applied-econometrics."
+
+  - id: "ROUTE-025"
+    prompt: "Our model predicts a profit squeeze and the archives describe a strike wave in the late 1960s. Write the historical-background section of the paper."
+    category: "ADVERSARIAL_BACKGROUND_DRAFTING"
+    rule: "ADV-D5"
+    d5_source_case: "E6-J"
+    primary_owner: "academic-paper"
+    domain_policy: "econ-write"
+    delegates_to:
+      - "econ-write"
+    calibration_input: null
+    must_not_primary_owner:
+      - "political-economy-research"
+      - "heterodox-economics-review"
+    expected_action: "LIFECYCLE_WITH_DOMAIN_POLICY"
+    rationale: "Manuscript lifecycle belongs to academic-paper consuming econ-write for disciplinary standards; political economy, econometrics, and macro modeling supply analytical outputs and claim ceilings but do not draft manuscript sections."
+
+  - id: "ROUTE-026"
+    prompt: "Estimate the employment effect of the 2015 minimum-wage reform using a difference-in-differences design with staggered adoption, and tell me whether IV or synthetic control would be better."
+    category: "ADVERSARIAL_UNASSIGNED_CAUSAL_GAP"
+    rule: "ADV-D6"
+    d5_source_case: "E7-A"
+    primary_owner: "UNASSIGNED_CAPABILITY_GAP"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "deep-research"
+      - "academic-paper"
+      - "academic-paper-reviewer"
+      - "academic-pipeline"
+      - "econ-write"
+      - "umass-applied-econometrics"
+      - "heterodox-economics-review"
+      - "econ-slides"
+      - "editor-jacobin-lat"
+      - "advisor-reviewer"
+      - "PE-phd-committee"
+      - "prose-register-critic"
+      - "irf-plotting"
+      - "latex-compilation"
+      - "prose-discipline"
+      - "editorial-governance"
+      - "advisor-michael-ash"
+      - "committee-umass-pe"
+      - "political-economy-research"
+      - "historical-source-criticism"
+      - "public-scholarship"
+      - "venue-jacobin-lat"
+    expected_action: "UNASSIGNED_GAP_REJECTION"
+    rationale: "Causal inference methodologies (DID/IV/RDD/synthetic controls) have no implemented canonical owner in ARS; requests must reject assignment to any existing component and report the capability gap."
+
+  # ----------------------------------------------------------------------------
+  # PART 4: Wave E Dissemination Architecture & Public Scholarship (ROUTE-027 to ROUTE-030)
+  # ----------------------------------------------------------------------------
+  - id: "ROUTE-027"
+    prompt: "Write an accessible explanatory public essay translating our findings on open-economy dynamics for a general audience."
+    category: "PUBLIC_SCHOLARSHIP_EXPLANATORY"
+    rule: "R17"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Author-side despecialization and public essay translation belong to public-scholarship."
+
+  - id: "ROUTE-028"
+    prompt: "Draft a Jacobin Latin America column on our central bank interest rate findings, following the magazine's editorial conventions."
+    category: "VENUE_CALIBRATED_PUBLIC_SCHOLARSHIP"
+    rule: "R18"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: "profiles/venues/jacobin-lat.md"
+    expected_action: "CALIBRATED_PUBLIC_SCHOLARSHIP"
+    rationale: "Jacobin Latin America public scholarship is authored by public-scholarship calibrated by profiles/venues/jacobin-lat.md."
+
+  - id: "ROUTE-029"
+    prompt: "Please run /editor-jacobin-lat to draft an opinion column on inflation."
+    category: "ADVERSARIAL_LEGACY_JACOBIN_REDIRECT"
+    rule: "ADV-E3"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: "profiles/venues/jacobin-lat.md"
+    must_not_primary_owner:
+      - "editor-jacobin-lat"
+    expected_action: "DEPRECATED_COMPATIBILITY_REDIRECT"
+    rationale: "Legacy editor-jacobin-lat surface is deprecated and redirects to public-scholarship with profiles/venues/jacobin-lat.md calibration."
+
+  - id: "ROUTE-030"
+    prompt: "Draft an op-ed for a national daily newspaper explaining our econometric results on wage dispersion, without technical jargon."
+    category: "ADVERSARIAL_PUBLIC_VS_ECON_WRITE"
+    rule: "ADV-E1"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "econ-write"
+      - "academic-paper"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Despecialized public newspaper writing belongs to public-scholarship; econ-write and academic-paper govern academic disciplinary and manuscript prose."
