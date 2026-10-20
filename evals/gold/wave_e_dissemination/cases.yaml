@@ -1,0 +1,333 @@
+# ==============================================================================
+# ARS Wave E — Dissemination Architecture & Public Scholarship Behavioral Eval Fixtures
+# ==============================================================================
+# Gold evaluation cases for Wave E Dissemination Architecture:
+#   Canonical Skill:   public-scholarship (runtime: public-scholarship/)
+#   Venue Profile:     profiles/venues/jacobin-lat.md
+#   Legacy Stub:       editor-jacobin-lat (runtime: editor-jacobin-lat/)
+#
+# Verification: scripts/test_wave_e_dissemination.py
+# Execution Plan: docs/design/wave-e/WAVE_E_EXECUTION_PLAN.md §6
+#
+# ENFORCEMENT HONESTY (D5 §17 & Wave E §6.1 — NO FAKE BEHAVIORAL ENFORCEMENT)
+#   The repository has NO live model-behavior harness in offline passes.
+#   What runs offline deterministically:
+#     FIXTURE_IMPLEMENTED          Case exists with prompt, owner, rubric, and anchors.
+#     SCHEMA_ENFORCED              Structure, types, and invariant fields validated.
+#     RUNTIME_CONTRACT_ANCHORED    Owning skill, profile, and stub text contain the rules.
+#     RUBRIC_DISCRIMINATION_VERIFIED
+#                                  The regex rubric passes the good exemplar and catches
+#                                  the bad exemplar (proves rubric discrimination).
+#     MODEL_BEHAVIOR_EXECUTION_PENDING
+#                                  No live model output has been graded offline.
+# ==============================================================================
+
+version: "1.0.0"
+benchmark: "ars-wave-e-dissemination-behavioral-v1"
+source_wave: "Wave E"
+
+enforcement_status_default:
+  - FIXTURE_IMPLEMENTED
+  - SCHEMA_ENFORCED
+  - RUNTIME_CONTRACT_ANCHORED
+  - RUBRIC_DISCRIMINATION_VERIFIED
+  - MODEL_BEHAVIOR_EXECUTION_PENDING
+
+cases:
+  # ----------------------------------------------------------------------------
+  # 1. Venue-Rule Leakage Negative Case (WAVE-E-NEG-01)
+  # ----------------------------------------------------------------------------
+  - case_id: "WAVE-E-NEG-01"
+    family: "VENUE_LEAKAGE"
+    case_kind: "BEHAVIORAL_EVAL"
+    title: "Generic Public Op-Ed Rejects Jacobin Constraints"
+    prompt: >-
+      Draft a 1,000-word public op-ed for an independent national newspaper translating
+      our empirical study on household debt and credit access. Provide a declarative
+      headline and an explanatory subtitle.
+    primary_owner: "public-scholarship"
+    calibration_profile: null
+    allowed_consumers: []
+    forbidden_owner:
+      - "editor-jacobin-lat"
+      - "venue-jacobin-lat"
+      - "academic-paper"
+      - "econ-write"
+    expected_boundary: >-
+      Generic public scholarship allows subtitles and general newspaper conventions.
+      Jacobin-specific constraints (subtitle ban, Weber citation mandate, multi-country
+      comparison mandate) must NOT leak into generic public scholarship.
+    severity: "CRITICAL"
+    source_wave: "Wave E"
+    invariants:
+      - "VENUE_RULE_CONTAINMENT"
+      - "GENRE_FLEXIBILITY"
+      - "DESPECIALIZATION_WITHOUT_BANALIZATION"
+    runtime_anchors:
+      - path: "public-scholarship/SKILL.md"
+        contains: "is venue-neutral by default"
+      - path: "public-scholarship/references/public_genres.md"
+        contains: "Two-Part Colon Titles (New York Times, Boston Review)"
+    required_behaviors:
+      - id: "includes_headline_and_subtitle"
+        pattern: '(?i)(title|headline):[\s\S]*?(subtitle):'
+      - id: "explains_debt_empirics"
+        pattern: '(?i)household debt'
+      - id: "identifies_public_scholarship_owner"
+        pattern: '(?i)public-scholarship'
+    forbidden_behaviors:
+      - id: "leak_jacobin_subtitle_ban"
+        severity: "CRITICAL"
+        pattern: '(?i)(subtitle[s]? (are )?(strictly )?(banned|forbidden|not allowed)|no subtitle)'
+      - id: "leak_jacobin_weber_mandate"
+        severity: "CRITICAL"
+        pattern: "(?i)(isabella weber|sellers'? inflation)"
+      - id: "leak_jacobin_latam_mandate"
+        severity: "CRITICAL"
+        pattern: '(?i)(must compare (at least )?(two|three) latin american countries|latin american comparison is required)'
+    bad_expected_violations:
+      - "leak_jacobin_subtitle_ban"
+      - "leak_jacobin_weber_mandate"
+      - "leak_jacobin_latam_mandate"
+    good_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Drafting public op-ed for independent daily newspaper.
+      Title: Household Debt Burden Stifles Economic Recovery
+      Subtitle: Why Recent Credit Expansion Fails to Stimulate Productive Investment
+      Across the country, rising household debt has constrained consumer purchasing power.
+      Our empirical research demonstrates that credit access alone does not alleviate structural income stagnation.
+    bad_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Applying editorial guidelines: Subtitles are strictly forbidden in this essay.
+      Title: Debt Crisis
+      We must cite Isabella Weber on sellers' inflation and a Latin American comparison is required between Chile and Argentina.
+
+  # ----------------------------------------------------------------------------
+  # 2. Commission-Specific Topic Leakage Negative Case (WAVE-E-NEG-02)
+  # ----------------------------------------------------------------------------
+  - case_id: "WAVE-E-NEG-02"
+    family: "COMMISSION_LEAKAGE"
+    case_kind: "BEHAVIORAL_EVAL"
+    title: "Public Essay on Labor Organizing Rejects Forced Sellers' Inflation"
+    prompt: >-
+      Write a public explanatory essay for a general audience on recent collective bargaining
+      trends and unionization campaigns in regional logistics warehouses.
+    primary_owner: "public-scholarship"
+    calibration_profile: null
+    allowed_consumers: []
+    forbidden_owner:
+      - "editor-jacobin-lat"
+      - "venue-jacobin-lat"
+    expected_boundary: >-
+      Commission-specific instructions (such as sellers' inflation or Isabella Weber) are
+      topic-specific exemplars and must never be forced onto unrelated labor topics.
+    severity: "CRITICAL"
+    source_wave: "Wave E"
+    invariants:
+      - "COMMISSION_SPECIFIC_ISOLATION"
+      - "SUBSTANTIVE_WARRANT"
+      - "NO_TOPICAL_LEAK"
+    runtime_anchors:
+      - path: "public-scholarship/SKILL.md"
+        contains: "Available Approaches vs. Universal Obligations"
+      - path: "profiles/venues/jacobin-lat.md"
+        contains: "Isabella Weber's *sellers' inflation* framework serves as an approved theoretical reference point"
+    required_behaviors:
+      - id: "analyzes_logistics_unionization"
+        pattern: '(?i)(logistics|warehouses?|unionization|collective bargaining)'
+      - id: "accessible_labor_explanation"
+        pattern: '(?i)(worker[s]?|labor|union)'
+    forbidden_behaviors:
+      - id: "forced_sellers_inflation"
+        severity: "CRITICAL"
+        pattern: "(?i)(sellers'? inflation|isabella weber)"
+      - id: "forced_unwarranted_theory"
+        severity: "MAJOR"
+        pattern: '(?i)mandatory theoretical framework requires'
+    bad_expected_violations:
+      - "forced_sellers_inflation"
+    good_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Title: Warehouse Workers Organize on the Front Lines of Logistics
+      The recent wave of unionization campaigns in regional logistics warehouses highlights a shift in collective bargaining.
+      Workers face automated surveillance and intense pacing, turning shop-floor grievances into organized union drives.
+    bad_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Title: Logistics Organizing and Price Shocks
+      In analyzing logistics warehouses, we must apply Isabella Weber's framework of sellers' inflation to explain unionization.
+
+  # ----------------------------------------------------------------------------
+  # 3. Unsupported Causal Strengthening Negative Case (WAVE-E-NEG-03)
+  # ----------------------------------------------------------------------------
+  - case_id: "WAVE-E-NEG-03"
+    family: "CAUSAL_INTEGRITY"
+    case_kind: "BEHAVIORAL_EVAL"
+    title: "Public Translation Rejects Causal Overclaiming from Non-Causal Evidence"
+    prompt: >-
+      Our time-series model finds a statistically non-significant cointegration test
+      between public infrastructure investment and private capital formation, with a
+      contemporaneous descriptive correlation of 0.32. Draft a public summary for a policy brief.
+    primary_owner: "public-scholarship"
+    calibration_profile: null
+    allowed_consumers: []
+    forbidden_owner:
+      - "econ-write"
+      - "umass-applied-econometrics"
+    expected_boundary: >-
+      Public despecialization must strictly respect empirical claim ceilings. Non-significant
+      cointegration and descriptive correlation cannot be converted into causal claims of
+      infrastructure driving private investment.
+    severity: "CRITICAL"
+    source_wave: "Wave E"
+    invariants:
+      - "EMPIRICAL_CLAIM_CEILINGS"
+      - "FAITHFUL_SIMPLIFICATION"
+      - "EPISTEMIC_INTEGRITY"
+    runtime_anchors:
+      - path: "public-scholarship/SKILL.md"
+        contains: "Never strengthen a causal claim beyond what the source research warrants"
+      - path: "public-scholarship/references/epistemic_integrity.md"
+        contains: "Correlation is Not Causation"
+    required_behaviors:
+      - id: "preserves_correlation_uncertainty"
+        pattern: '(?i)(correlation|association|tentative|cannot establish causality|does not establish a direct causal link)'
+      - id: "faithful_mechanism_qualification"
+        pattern: '(?i)(infrastructure|private investment|capital formation)'
+    forbidden_behaviors:
+      - id: "unsupported_causal_assertion"
+        severity: "CRITICAL"
+        pattern: '(?i)(proves that infrastructure (drives|causes|generates)|definitively causes|empirically demonstrated causality)'
+      - id: "suppression_of_statistical_limits"
+        severity: "CRITICAL"
+        pattern: '(?i)(proves? definitive causal impact|guarantees? private investment growth)'
+    bad_expected_violations:
+      - "unsupported_causal_assertion"
+    good_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Policy Brief: Public Infrastructure and Private Capital Formation.
+      Our analysis indicates a moderate contemporaneous correlation (0.32) between public infrastructure spending
+      and private investment. However, long-run cointegration tests remain inconclusive, meaning we cannot establish
+      causality or claim that public works automatically trigger private investment booms.
+    bad_response_exemplar: >-
+      Primary owner: public-scholarship.
+      Policy Brief: The Growth Engine.
+      Our groundbreaking empirical study definitively causes private capital growth through state infrastructure.
+      It proves that infrastructure drives economic revitalization across all sectors without fail.
+
+  # ----------------------------------------------------------------------------
+  # 4. Legacy Compatibility Redirection Negative Case (WAVE-E-NEG-04)
+  # ----------------------------------------------------------------------------
+  - case_id: "WAVE-E-NEG-04"
+    family: "COMPATIBILITY_REDIRECT"
+    case_kind: "BEHAVIORAL_EVAL"
+    title: "Legacy Jacobin Editor Call Redirects to Canonical Skill with Venue Profile"
+    prompt: >-
+      Execute /editor-jacobin-lat to draft an opinion column on lithium industrial policy in Chile.
+    primary_owner: "public-scholarship"
+    calibration_profile: "profiles/venues/jacobin-lat.md"
+    allowed_consumers: []
+    forbidden_owner:
+      - "editor-jacobin-lat"
+    expected_boundary: >-
+      Calls to deprecated editor-jacobin-lat must transparently notify the user of deprecation
+      and redirect execution to public-scholarship with profiles/venues/jacobin-lat.md.
+    severity: "CRITICAL"
+    source_wave: "Wave E"
+    invariants:
+      - "COMPATIBILITY_REDIRECTION"
+      - "SINGLE_OPERATIONAL_OWNER"
+      - "STUB_NON_SOVEREIGNTY"
+    runtime_anchors:
+      - path: "editor-jacobin-lat/SKILL.md"
+        contains: "DEPRECATED_COMPATIBILITY_REDIRECT"
+      - path: "editor-jacobin-lat/SKILL.md"
+        contains: "Canonical Dissemination Skill:"
+      - path: "editor-jacobin-lat/SKILL.md"
+        contains: "Venue Profile (Jacobin AL):"
+    required_behaviors:
+      - id: "notifies_deprecation_and_redirect"
+        pattern: '(?i)(deprecated|redirect[a-z]*|compatibility (entry point|stub))'
+      - id: "names_canonical_public_scholarship"
+        pattern: '(?i)public-scholarship'
+      - id: "loads_jacobin_profile"
+        pattern: '(?i)profiles/venues/jacobin-lat\.md'
+    forbidden_behaviors:
+      - id: "claims_legacy_skill_autonomous"
+        severity: "CRITICAL"
+        pattern: '(?i)(editor-jacobin-lat is (the |an )autonomous skill|executing editor-jacobin-lat directly as canonical owner)'
+      - id: "omits_redirect"
+        severity: "CRITICAL"
+        pattern: '(?i)primary owner: editor-jacobin-lat\b'
+    bad_expected_violations:
+      - "claims_legacy_skill_autonomous"
+      - "omits_redirect"
+    good_response_exemplar: >-
+      [COMPATIBILITY NOTICE] The skill 'editor-jacobin-lat' is a deprecated compatibility entry point.
+      Redirecting execution to canonical skill 'public-scholarship' calibrated with 'profiles/venues/jacobin-lat.md'.
+      Title: Chile debe controlar su renta del litio
+      Subtitle: (None — omitted per Jacobin América Latina editorial conventions).
+      La política industrial del litio en Chile debe subordinar la ganancia privada al desarrollo nacional.
+    bad_response_exemplar: >-
+      Primary owner: editor-jacobin-lat.
+      editor-jacobin-lat is an autonomous skill that independently produces socialist commentary without redirection.
+
+  # ----------------------------------------------------------------------------
+  # 5. Positive Venue Calibration Case (WAVE-E-POS-01)
+  # ----------------------------------------------------------------------------
+  - case_id: "WAVE-E-POS-01"
+    family: "VENUE_CALIBRATION"
+    case_kind: "BEHAVIORAL_EVAL"
+    title: "Jacobin Latin America Column Conforms to Venue Rhetoric and Headline Constraints"
+    prompt: >-
+      Draft a Jacobin Latin America column on central bank interest rates in the Southern Cone.
+      Follow the venue's editorial guidelines without enabling optional commission flags.
+    primary_owner: "public-scholarship"
+    calibration_profile: "profiles/venues/jacobin-lat.md"
+    allowed_consumers: []
+    forbidden_owner:
+      - "editor-jacobin-lat"
+      - "academic-paper-reviewer"
+    expected_boundary: >-
+      Jacobin AL column must enforce declarative thesis headline <= 12 words, no subtitles/colons,
+      class-relational framing (critique of political economy), and anti-agitprop discipline.
+    severity: "CRITICAL"
+    source_wave: "Wave E"
+    invariants:
+      - "VENUE_CALIBRATION"
+      - "HEADLINE_DISCIPLINE"
+      - "VENUE_PROFILE_BOUNDARY"
+    runtime_anchors:
+      - path: "profiles/venues/jacobin-lat.md"
+        contains: "**Maximum Length:** 12 words"
+      - path: "profiles/venues/jacobin-lat.md"
+        contains: "Jacobin América Latina **never uses subtitles**"
+    required_behaviors:
+      - id: "thesis_headline_within_limit"
+        pattern: '(?i)(headline|title): [^\n\r]{1,80}(\n|\r|$)'
+      - id: "critique_of_political_economy_framing"
+        pattern: '(?i)(critique of political economy|crítica de la economía política|class-relational|distributional conflict|conflicto distributivo|central bank|banco central)'
+      - id: "no_subtitles_present"
+        pattern: '(?i)(subtitles?: \(?(none|omitted|sin subtítulo)\)?|without subtitle)'
+    forbidden_behaviors:
+      - id: "includes_forbidden_subtitle"
+        severity: "CRITICAL"
+        pattern: '(?i)(^|\n|\r)(subtitle|subtítulo): [^\n\r]+'
+      - id: "uses_agitprop_blacklisted_phrase"
+        severity: "MAJOR"
+        pattern: '(?i)(el capitalismo tardío en su fase terminal|la bancarrota moral de las élites|la explotación neoliberal despiadada)'
+    bad_expected_violations:
+      - "includes_forbidden_subtitle"
+      - "uses_agitprop_blacklisted_phrase"
+    good_response_exemplar: |-
+      Primary owner: public-scholarship.
+      Calibration profile: profiles/venues/jacobin-lat.md.
+      Formatting note: without subtitle (strictly omitted per Jacobin América Latina editorial conventions).
+      Title: Las tasas de interés castigan a la clase trabajadora
+      La política monetaria del banco central no es neutral: representa un conflicto distributivo directo.
+      El aumento de tasas protege el rendimiento financiero a expensas de la contracción salarial.
+    bad_response_exemplar: |-
+      Primary owner: public-scholarship.
+      Calibration profile: profiles/venues/jacobin-lat.md.
+      Title: La tasa de interés y el ajuste
+      Subtítulo: Cómo el capital aplasta al pueblo trabajador
+      El capitalismo tardío en su fase terminal demuestra la bancarrota moral de las élites financieras.

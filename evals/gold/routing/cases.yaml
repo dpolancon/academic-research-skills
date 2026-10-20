@@ -379,5 +379,55 @@ cases:
       - "committee-umass-pe"
       - "political-economy-research"
       - "historical-source-criticism"
+      - "public-scholarship"
+      - "venue-jacobin-lat"
     expected_action: "UNASSIGNED_GAP_REJECTION"
     rationale: "Causal inference methodologies (DID/IV/RDD/synthetic controls) have no implemented canonical owner in ARS; requests must reject assignment to any existing component and report the capability gap."
+
+  # ----------------------------------------------------------------------------
+  # PART 4: Wave E Dissemination Architecture & Public Scholarship (ROUTE-027 to ROUTE-030)
+  # ----------------------------------------------------------------------------
+  - id: "ROUTE-027"
+    prompt: "Write an accessible explanatory public essay translating our findings on open-economy dynamics for a general audience."
+    category: "PUBLIC_SCHOLARSHIP_EXPLANATORY"
+    rule: "R17"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: null
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Author-side despecialization and public essay translation belong to public-scholarship."
+
+  - id: "ROUTE-028"
+    prompt: "Draft a Jacobin Latin America column on our central bank interest rate findings, following the magazine's editorial conventions."
+    category: "VENUE_CALIBRATED_PUBLIC_SCHOLARSHIP"
+    rule: "R18"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: "profiles/venues/jacobin-lat.md"
+    expected_action: "CALIBRATED_PUBLIC_SCHOLARSHIP"
+    rationale: "Jacobin Latin America public scholarship is authored by public-scholarship calibrated by profiles/venues/jacobin-lat.md."
+
+  - id: "ROUTE-029"
+    prompt: "Please run /editor-jacobin-lat to draft an opinion column on inflation."
+    category: "ADVERSARIAL_LEGACY_JACOBIN_REDIRECT"
+    rule: "ADV-E3"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: "profiles/venues/jacobin-lat.md"
+    must_not_primary_owner:
+      - "editor-jacobin-lat"
+    expected_action: "DEPRECATED_COMPATIBILITY_REDIRECT"
+    rationale: "Legacy editor-jacobin-lat surface is deprecated and redirects to public-scholarship with profiles/venues/jacobin-lat.md calibration."
+
+  - id: "ROUTE-030"
+    prompt: "Draft an op-ed for a national daily newspaper explaining our econometric results on wage dispersion, without technical jargon."
+    category: "ADVERSARIAL_PUBLIC_VS_ECON_WRITE"
+    rule: "ADV-E1"
+    primary_owner: "public-scholarship"
+    delegates_to: []
+    calibration_input: null
+    must_not_primary_owner:
+      - "econ-write"
+      - "academic-paper"
+    expected_action: "DIRECT_EXECUTION"
+    rationale: "Despecialized public newspaper writing belongs to public-scholarship; econ-write and academic-paper govern academic disciplinary and manuscript prose."

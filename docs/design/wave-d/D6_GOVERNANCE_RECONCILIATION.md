@@ -7,6 +7,12 @@
 **Working Branch:** `main`
 **Commit / Push Authorization:** None. Strict no-commit / no-push discipline enforced.
 
+> [!NOTE]
+> **Post-Implementation Closure Note (2026-10-19):**
+> Following validation of this report and completion of dynamic regression checks, human architect Diego Polanco authorized the local commit and normal push of the D6 governance reconciliation at checkpoint `27fbfd60255fe6c3cd99e7298c43a5189869163b` (`Reconcile Wave D6 governance and verify capability boundaries`).
+> Wave D is now explicitly **HUMAN-CLOSED**. See the formal [Wave D Human Closure Record](WAVE_D_HUMAN_CLOSURE_2026-10-19.md) and the governing [Restart Handoff](ARS_SESSION_HANDOFF_POST_WAVE_D_2026-10-19.md).
+> The historical metadata and "NO COMMIT / NO PUSH" footer below describe the pre-publication review state prior to the authorized commit and push.
+
 ---
 
 ## 1. Plain-Language Before/After Table of Research Responsibilities
@@ -43,7 +49,7 @@ docs/design/wave-d/D6_GOVERNANCE_RECONCILIATION.md
 
 ### Detailed File Changes:
 
-1. [`docs/governance/ars_registry.yaml`](file:///C:/ReposGitHub/academic-research-skills/docs/governance/ars_registry.yaml)
+1. [`docs/governance/ars_registry.yaml`](../../governance/ars_registry.yaml)
    - **Version:** Bumped to `1.2.0` (Last Updated: `2026-10-19`).
    - **Component Registration (`components:`):**
      - Registered `political-economy-research` (`runtime_path: political-economy-research`, `semantic_role: DOMAIN_SKILL`, `lifecycle_status: ACTIVE`).
@@ -60,7 +66,7 @@ docs/design/wave-d/D6_GOVERNANCE_RECONCILIATION.md
      - Updated `cointegration_specification_audit` and `toda_yamamoto_specification_mapping`: updated notes decoupling empirical admissibility from theoretical mechanism plausibility.
      - *Total capabilities validated:* Increased from 20 to 22.
 
-2. [`docs/governance/ROUTING_AND_PRECEDENCE.md`](file:///C:/ReposGitHub/academic-research-skills/docs/governance/ROUTING_AND_PRECEDENCE.md)
+2. [`docs/governance/ROUTING_AND_PRECEDENCE.md`](../../governance/ROUTING_AND_PRECEDENCE.md)
    - **Version:** Bumped to `1.2.0` (Baseline Parent: `aa5283e`).
    - **Ownership Principles:** Added Principles 9 through 12 codifying inferential-task jurisdiction, `THEORY → EMPIRICAL METHOD → INTERPRETATION`, protocol standard vs. workflow owner distinction, and unassigned causal inference gap preservation.
    - **Routing Decision Tree:** Added explicit routing branches for political-economy research, heterodox macro modeling, applied time-series econometrics, historical source assessment via shared protocol, archival retrieval, and unassigned causal inference gap.
@@ -68,18 +74,18 @@ docs/design/wave-d/D6_GOVERNANCE_RECONCILIATION.md
    - **Adversarial Rules:** Added Section 4 detailing Rules ADV-D1 through ADV-D6.
    - **Runtime Warning:** Added `political-economy-research`, `umass-applied-econometrics`, and `heterodox-economics-review` to the mandatory live runtime path allowlist.
 
-3. [`evals/gold/routing/cases.yaml`](file:///C:/ReposGitHub/academic-research-skills/evals/gold/routing/cases.yaml)
+3. [`evals/gold/routing/cases.yaml`](../../../evals/gold/routing/cases.yaml)
    - **Version:** Bumped to `1.2.0` (Schema: `ars-routing-eval-v1.2`).
    - **Cases:** Added Part 3 containing 9 new canonical evaluation fixtures (`ROUTE-018` through `ROUTE-026`) mapping all D5 E6 and E7 behavioral scenarios into the canonical routing benchmark. Total cases increased from 17 to 26 (12 positive, 14 adversarial).
 
-4. [`scripts/test_routing_contract.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_routing_contract.py)
+4. [`scripts/test_routing_contract.py`](../../../scripts/test_routing_contract.py)
    - **D5 Conceptual Name Mapping:** Added `D5_CONCEPTUAL_TO_REGISTERED` dictionary mapping `applied-econometrics-pe` → `umass-applied-econometrics`, `heterodox-macro-modeling` → `heterodox-economics-review`, and `historical_source_criticism_protocol` → `historical-source-criticism`. Added programmatic check ensuring all conceptual names resolve to active registered components without creating duplicate components.
    - **Unassigned Capability Gap Handling:** Supported `primary_owner: UNASSIGNED_CAPABILITY_GAP`, asserting that it does not exist as a registered component and verifying that the underlying capability has `current_owner: null`.
    - **Shared Protocol Typing Enforcement:** Enforced that components with `semantic_role: SHARED_PROTOCOL` cannot be selected as primary executable owners, preventing protocol-as-skill errors.
    - **Governing Protocol Verification:** Added `governing_protocol` check ensuring requesting workflows consume valid `SHARED_PROTOCOL` components.
    - **Rule Verification:** Implemented rule-specific checks for R12, R13, R14, and ADV-D1 through ADV-D6.
 
-5. [`scripts/validate_ars_registry.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/validate_ars_registry.py)
+5. [`scripts/validate_ars_registry.py`](../../../scripts/validate_ars_registry.py)
    - Added Section 4 enforcing Wave D6 Invariants D6-1 through D6-5 (active political economy skill, active historical source protocol, active applied econometrics, active heterodox macro modeling, and unassigned causal inference gap preservation).
 
 ---
@@ -110,17 +116,17 @@ All validation suites across the standing regression baseline passed cleanly:
 
 | Test Suite / Script | Verification Target | Status | Exit Code | Metrics / Assertions |
 |:---|:---|:---:|:---:|:---|
-| [`scripts/validate_ars_registry.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/validate_ars_registry.py) | Schema validity, component/capability uniqueness, Wave B1/C5/D6 invariants | **PASS** | `0` | 20 components, 22 capabilities validated; Invariants D6-1 to D6-5 confirmed |
-| [`scripts/test_routing_contract.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_routing_contract.py) | Canonical routing precedence contract & D5 conceptual resolution | **PASS** | `0` | 26/26 cases passed (12 positive, 14 adversarial); conceptual mappings verified |
-| [`scripts/test_wave_c_reconciliation.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_wave_c_reconciliation.py) | Wave C legacy stubs, profile routing, review ownership, Wave F deferral | **PASS** | `0` | 11/11 assertions passed |
-| [`scripts/test_prose_discipline.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_prose_discipline.py) | Shared prose protocol, non-inference AI guard, gold fixtures | **PASS** | `0` | 11/11 fixtures passed; deterministic JSON output verified |
-| [`scripts/test_profile_contract.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_profile_contract.py) | Scholar profiles, advisor/committee wrappers, templates | **PASS** | `0` | 19/19 assertions passed |
-| [`scripts/test_revision_guard.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_revision_guard.py) | Change-control engine, deterministic sidecar validation | **PASS** | `0` | 12/12 cases passed |
+| [`scripts/validate_ars_registry.py`](../../../scripts/validate_ars_registry.py) | Schema validity, component/capability uniqueness, Wave B1/C5/D6 invariants | **PASS** | `0` | 20 components, 22 capabilities validated; Invariants D6-1 to D6-5 confirmed |
+| [`scripts/test_routing_contract.py`](../../../scripts/test_routing_contract.py) | Canonical routing precedence contract & D5 conceptual resolution | **PASS** | `0` | 26/26 cases passed (12 positive, 14 adversarial); conceptual mappings verified |
+| [`scripts/test_wave_c_reconciliation.py`](../../../scripts/test_wave_c_reconciliation.py) | Wave C legacy stubs, profile routing, review ownership, Wave F deferral | **PASS** | `0` | 11/11 assertions passed |
+| [`scripts/test_prose_discipline.py`](../../../scripts/test_prose_discipline.py) | Shared prose protocol, non-inference AI guard, gold fixtures | **PASS** | `0` | 11/11 fixtures passed; deterministic JSON output verified |
+| [`scripts/test_profile_contract.py`](../../../scripts/test_profile_contract.py) | Scholar profiles, advisor/committee wrappers, templates | **PASS** | `0` | 19/19 assertions passed |
+| [`scripts/test_revision_guard.py`](../../../scripts/test_revision_guard.py) | Change-control engine, deterministic sidecar validation | **PASS** | `0` | 12/12 cases passed |
 | `pytest scripts/test_run_evals.py` | ARS core citation & lift evaluation harness | **PASS** | `0` | 24/24 passed in 0.58s |
-| [`scripts/check_ci_pytest_manifest.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/check_ci_pytest_manifest.py) | CI pytest manifest drift guard | **PASS** | `0` | 43 entries verified clean |
-| [`scripts/test_editorial_governance_schema.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_editorial_governance_schema.py) | Sidecar and Material Passport JSON draft schemas | **PASS** | `0` | 10/10 assertions passed |
-| [`scripts/test_wave_d_behavioral_evals.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_wave_d_behavioral_evals.py) (CLI) | Frozen D5 cross-domain behavioral fixtures & anchors | **PASS** | `0` | 31/31 cases validated; 22 anchored (28 anchors), 9 unanchored N/A; rubric discrimination clean |
-| [`scripts/test_wave_d_behavioral_evals.py`](file:///C:/ReposGitHub/academic-research-skills/scripts/test_wave_d_behavioral_evals.py) (pytest) | Frozen D5 pytest test suite | **PASS** | `0` | 4/4 passed in 0.40s |
+| [`scripts/check_ci_pytest_manifest.py`](../../../scripts/check_ci_pytest_manifest.py) | CI pytest manifest drift guard | **PASS** | `0` | 43 entries verified clean |
+| [`scripts/test_editorial_governance_schema.py`](../../../scripts/test_editorial_governance_schema.py) | Sidecar and Material Passport JSON draft schemas | **PASS** | `0` | 10/10 assertions passed |
+| [`scripts/test_wave_d_behavioral_evals.py`](../../../scripts/test_wave_d_behavioral_evals.py) (CLI) | Frozen D5 cross-domain behavioral fixtures & anchors | **PASS** | `0` | 31/31 cases validated; 22 anchored (28 anchors), 9 unanchored N/A; rubric discrimination clean |
+| [`scripts/test_wave_d_behavioral_evals.py`](../../../scripts/test_wave_d_behavioral_evals.py) (pytest) | Frozen D5 pytest test suite | **PASS** | `0` | 4/4 passed in 0.40s |
 | `git diff --check` | Trailing whitespace and newline integrity | **PASS** | `0` | 0 errors |
 
 ### Demonstration of Negative Failure Modes

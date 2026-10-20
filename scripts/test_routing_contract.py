@@ -2,7 +2,7 @@
 """
 scripts/test_routing_contract.py
 
-Deterministic test runner for ARS Wave B1, B1.1, C5, and D6 routing precedence contract.
+Deterministic test runner for ARS Wave B1, B1.1, C5, D6, and E routing precedence contract.
 Validates evals/gold/routing/cases.yaml against docs/governance/ars_registry.yaml
 and enforces positive ownership, delegation, calibration, and adversarial negative
 exclusion invariants without invoking LLMs.
@@ -63,6 +63,8 @@ def validate_single_case(
             errors.append(f"primary_owner '{owner}' is a deprecated component; deprecated aliases cannot be primary owners.")
         if owner_comp.get("semantic_role") == "SHARED_PROTOCOL":
             errors.append(f"primary_owner '{owner}' has semantic_role 'SHARED_PROTOCOL'; shared protocols cannot be autonomous executable primary owners.")
+        if owner_comp.get("semantic_role") == "PROFILE":
+            errors.append(f"primary_owner '{owner}' has semantic_role 'PROFILE'; profiles are calibration inputs and cannot be autonomous primary owners.")
 
     # 2. Delegates existence and target-path check
     if delegates:
@@ -305,6 +307,46 @@ def validate_single_case(
         if ci_cap.get("migration_status") != "CANDIDATE":
             errors.append("causal_inference_microeconometrics must have migration_status: 'CANDIDATE'.")
 
+    # Wave E Rules (R17, R18, ADV-E1 to ADV-E4)
+    elif rule == "R17":  # Generic public scholarship
+        if owner != "public-scholarship":
+            errors.append(f"R17 primary owner must be 'public-scholarship', got '{owner}'.")
+        if capabilities.get("public_scholarship_translation", {}).get("current_owner") != "public-scholarship":
+            errors.append("public_scholarship_translation must be owned by 'public-scholarship'.")
+
+    elif rule == "R18":  # Venue-calibrated public scholarship (Jacobin AL)
+        if owner != "public-scholarship":
+            errors.append(f"R18 primary owner must be 'public-scholarship', got '{owner}'.")
+        if calib != "profiles/venues/jacobin-lat.md":
+            errors.append(f"R18 calibration_input must be 'profiles/venues/jacobin-lat.md', got '{calib}'.")
+        if not (repo_root / calib).exists():
+            errors.append(f"R18 calibration_input path '{calib}' does not exist on disk.")
+
+    elif rule == "ADV-E1":  # Public scholarship vs. econ-write
+        if owner != "public-scholarship":
+            errors.append(f"ADV-E1 primary owner must be 'public-scholarship', got '{owner}'.")
+        for ex in ("econ-write", "academic-paper"):
+            if ex not in must_not_owner:
+                errors.append(f"ADV-E1 must exclude '{ex}' from primary owner.")
+
+    elif rule == "ADV-E2":  # Venue profile vs. review engine
+        if owner != "public-scholarship":
+            errors.append(f"ADV-E2 primary owner must be 'public-scholarship', got '{owner}'.")
+        if "academic-paper-reviewer" not in must_not_owner:
+            errors.append("ADV-E2 must exclude 'academic-paper-reviewer' from primary owner.")
+
+    elif rule == "ADV-E3":  # Legacy Jacobin redirect
+        if owner != "public-scholarship":
+            errors.append(f"ADV-E3 primary owner must be 'public-scholarship', got '{owner}'.")
+        if calib != "profiles/venues/jacobin-lat.md":
+            errors.append(f"ADV-E3 calibration_input must be 'profiles/venues/jacobin-lat.md', got '{calib}'.")
+        if "editor-jacobin-lat" not in must_not_owner:
+            errors.append("ADV-E3 must exclude 'editor-jacobin-lat' from primary owner.")
+
+    elif rule == "ADV-E4":  # Simplification vs. causal overclaiming
+        if owner != "public-scholarship":
+            errors.append(f"ADV-E4 primary owner must be 'public-scholarship', got '{owner}'.")
+
     return errors
 
 
@@ -435,6 +477,44 @@ def verify_unassigned_capability_and_negative_invariants(
         f"Expected ADV-D4 violation error, got: {pe_unit_root_errs}"
     )
     print("  [PASS] ROUTE-024: Unit-root assignment to PE fails; valid econometric assignment passes.")
+
+    # 7. Wave E: Verify assigning deprecated editor-jacobin-lat as primary owner fails, while valid case passes
+    r029_matches = [c for c in cases if c.get("id") == "ROUTE-029"]
+    assert len(r029_matches) == 1, "Expected exactly one ROUTE-029 case fixture."
+    r029 = r029_matches[0]
+
+    # Valid case passes
+    orig_r029_errs = validate_single_case(r029, components, deprecated_components, capabilities, repo_root)
+    assert len(orig_r029_errs) == 0, f"Original valid ROUTE-029 failed: {orig_r029_errs}"
+
+    # Tampered case: assigning deprecated editor-jacobin-lat as primary owner
+    tampered_r029 = copy.deepcopy(r029)
+    tampered_r029["primary_owner"] = "editor-jacobin-lat"
+    legacy_jacobin_errs = validate_single_case(tampered_r029, components, deprecated_components, capabilities, repo_root)
+    assert len(legacy_jacobin_errs) > 0, "Assigning deprecated editor-jacobin-lat as primary owner should have failed!"
+    assert any("is a deprecated component" in e for e in legacy_jacobin_errs), (
+        f"Expected deprecated component error, got: {legacy_jacobin_errs}"
+    )
+    print("  [PASS] ROUTE-029: Deprecated editor-jacobin-lat assignment fails; canonical redirect passes.")
+
+    # 8. Wave E: Verify assigning venue profile as primary owner fails, while valid case passes
+    r028_matches = [c for c in cases if c.get("id") == "ROUTE-028"]
+    assert len(r028_matches) == 1, "Expected exactly one ROUTE-028 case fixture."
+    r028 = r028_matches[0]
+
+    # Valid case passes
+    orig_r028_errs = validate_single_case(r028, components, deprecated_components, capabilities, repo_root)
+    assert len(orig_r028_errs) == 0, f"Original valid ROUTE-028 failed: {orig_r028_errs}"
+
+    # Tampered case: assigning venue-jacobin-lat as primary owner
+    tampered_r028 = copy.deepcopy(r028)
+    tampered_r028["primary_owner"] = "venue-jacobin-lat"
+    profile_owner_errs = validate_single_case(tampered_r028, components, deprecated_components, capabilities, repo_root)
+    assert len(profile_owner_errs) > 0, "Assigning venue profile as primary owner should have failed!"
+    assert any("has semantic_role 'PROFILE'" in e for e in profile_owner_errs), (
+        f"Expected PROFILE error, got: {profile_owner_errs}"
+    )
+    print("  [PASS] ROUTE-028: Venue profile as primary owner fails; canonical skill + calibration passes.")
 
 
 def test_routing_contract(repo_root: Path) -> bool:

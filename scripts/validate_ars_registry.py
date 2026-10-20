@@ -287,6 +287,32 @@ def validate_registry_data(data: dict, repo_root: Path) -> list[str]:
     elif ci_cap.get("current_owner") is not None or ci_cap.get("migration_status") != "CANDIDATE":
         errors.append("Wave D6 violation: 'causal_inference_microeconometrics' must have current_owner: null and migration_status: CANDIDATE.")
 
+    # 5. Validate Wave E Dissemination Governance Invariants
+    # Invariant E-1: public-scholarship is an ACTIVE DISSEMINATION_SKILL owning public_scholarship_translation
+    ps_comp = components_by_id.get("public-scholarship")
+    if not ps_comp or ps_comp.get("lifecycle_status") != "ACTIVE" or ps_comp.get("semantic_role") != "DISSEMINATION_SKILL":
+        errors.append("Wave E violation: 'public-scholarship' must be an ACTIVE DISSEMINATION_SKILL in registry.")
+    ps_cap = capabilities_by_id.get("public_scholarship_translation")
+    if not ps_cap or ps_cap.get("current_owner") != "public-scholarship" or ps_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave E violation: 'public_scholarship_translation' must be currently owned by 'public-scholarship'.")
+
+    # Invariant E-2: venue-jacobin-lat is an ACTIVE PROFILE owning venue_jacobin_lat_editorial
+    vj_comp = components_by_id.get("venue-jacobin-lat")
+    if not vj_comp or vj_comp.get("lifecycle_status") != "ACTIVE" or vj_comp.get("semantic_role") != "PROFILE":
+        errors.append("Wave E violation: 'venue-jacobin-lat' must be an ACTIVE PROFILE in registry.")
+    vj_cap = capabilities_by_id.get("venue_jacobin_lat_editorial")
+    if not vj_cap or vj_cap.get("current_owner") != "venue-jacobin-lat" or vj_cap.get("migration_status") != "CURRENT":
+        errors.append("Wave E violation: 'venue_jacobin_lat_editorial' must be owned by 'venue-jacobin-lat'.")
+
+    # Invariant E-3: editor-jacobin-lat is a DEPRECATED LEGACY_SKILL delegating to public-scholarship
+    ej_comp = components_by_id.get("editor-jacobin-lat")
+    if not ej_comp or ej_comp.get("lifecycle_status") != "DEPRECATED" or ej_comp.get("current_implementation_type") != "LEGACY_SKILL":
+        errors.append("Wave E violation: 'editor-jacobin-lat' must be a DEPRECATED LEGACY_SKILL in registry.")
+    if ej_comp and ej_comp.get("delegates_to") != "public-scholarship":
+        errors.append("Wave E violation: 'editor-jacobin-lat' must delegate_to 'public-scholarship'.")
+    if ej_comp and ej_comp.get("replacement_path") != "profiles/venues/jacobin-lat.md":
+        errors.append("Wave E violation: 'editor-jacobin-lat' replacement_path must be 'profiles/venues/jacobin-lat.md'.")
+
     return errors
 
 

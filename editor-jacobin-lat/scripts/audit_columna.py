@@ -1,19 +1,30 @@
 #!/usr/bin/env python3
 """
-audit_columna.py — Auditor Determinístico Editorial para Jacobin América Latina
-Calibrado según los criterios de Martín Arboleda y la rúbrica de 100 puntos.
-Refinado para exigir prosa pública, asertiva y rigurosa, libre de clichés panfletarios.
+audit_columna.py — Auditor Determinístico Editorial de Prosa Pública y Ensayo
+
+Herramienta de diagnóstico estático para verificar requisitos formales, heurísticas
+de registro y preguntas de revisión sustantiva en columnas y ensayos públicos.
+
+Soporta perfiles de medio (ej. Jacobin América Latina) y modo genérico para
+diversos formatos de divulgación académica.
+
+Autoridad delimitada:
+  1. Fallos Mecánicos: Infracciones formales demostrables contra reglas aplicables.
+  2. Advertencias Heurísticas: Patrones o términos que ameritan inspección editorial.
+  3. Preguntas Sustantivas: Asuntos de mérito y causalidad que ningún script puede verificar.
 
 Uso:
-    python audit_columna.py ruta/a/tu_columna.md
+    python audit_columna.py ruta/a/tu_columna.md [--venue {jacobin,generic}] [--require-latam-comparisons] [--require-weber] [--json]
 """
 
 import sys
 import re
-import os
+import argparse
+import json
 from pathlib import Path
+from typing import List, Dict, Tuple, Any
 
-# Países de América Latina para verificar latinoamericanización
+# Países de América Latina para inspección geográfica regional
 PAISES_LATAM = [
     "Argentina", "Bolivia", "Brasil", "Chile", "Colombia", "Costa Rica",
     "Cuba", "Ecuador", "El Salvador", "Guatemala", "Honduras", "México",
@@ -21,28 +32,28 @@ PAISES_LATAM = [
     "República Dominicana", "Uruguay", "Venezuela"
 ]
 
-# Términos de jerga académica a des-especializar
+# Términos de jerga académica endogámica a traducir a relaciones materiales
 JERGA_ACADEMICA = [
-    ("historiografía", "relato oficial de la derecha / historia oficial"),
+    ("historiografía", "historia oficial / relato dominante"),
     ("populismo macroeconómico", "el mito del derroche fiscal popular"),
-    ("veto estructural", "huelga patronal de inversiones / boicot de crédito"),
+    ("veto estructural", "huelga patronal de inversiones / salida de capitales"),
     ("estudio de evento", "seguimiento diario de la reacción del mercado"),
     ("señoreaje", "creación de dinero / emisión"),
-    ("emisión inorgánica", "el cliché de la 'maquinita de billetes'"),
-    ("rigideces estructurales", "atraso productivo / límites físicos de la oferta"),
-    ("choques exógenos", "agresiones externas deliberadas / asfixia financiera"),
-    ("admisibilidad", "solidez empírica / coherencia material de los datos"),
-    ("balance de pagos", "asfixia de divisas / falta estructural de dólares")
+    ("emisión inorgánica", "creación monetaria sin respaldo productivo"),
+    ("rigideces estructurales", "límites físicos de la oferta / atraso productivo"),
+    ("choques exógenos", "agresiones externas deliberadas / estrangulamiento financiero"),
+    ("admisibilidad", "solidez empírica / coherencia material"),
+    ("balance de pagos", "asfixia de divisas / escasez de dólares")
 ]
 
-# Clichés panfletarios / agitprop a erradicar
+# Clichés panfletarios y adjetivos viscerales (específicos de Jacobin AL)
 CLICHES_PANFLETARIOS = [
     "burguesía rapaz", "pueblo heroico", "lacayos", "la lucha continúa",
     "a las calles", "odio de clase", "planes siniestros", "salvaje capitalismo",
     "vilmente", "parasitaria oligarquía"
 ]
 
-# Palabras clave de contemporaneización
+# Fórmulas de contemporaneización indicativas
 KEYWORDS_CONTEMPORANEO = [
     "2020", "2021", "2022", "2023", "2024", "2025", "2026",
     "post-pandemia", "pospandemia", "pandemia", "hoy", "actual",
@@ -50,7 +61,7 @@ KEYWORDS_CONTEMPORANEO = [
     "inflación de vendedores", "márgenes empresariales", "márgenes de ganancia"
 ]
 
-# Clichés académicos prohibidos en apertura o cierre
+# Fórmulas meta-académicas de tesis doctoral prohibidas en apertura o cierre
 CLICHES_ACADEMICOS = [
     "la historiografía ha establecido",
     "la literatura económica ha debatido",
@@ -58,12 +69,13 @@ CLICHES_ACADEMICOS = [
     "en este artículo sostengo",
     "es necesario seguir investigando",
     "futuras investigaciones deberán",
-    "queda por estudiar"
+    "queda por estudiar",
+    "se requieren más estudios"
 ]
 
 
 def strip_markdown(text: str) -> str:
-    """Remueve formato markdown pesado para conteo limpio de palabras."""
+    """Remueve formato markdown pesado para conteo limpio de palabras de prosa."""
     text = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
     text = re.sub(r'!\[.*?\]\(.*?\)', '', text)
     text = re.sub(r'\[(.*?)\]\(.*?\)', r'\1', text)
@@ -72,227 +84,302 @@ def strip_markdown(text: str) -> str:
     return text
 
 
-def auditar_columna(filepath: str):
-    path = Path(filepath)
-    if not path.exists():
-        print(f"❌ Error: El archivo '{filepath}' no existe.")
-        sys.exit(1)
-
-    with open(path, "r", encoding="utf-8") as f:
-        raw_text = f.read()
-
+def extract_sections(raw_text: str) -> Tuple[str, List[str], str, str]:
+    """Extrae título H1, párrafos, texto de apertura y texto de cierre."""
     lines = raw_text.splitlines()
-    clean_text = strip_markdown(raw_text)
-    words = clean_text.split()
-    total_words = len(words)
-
-    # 1. TÍTULO
     title = ""
     for line in lines:
         if line.strip().startswith("# "):
             title = line.strip()[2:].strip()
             break
 
+    # Párrafos de prosa sustantiva (omitir encabezados o líneas vacías)
+    raw_paras = [p.strip() for p in raw_text.split("\n\n")]
+    paragraphs = []
+    for p in raw_paras:
+        clean_p = strip_markdown(p).strip()
+        if len(clean_p.split()) >= 15:
+            paragraphs.append(p)
+
+    opening = " ".join(paragraphs[:2]) if len(paragraphs) >= 2 else (paragraphs[0] if paragraphs else "")
+    closing = " ".join(paragraphs[-2:]) if len(paragraphs) >= 2 else (paragraphs[-1] if paragraphs else "")
+    return title, paragraphs, opening, closing
+
+
+def is_in_quotes_or_block(match_span: Tuple[int, int], raw_text: str) -> bool:
+    """Detecta si un término aparece dentro de una cita explícita (bloque > o comillas)."""
+    start, end = match_span
+    line_start = raw_text.rfind('\n', 0, start)
+    line_start = 0 if line_start == -1 else line_start + 1
+    line_prefix = raw_text[line_start:start].strip()
+    if line_prefix.startswith('>'):
+        return True
+
+    # Verificar comillas dobles o angulares cercanas
+    surrounding_start = max(0, start - 200)
+    surrounding_end = min(len(raw_text), end + 200)
+    snippet_before = raw_text[surrounding_start:start]
+    snippet_after = raw_text[end:surrounding_end]
+    quotes_before = snippet_before.count('"') + snippet_before.count('«')
+    quotes_after = snippet_after.count('"') + snippet_after.count('»')
+    if (quotes_before % 2 == 1) and (quotes_after % 2 == 1):
+        return True
+
+    return False
+
+
+def auditar_columna(filepath: str, venue: str = "jacobin",
+                    require_latam_comparisons: bool = False,
+                    require_weber: bool = False,
+                    as_json: bool = False) -> Dict[str, Any]:
+    path = Path(filepath)
+    if not path.exists():
+        err_msg = f"Error: El archivo '{filepath}' no existe."
+        if as_json:
+            print(json.dumps({"error": err_msg}))
+            sys.exit(1)
+        else:
+            print(f"❌ {err_msg}")
+            sys.exit(1)
+
+    with open(path, "r", encoding="utf-8") as f:
+        raw_text = f.read()
+
+    clean_text = strip_markdown(raw_text)
+    words = clean_text.split()
+    total_words = len(words)
+
+    title, paragraphs, opening_text, closing_text = extract_sections(raw_text)
     title_words = len(title.split()) if title else 0
     has_subtitle = (":" in title) or ("—" in title) or (" - " in title)
 
-    # 2. PÁRRAFOS Y APERTURA
-    paragraphs = [p.strip() for p in raw_text.split("\n\n") if len(p.strip().split()) > 15]
-    opening_text = " ".join(paragraphs[:2]) if len(paragraphs) >= 2 else (paragraphs[0] if paragraphs else "")
-    closing_text = " ".join(paragraphs[-2:]) if len(paragraphs) >= 2 else (paragraphs[-1] if paragraphs else "")
+    # Inicializar las tres capas de salida
+    mechanical_failures: List[Dict[str, Any]] = []
+    heuristic_warnings: List[Dict[str, Any]] = []
+    substantive_questions: List[str] = []
 
-    # Contemporaneización en apertura
-    has_contemporary_opening = any(kw in opening_text.lower() for kw in KEYWORDS_CONTEMPORANEO)
-    has_academic_opening = any(cliche in opening_text.lower() for cliche in [
-        "historiografía", "la literatura", "este artículo", "este ensayo"
-    ])
+    # -------------------------------------------------------------
+    # 1. EVALUACIÓN MECÁNICA (Hard Gates del Medio / Formato)
+    # -------------------------------------------------------------
+    if not title:
+        mechanical_failures.append({
+            "check": "missing-title",
+            "message": "No se detectó encabezado principal H1 (# Título)."
+        })
 
-    # 3. LATINOAMERICANIZACIÓN (Países detectados)
-    paises_detectados = []
-    for pais in PAISES_LATAM:
-        if re.search(r'\b' + re.escape(pais) + r'\b', raw_text, re.IGNORECASE):
-            paises_detectados.append(pais)
+    if venue.lower() in ["jacobin", "jacobin-lat", "profiles/venues/jacobin-lat.md"]:
+        # Título Jacobin: <= 12 palabras, sin subtítulo ni dos puntos
+        if title:
+            if has_subtitle:
+                mechanical_failures.append({
+                    "check": "jacobin-subtitle-prohibited",
+                    "message": f"El título contiene ':' o guión de subtítulo. Jacobin prohíbe subtítulos: debe ser tesis declarativa."
+                })
+            if title_words > 12:
+                mechanical_failures.append({
+                    "check": "jacobin-title-length",
+                    "message": f"El título tiene {title_words} palabras (máximo estricto: 12 palabras)."
+                })
 
-    # 4. REFERENCIAS CONTEMPORÁNEAS (Weber, post-2020)
-    has_weber = bool(re.search(r'\bweber\b', raw_text, re.IGNORECASE))
-    has_post_2020 = any(year in raw_text for year in ["2020", "2021", "2022", "2023", "2024", "2025", "2026"])
+        # Extensión Jacobin: rango admisible 1.400 - 2.600 palabras
+        if total_words < 1400:
+            mechanical_failures.append({
+                "check": "word-count-underflow",
+                "message": f"Extensión insuficiente: {total_words} palabras (mínimo Jacobin: 1.400; meta: 1.800–2.000)."
+            })
+        elif total_words > 2600:
+            mechanical_failures.append({
+                "check": "word-count-overflow",
+                "message": f"Extensión excesiva: {total_words} palabras (máximo Jacobin: 2.600)."
+            })
 
-    # 5. DETECCIÓN DE JERGA ACADÉMICA
-    jerga_encontrada = []
+    elif venue.lower() == "generic":
+        # En modo genérico se permiten subtítulos y colons; límites de palabra son heurísticos
+        if total_words < 600:
+            mechanical_failures.append({
+                "check": "word-count-underflow",
+                "message": f"Extensión demasiado breve para ensayo u op-ed: {total_words} palabras."
+            })
+        elif total_words > 4000:
+            mechanical_failures.append({
+                "check": "word-count-overflow",
+                "message": f"Extensión excede el marco estándar de divulgación: {total_words} palabras."
+            })
+
+    # Requisitos de encargo explícitos (Commissions específicas)
+    if require_latam_comparisons:
+        paises_detectados = [p for p in PAISES_LATAM if re.search(r'\b' + re.escape(p) + r'\b', raw_text, re.IGNORECASE)]
+        if len(paises_detectados) < 3:
+            mechanical_failures.append({
+                "check": "assignment-latam-comparisons",
+                "message": f"Encargo requiere comparar >= 3 países de la región; se detectaron {len(paises_detectados)}: {', '.join(paises_detectados)}."
+            })
+
+    if require_weber:
+        has_weber = bool(re.search(r'\bweber\b', raw_text, re.IGNORECASE))
+        if not has_weber:
+            mechanical_failures.append({
+                "check": "assignment-weber-citation",
+                "message": "Encargo requiere citar a Isabella Weber / sellers' inflation para debate de costos."
+            })
+
+    # -------------------------------------------------------------
+    # 2. ADVERTENCIAS HEURÍSTICAS (Alertas de Revisión Editorial)
+    # -------------------------------------------------------------
+    # Clichés académicos en apertura o cierre
+    for cliche in CLICHES_ACADEMICOS:
+        if cliche in opening_text.lower():
+            heuristic_warnings.append({
+                "check": "academic-opening-phrase",
+                "pattern": cliche,
+                "location": "opening",
+                "message": f"Apertura contiene fórmula meta-académica: '{cliche}'."
+            })
+        if cliche in closing_text.lower():
+            heuristic_warnings.append({
+                "check": "academic-closing-phrase",
+                "pattern": cliche,
+                "location": "closing",
+                "message": f"Cierre contiene fórmula evasiva académica: '{cliche}' (rematar con balance político)."
+            })
+
+    # Detección de jerga técnica a des-especializar
     for termino, sugerencia in JERGA_ACADEMICA:
-        matches = len(re.findall(r'\b' + re.escape(termino) + r'\b', raw_text, re.IGNORECASE))
-        if matches > 0:
-            jerga_encontrada.append((termino, matches, sugerencia))
+        matches = list(re.finditer(r'\b' + re.escape(termino) + r'\b', raw_text, re.IGNORECASE))
+        for m in matches:
+            in_quote = is_in_quotes_or_block(m.span(), raw_text)
+            heuristic_warnings.append({
+                "check": "academic-jargon",
+                "term": termino,
+                "in_quote": in_quote,
+                "suggestion": sugerencia,
+                "message": f"Término especializado '{termino}' detectado {'(en cita)' if in_quote else ''}. Considerar sugerencia: '{sugerencia}'."
+            })
 
-    # 6. DETECCIÓN DE CLICHÉS PANFLETARIOS
-    cliches_detectados = []
-    for panfleto in CLICHES_PANFLETARIOS:
-        matches = len(re.findall(r'\b' + re.escape(panfleto) + r'\b', raw_text, re.IGNORECASE))
-        if matches > 0:
-            cliches_detectados.append((panfleto, matches))
+    # Detección de clichés panfletarios / eslóganes (en perfil Jacobin)
+    if venue.lower() in ["jacobin", "jacobin-lat", "profiles/venues/jacobin-lat.md"]:
+        for panfleto in CLICHES_PANFLETARIOS:
+            matches = list(re.finditer(r'\b' + re.escape(panfleto) + r'\b', raw_text, re.IGNORECASE))
+            for m in matches:
+                in_quote = is_in_quotes_or_block(m.span(), raw_text)
+                if in_quote:
+                    heuristic_warnings.append({
+                        "check": "panfletary-cliche-quoted",
+                        "term": panfleto,
+                        "in_quote": True,
+                        "message": f"Frase panfletaria '{panfleto}' detectada en cita/bloque textual. Verificar encuadre crítico."
+                    })
+                else:
+                    heuristic_warnings.append({
+                        "check": "panfletary-cliche",
+                        "term": panfleto,
+                        "in_quote": False,
+                        "message": f"Cliché panfletario en voz de autor: '{panfleto}'. Reemplazar por explicación forense del mecanismo material."
+                    })
 
-    # 7. CIERRE
-    has_academic_closing = any(cliche in closing_text.lower() for cliche in [
-        "seguir investigando", "futuras investigaciones", "queda por estudiar", "más investigaciones"
-    ])
+    # Anclaje contemporáneo heurístico
+    has_contemporary_opening = any(kw in opening_text.lower() for kw in KEYWORDS_CONTEMPORANEO)
+    if not has_contemporary_opening and venue.lower() in ["jacobin", "jacobin-lat"]:
+        heuristic_warnings.append({
+            "check": "contemporary-hook-absent",
+            "message": "Los primeros párrafos no contienen anclajes temporales recientes explícitos (revisar si conecta con el presente)."
+        })
 
-    # CÁLCULO DE SCORE
-    score = 0
-
-    # Dimensión 1: Contemporaneización (20 pts)
-    p_contemp = 0
-    if has_contemporary_opening:
-        p_contemp += 12
-    if has_post_2020 or has_weber:
-        p_contemp += 8
-    score += p_contemp
-
-    # Dimensión 2: Des-especialización y Registro Público (20 pts)
-    p_desesp = 20 - min(15, len(jerga_encontrada) * 3)
-    if cliches_detectados:
-        p_desesp -= min(10, len(cliches_detectados) * 5)
-    score += max(0, p_desesp)
-
-    # Dimensión 3: Latinoamericanización (15 pts)
-    p_latam = 0
-    if len(paises_detectados) >= 3:
-        p_latam = 15
-    elif len(paises_detectados) == 2:
-        p_latam = 10
-    elif len(paises_detectados) == 1:
-        p_latam = 4
-    score += p_latam
-
-    # Dimensión 4: Titular Afirmativo (15 pts)
-    p_title = 0
-    if title:
-        if not has_subtitle:
-            p_title += 8
-        if title_words <= 12:
-            p_title += 7
-        elif title_words <= 16:
-            p_title += 4
-    score += p_title
-
-    # Dimensión 5: Extensión (15 pts)
-    p_ext = 0
-    if 1700 <= total_words <= 2200:
-        p_ext = 15
-    elif 1500 <= total_words <= 2500:
-        p_ext = 11
-    elif 1300 <= total_words < 1500:
-        p_ext = 6
+    # -------------------------------------------------------------
+    # 3. PREGUNTAS SUSTANTIVAS (Materias que el script no puede certificar)
+    # -------------------------------------------------------------
+    substantive_questions.append("¿Se preservan fielmente los mecanismos y límites empíricos del estudio sin exagerar la certeza causal?")
+    substantive_questions.append("¿Las cifras y relaciones de balance citadas cuentan con respaldo documental o estadístico trazable?")
+    if venue.lower() in ["jacobin", "jacobin-lat"]:
+        substantive_questions.append("¿El encuadre teórico sitúa la disputa en el eje de clase (economía burguesa vs. crítica de la economía política)?")
     else:
-        p_ext = 2
-    score += p_ext
+        substantive_questions.append("¿El tono y nivel de detalle corresponden adecuadamente al público y género seleccionado?")
 
-    # Dimensión 6: Cierre y Fuerza Analítica (15 pts)
-    p_close = 15
-    if has_academic_closing:
-        p_close -= 10
-    score += max(0, p_close)
-
-    # Penalizaciones automáticas
-    if has_subtitle:
-        score -= 5
-    if has_academic_opening:
-        score -= 10
-    if cliches_detectados:
-        score -= 10
-    score = max(0, min(100, score))
-
-    # INFORME
-    print("=" * 70)
-    print("📋 REPORTE DE AUDITORÍA EDITORIAL — JACOBIN AMÉRICA LATINA")
-    print(f"Archivo auditado: {path.name}")
-    print("=" * 70)
-    print(f"PUNTAJE GLOBAL: {score} / 100")
-    if score >= 80:
-        print("ESTADO: ✅ APROBADO PARA ENVÍO EDITORIAL")
-    elif score >= 60:
-        print("ESTADO: ⚠️ REQUIERE REVISIÓN Y EDICIÓN PREVIA")
+    # -------------------------------------------------------------
+    # 4. DETERMINACIÓN DE VEREDICTO
+    # -------------------------------------------------------------
+    if mechanical_failures:
+        verdict = "FAIL"
+    elif any(w.get("check") == "panfletary-cliche" and not w.get("in_quote") for w in heuristic_warnings):
+        verdict = "REVIEW_REQUIRED"
+    elif heuristic_warnings:
+        verdict = "PASS_WITH_WARNINGS"
     else:
-        print("ESTADO: ❌ RECHAZADO (Requiere reescritura sustancial)")
-    print("-" * 70)
+        verdict = "PASS"
 
-    print("\n1. EXTENSIÓN Y PALABRAS:")
-    print(f"   • Total palabras: {total_words} (Meta: 1.800 – 2.000 palabras | Rango: 1.500–2.500)")
-    if total_words < 1500:
-        print(f"   ⚠️ Alerta: Faltan aproximadamente {1800 - total_words} palabras.")
-    elif total_words > 2500:
-        print(f"   ⚠️ Alerta: Excede por {total_words - 2500} palabras el límite superior.")
+    result = {
+        "file": path.name,
+        "venue": venue,
+        "verdict": verdict,
+        "total_words": total_words,
+        "title": title,
+        "title_words": title_words,
+        "mechanical_failures": mechanical_failures,
+        "heuristic_warnings": heuristic_warnings,
+        "substantive_review_questions": substantive_questions
+    }
+
+    if as_json:
+        print(json.dumps(result, indent=2, ensure_ascii=False))
+        return result
+
+    # Salida formateada de terminal
+    print("=" * 75)
+    print(f"📋 REPORTE DE AUDITORÍA EDITORIAL DE PROSA PÚBLICA")
+    print(f"Archivo: {path.name} | Perfil: {venue.upper()} | Palabras: {total_words}")
+    print("=" * 75)
+    if verdict == "PASS":
+        print("VEREDICTO: ✅ APROBADO (Sin infracciones mecánicas)")
+    elif verdict == "PASS_WITH_WARNINGS":
+        print("VEREDICTO: ⚠️ APROBADO CON ADVERTENCIAS (Revisar observaciones heurísticas)")
+    elif verdict == "REVIEW_REQUIRED":
+        print("VEREDICTO: ⚠️ REQUIERE REVISIÓN (Detectadas expresiones que ameritan sustitución)")
     else:
-        print("   ✅ Extensión en rango adecuado.")
+        print("VEREDICTO: ❌ RECHAZADO (Presenta infracciones mecánicas formales)")
+    print("-" * 75)
 
-    print("\n2. TITULAR DE TESIS PÚBLICA:")
-    if title:
-        print(f"   • Texto: \"{title}\"")
-        print(f"   • Palabras: {title_words} (Máximo recomendado: 12)")
-        if has_subtitle:
-            print("   ❌ Alerta: Contiene dos puntos (':') o estructura de subtítulo.")
-            print("      Jacobin NO usa subtítulos. Debe ser una tesis declarativa asertiva.")
-        else:
-            print("   ✅ Título sin subtítulo.")
+    print("\n1. FALLOS MECÁNICOS (HARD GATES):")
+    if mechanical_failures:
+        for f in mechanical_failures:
+            print(f"   ❌ [{f['check']}] {f['message']}")
     else:
-        print("   ❌ No se detectó encabezado principal H1 (# Título)")
+        print("   ✅ Ningún fallo mecánico detectado.")
 
-    print("\n3. APERTURA Y GANCHO CONTEMPORÁNEO:")
-    if has_academic_opening:
-        print("   ❌ Alerta: La apertura contiene fórmulas académicas/historiográficas.")
-    if has_contemporary_opening:
-        print("   ✅ Apertura con anclaje contemporáneo detectado.")
+    print("\n2. ADVERTENCIAS HEURÍSTICAS (OBSERVACIONES DE REVISIÓN):")
+    if heuristic_warnings:
+        for w in heuristic_warnings:
+            quote_tag = " (en cita)" if w.get("in_quote") else ""
+            print(f"   ⚠️ [{w['check']}]{quote_tag} {w['message']}")
     else:
-        print("   ⚠️ Alerta: Los primeros párrafos no mencionan coyunturas recientes (2022-2026, inflación reciente).")
+        print("   ✅ Ninguna advertencia heurística registrada.")
 
-    print("\n4. LATINOAMERICANIZACIÓN:")
-    print(f"   • Países detectados ({len(paises_detectados)}): {', '.join(paises_detectados) if paises_detectados else 'Ninguno'}")
-    if len(paises_detectados) < 3:
-        print("   ⚠️ Alerta: Se debe conectar con al menos otros 2 países de la región.")
-    else:
-        print("   ✅ Perspectiva regional amplia confirmada.")
+    print("\n3. PREGUNTAS DE REVISIÓN SUSTANTIVA (EVALUACIÓN HUMANA/EDITORIAL):")
+    for q in substantive_questions:
+        print(f"   🔍 {q}")
 
-    print("\n5. CITACIÓN CONTEMPORÁNEA (Weber / post-2020):")
-    print(f"   • Cita a Isabella Weber / sellers' inflation: {'✅ Detectada' if has_weber else '❌ No encontrada'}")
-    print(f"   • Referencias post-2020: {'✅ Detectadas' if has_post_2020 else '❌ No encontradas'}")
-
-    print("\n6. DES-ESPECIALIZACIÓN Y CONTROL TONAL:")
-    if jerga_encontrada:
-        print("   🔍 Jerga de paper detectada para traducir a prosa pública:")
-        for term, count, sug in jerga_encontrada:
-            print(f"      • '{term}' ({count}x) ➔ Sugerencia: '{sug}'")
-    else:
-        print("   ✅ Prosa libre de tecnicismos endogámicos.")
-
-    if cliches_detectados:
-        print("   ❌ Clichés panfletarios / moralistas detectados (¡Purgar!):")
-        for panf, count in cliches_detectados:
-            print(f"      • '{panf}' ({count}x)")
-    else:
-        print("   ✅ Tono sobrio y analítico: libre de eslóganes panfletarios.")
-
-    print("\n" + "=" * 70)
-    print("SUGERENCIAS PRIORITARIAS:")
-    step = 1
-    if has_subtitle:
-        print(f"  {step}. Formular un titular de tesis afirmativo, sobrio y sin subtítulo (máx. 12 palabras).")
-        step += 1
-    if not has_contemporary_opening:
-        print(f"  {step}. Abrir en el presente: anclar los primeros 2 párrafos a la inflación y presiones distributivas recientes en América Latina.")
-        step += 1
-    if len(paises_detectados) < 3:
-        print(f"  {step}. Extender la perspectiva material hacia al menos 2 países de la región (ej. Argentina, Brasil).")
-        step += 1
-    if not has_weber:
-        print(f"  {step}. Introducir a Isabella Weber (sellers' inflation / márgenes empresariales) para conectar con el debate vivo.")
-        step += 1
-    if cliches_detectados:
-        print(f"  {step}. Reemplazar los calificativos moralistas por la explicación forense del mecanismo material de boicot.")
-        step += 1
-    print("=" * 70)
+    print("=" * 75)
+    return result
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Uso: python audit_columna.py ruta/a/tu_columna.md")
+    parser = argparse.ArgumentParser(description="Auditor determinístico para columnas y ensayos de economía política.")
+    parser.add_argument("file", help="Ruta al archivo Markdown de la columna")
+    parser.add_argument("--venue", default="jacobin", choices=["jacobin", "generic", "jacobin-lat"],
+                        help="Perfil de medio a aplicar (default: jacobin)")
+    parser.add_argument("--require-latam-comparisons", action="store_true",
+                        help="Encargo específico: exigir mención/comparación de >= 3 países de AL")
+    parser.add_argument("--require-weber", action="store_true",
+                        help="Encargo específico: exigir mención a Isabella Weber / sellers' inflation")
+    parser.add_argument("--json", action="store_true", help="Emitir reporte en formato JSON")
+
+    args = parser.parse_args()
+    res = auditar_columna(
+        args.file,
+        venue=args.venue,
+        require_latam_comparisons=args.require_latam_comparisons,
+        require_weber=args.require_weber,
+        as_json=args.json
+    )
+    if res["verdict"] == "FAIL":
         sys.exit(1)
-    auditar_columna(sys.argv[1])
+    sys.exit(0)

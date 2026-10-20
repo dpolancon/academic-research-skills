@@ -199,3 +199,11 @@ path = "scripts/test_check_instruction_data_boundary.py"
 [[pytest]]
 id = "272-runtime-injection-boundary-pebble"
 path = "scripts/test_runtime_injection_boundary_xfail.py"
+
+[[pytest]]
+id = "wave-e-column-auditor"
+path = "tests/test_audit_columna.py"
+
+[[pytest]]
+id = "wave-e-dissemination"
+path = "scripts/test_wave_e_dissemination.py"

@@ -5,8 +5,8 @@
 # capability ownership mappings.
 #
 # Schema: ars-governance-registry-v1.0
-# Version: 1.2.0
-# Last Updated: 2026-10-19 (Wave D6 Governance Reconciliation)
+# Version: 1.3.0
+# Last Updated: 2026-10-19 (Wave E Dissemination Architecture Reconciliation)
 #
 # Core Architectural Principles:
 # 1. Components ("What exists?") and Capabilities ("What responsibility is owned?")
@@ -18,7 +18,7 @@
 # 5. Deprecated aliases own zero canonical substantive capabilities.
 # ==============================================================================
 
-version: "1.2.0"
+version: "1.3.0"
 last_updated: "2026-10-19"
 schema: "ars-governance-registry-v1.0"
 
@@ -120,16 +120,40 @@ components:
     provenance_source: "Lu Han (hanlulong/econ-slides-skill) + local adaptation"
     notes: "Authoritative production and verification of academic economics Beamer presentation slide decks."
 
-  - component_id: "editor-jacobin-lat"
-    display_name: "Editor Jacobin América Latina"
-    runtime_path: "editor-jacobin-lat"
+  - component_id: "public-scholarship"
+    display_name: "Public Scholarship"
+    runtime_path: "public-scholarship"
     current_implementation_type: "SKILL"
     semantic_role: "DISSEMINATION_SKILL"
-    lifecycle_status: "PLANNED_MIGRATION"
+    lifecycle_status: "ACTIVE"
     mode_bearing: false
     target_path: "skills/dissemination/public-scholarship"
+    provenance_source: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Translation of research into accessible public essays across multiple genres (op-eds, policy briefs, explainers); enforces des-specialization without banalization and empirical claim discipline; consumes venue profiles for outlet calibration."
+
+  - component_id: "editor-jacobin-lat"
+    display_name: "Editor Jacobin América Latina (Legacy Alias)"
+    runtime_path: "editor-jacobin-lat"
+    current_implementation_type: "LEGACY_SKILL"
+    semantic_role: "DISSEMINATION_SKILL"
+    lifecycle_status: "DEPRECATED"
+    mode_bearing: false
+    target_path: "profiles/venues/jacobin-lat.md"
     provenance_source: "Diego Polanco (Local creation)"
-    notes: "Translation of research into accessible public essays; planned decomposition into generic public-scholarship skill + venue profile in Wave E."
+    replacement_path: "profiles/venues/jacobin-lat.md"
+    delegates_to: "public-scholarship"
+    notes: "DEPRECATED compatibility redirect. Canonical dissemination skill is public-scholarship; calibration profile is profiles/venues/jacobin-lat.md."
+
+  - component_id: "venue-jacobin-lat"
+    display_name: "Venue Profile: Jacobin América Latina"
+    runtime_path: "profiles/venues/jacobin-lat.md"
+    current_implementation_type: "PROFILE"
+    semantic_role: "PROFILE"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "profiles/venues/jacobin-lat.md"
+    provenance_source: "Extracted from editor-jacobin-lat (Wave E)"
+    notes: "Venue editorial profile for Jacobin América Latina (Martín Arboleda criteria, 12-word declarative headline, no subtitles, anti-agitprop blacklist). Calibrates public-scholarship."
 
   - component_id: "advisor-reviewer"
     display_name: "Advisor Reviewer (Legacy Alias)"
@@ -374,17 +398,17 @@ capabilities:
     notes: "Sole owner of Beamer decks; absorbs presentation guidance from econ-write; Fondecyt project files quarantined from core distribution."
 
   - capability_id: "public_scholarship_translation"
-    description: "Translation of dense academic research into accessible, non-specialized public essays and opinion columns."
-    current_owner: "editor-jacobin-lat"
+    description: "Translation of dense academic research into accessible, non-specialized public essays, op-eds, policy briefs, and educational explainers."
+    current_owner: "public-scholarship"
     current_owner_type: "DISSEMINATION_SKILL"
     target_owner: "skills/dissemination/public-scholarship"
     target_owner_type: "DISSEMINATION_SKILL"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "public_scholars"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently conflated with Jacobin América Latina house style; planned decomposition in Wave E."
+    provenance: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Sole canonical owner of public scholarship translation; decomposes into generic public craft and consumes venue profiles for specific outlets."
 
   - capability_id: "prose_discipline_and_lexical_audit"
     description: "Category A/B/C prose discipline protocol, technical vocabulary protection, and evidential claim-strength verb mapping."
@@ -498,16 +522,16 @@ capabilities:
 
   - capability_id: "venue_jacobin_lat_editorial"
     description: "Editorial style guide, headline constraints (declarative thesis, no subtitle, max 12 words), and Martín Arboleda criteria."
-    current_owner: "editor-jacobin-lat"
-    current_owner_type: "DISSEMINATION_SKILL"
-    target_owner: "profiles/venues/jacobin-lat"
+    current_owner: "venue-jacobin-lat"
+    current_owner_type: "PROFILE"
+    target_owner: "profiles/venues/jacobin-lat.md"
     target_owner_type: "PROFILE"
-    migration_status: "PLANNED"
+    migration_status: "CURRENT"
     consumers:
       - "public-scholarship"
     forbidden_duplicate_owners: true
-    provenance: "Diego Polanco (Local creation)"
-    notes: "Currently embedded within editor-jacobin-lat; planned extraction to venue profile in Wave E."
+    provenance: "Diego Polanco (Extracted from editor-jacobin-lat in Wave E)"
+    notes: "Durable editorial preferences of Jacobin América Latina (Martín Arboleda criteria). Calibrates public-scholarship; does not own translation capability."
 
   - capability_id: "author_diego_academic_voice"
     description: "Authorial voice, preferred theoretical phrasing, citation density preferences, and bilingual Spanish-English idioms."

@@ -1,8 +1,8 @@
 # ARS Runtime Routing & Capability Precedence Contract
 
-- **Version:** 1.2.0
-- **Wave:** Wave D6 (Domain Architecture & Governance Reconciliation)
-- **Baseline Checkpoint:** `aa5283ecd4cf49c377a3a96ba8d57c3c0257ab65`
+- **Version:** 1.3.0
+- **Wave:** Wave E (Dissemination Architecture & Public Scholarship)
+- **Baseline Checkpoint:** `27fbfd60255fe6c3cd99e7298c43a5189869163b`
 - **Authoritative Governance Reference:** `docs/governance/ars_registry.yaml`
 
 ---
@@ -18,11 +18,12 @@ The Academic Research Skills (ARS) repository enforces deterministic capability 
 5. **Profiles Are Inputs, Not Review Engines:** Scholar and committee profiles (`profiles/advisors/michael-ash.md`, `profiles/committees/umass-pe.md`) serve strictly as calibration inputs to `academic-paper-reviewer`; they are not independent peer-review engines.
 6. **Shared Protocol Substrate:** Reusable cross-domain prose discipline is codified in `shared/protocols/prose_discipline_protocol.md` and verified offline via `tools/prose_checks/check_prose_patterns.py`; it does not own manuscript authoring or editing tasks.
 7. **Change Control Is Not Review:** Editorial governance (`shared/contracts/passport/EDITORIAL_GOVERNANCE_PORT.md`, `scripts/revision_guard.py`) owns change-control verification only; it does not evaluate scholarly quality or authorize substantive prose changes. Default release policy is `optional`.
-8. **Runtime Path Rule:** Until Wave F physical directory harmonization, all routing contracts MUST resolve to live root directories (`academic-paper`, `econ-write`, `academic-paper-reviewer`, `academic-pipeline`, `deep-research`, `econ-slides`, `political-economy-research`, `umass-applied-econometrics`, `heterodox-economics-review`) and live extracted substrates (`profiles/`, `shared/`, `tools/`), never to future target paths (`skills/core/...`, `skills/domain/...`, `orchestrator/...`).
+8. **Runtime Path Rule:** Until Wave F physical directory harmonization, all routing contracts MUST resolve to live root directories (`academic-paper`, `econ-write`, `academic-paper-reviewer`, `academic-pipeline`, `deep-research`, `econ-slides`, `political-economy-research`, `umass-applied-econometrics`, `heterodox-economics-review`, `public-scholarship`) and live extracted substrates (`profiles/`, `shared/`, `tools/`), never to future target paths (`skills/core/...`, `skills/domain/...`, `skills/dissemination/...`, `orchestrator/...`).
 9. **Inferential-Task Jurisdiction:** Task allocation is governed by the specific inferential operation requested, not the topical framing of the prompt. A political-economy paper requesting unit-root tests routes to applied econometrics (`umass-applied-econometrics`), not political economy; an accumulation model requesting historical strike records routes to deep research / political economy, not macro modeling.
 10. **Theoretical Model ≠ Automatic Estimator (`THEORY → EMPIRICAL METHOD → INTERPRETATION`):** Theoretical macro models (`heterodox-economics-review`) derive mechanisms, theoretical state variables, and testable restrictions. Empirical strategy and estimator selection belong strictly to the applicable empirical capability (`umass-applied-econometrics`). A theoretical model does not select an estimator; historical evidence cannot establish stochastic admissibility; econometric non-findings cannot be overridden by theoretical fit or narrative.
 11. **Shared Protocol Standard vs. Executable Workflow Owner (`BEHAVIOR, NOT PATH, DETERMINES COMPONENT TYPE`):** `shared/protocols/historical_source_criticism_protocol.md` is a shared diagnostic standard governing claim-relative source warrant (14 diagnostic dimensions, 4 canonical verdicts: SUPPORTS, UNDERMINES, SILENT, INDETERMINATE; no universal hierarchy; no causal inference leak). It is NOT an autonomous routable skill or agent; it is executed conditionally within a requesting workflow (`political-economy-research` or `deep-research`).
 12. **Preserved Causal-Inference Gap (`UNRESOLVED CAPABILITY OWNERSHIP ≠ LICENSE TO ASSIGN TO NEAREST SKILL`):** Micro-econometric causal inference (DID, IV, RDD, synthetic controls, staggered adoption) currently has `NO CURRENT CANONICAL OWNER`. It is bounded out of `umass-applied-econometrics` (time-series only) and `econ-write` (writing only). Requests for causal identification must acknowledge this gap and must NOT be misrouted to existing skills.
+13. **Public Scholarship vs. Technical Academic Production (`DESPECIALIZATION WITHOUT BANALIZATION`):** `public-scholarship` is the canonical owner of author-side public translation across non-academic genres (op-ed, explanatory essay, historical perspective, policy brief). Venue profiles (`profiles/venues/jacobin-lat.md`) calibrate presentation, rhetorical conventions, and headline constraints without acquiring authority over empirical evidence, causal claims, or substantive truth values. Venue profiles cannot override domain claim ceilings or dictate substantive conclusions.
 
 ---
 
@@ -74,6 +75,15 @@ USER REQUEST
     │       ├── Diagnostic scan: tools/prose_checks/check_prose_patterns.py
     │       └── Manuscript revision: academic-paper or econ-write
     │              consuming shared/protocols/prose_discipline_protocol.md
+    │
+    ├── Public scholarship, despecialized essay, op-ed, or policy brief?
+    │       └── public-scholarship (author-side multi-genre translation & craft)
+    │              │
+    │              └── If Latin American socialist / left venue requested → consumes profiles/venues/jacobin-lat.md
+    │
+    ├── Legacy Jacobin column request (/editor-jacobin-lat)?
+    │       └── DEPRECATED_COMPATIBILITY_REDIRECT → public-scholarship
+    │              + calibration input: profiles/venues/jacobin-lat.md
     │
     ├── Revision verification / change control audit?
     │       └── scripts/revision_guard.py (Material Passport Port)
@@ -186,6 +196,19 @@ USER REQUEST
 - **Scope:** Micro-econometric causal identification (difference-in-differences, instrumental variables, regression discontinuity, synthetic controls).
 - **Enforcement:** Requests must identify and report the capability gap. Must NOT be routed to `econ-write` (writing only) or `umass-applied-econometrics` (time-series only).
 
+### Rule R17 — Generic Public Scholarship & Despecialization
+- **Trigger Examples:** `"Write a public explanatory essay from this research"`, `"Draft an op-ed translating this economic finding"`, `"Turn this dissertation chapter into a policy brief"`, `"Despecialize this paper for a general audience"`.
+- **Primary Owner:** `public-scholarship`.
+- **Scope:** Cross-genre public translation (op-ed, explanatory essay, historical perspective, policy brief), despecialization without banalization, faithful mechanism simplification, empirical claim ceilings, and causal inference discipline.
+- **Boundaries:** Author-side translation only. Does not replace academic peer review (`academic-paper-reviewer`), academic paper authoring (`academic-paper`), or technical economics writing (`econ-write`).
+
+### Rule R18 — Venue-Calibrated Public Scholarship (Jacobin América Latina)
+- **Trigger Examples:** `"Draft a Jacobin Latin America column on this topic"`, `"Format this public essay for Jacobin América Latina"`, `"Apply Jacobin editorial conventions to this draft"`.
+- **Primary Owner:** `public-scholarship`.
+- **Calibration Profile:** `profiles/venues/jacobin-lat.md`.
+- **Scope:** Jacobin-specific presentation calibration (thesis headline $\le 12$ words, no subtitles/colons, bourgeois economics vs critique of political economy, sellers' inflation as cost-shock exemplar, anti-agitprop blacklist). Commission-specific options (multi-country comparison, Weber) are inactive by default unless explicitly flagged.
+- **Boundaries:** Venue Profile Boundary Principle: The venue profile calibrates presentation and rhetorical framing; it cannot override empirical evidence, force unsupported causal claims, or dictate substantive economic truth.
+
 ---
 
 ## 4. Adversarial Disambiguation Rules
@@ -206,18 +229,23 @@ USER REQUEST
 | **ADV-D4** | PE topic with econometric operation | `umass-applied-econometrics` | `political-economy-research` | Operation, not topic, selects the capability owner |
 | **ADV-D5** | Historical section drafting | `academic-paper` | `political-economy-research`, `heterodox-economics-review` | Manuscript lifecycle belongs to academic-paper consuming econ-write; analytical skills supply outputs |
 | **ADV-D6** | Unassigned causal inference method | `UNASSIGNED_CAPABILITY_GAP` | All registered components | Causal inference has no current owner; reject all components |
+| **ADV-E1** | Public scholarship vs. economics paper write | `public-scholarship` | `econ-write`, `academic-paper` | Public translation is distinct from peer-reviewed disciplinary economics writing |
+| **ADV-E2** | Venue profile vs. review engine | `public-scholarship` | `academic-paper-reviewer` | Venue profiles calibrate author craft, not simulate peer review |
+| **ADV-E3** | Legacy Jacobin editor call | `public-scholarship` | `editor-jacobin-lat` | Legacy entry point delegates to canonical skill with venue profile |
+| **ADV-E4** | Simplification vs. causal overclaiming | `public-scholarship` | All overclaiming shorthands | Despecialization cannot elevate descriptive associations into causal claims |
 
 ---
 
 ## 5. Deprecated Compatibility Redirects
 
-The following legacy skill surfaces are deprecated as of Wave C5. Calls to these surfaces are routed to canonical components:
+The following legacy skill surfaces are deprecated as of Wave C5 and Wave E. Calls to these surfaces are routed to canonical components:
 
 | Legacy Surface | Status | Canonical Replacement |
 |:---------------|:-------|:----------------------|
 | `advisor-reviewer` | DEPRECATED | `academic-paper-reviewer` + `profiles/advisors/michael-ash.md` |
 | `PE-phd-committee` | DEPRECATED | `academic-paper-reviewer` + `profiles/committees/umass-pe.md` |
 | `prose-register-critic` | DEPRECATED | `shared/protocols/prose_discipline_protocol.md` + `tools/prose_checks/check_prose_patterns.py` (writing: `academic-paper` / `econ-write`) |
+| `editor-jacobin-lat` | DEPRECATED | `public-scholarship` + `profiles/venues/jacobin-lat.md` (audit tool: `editor-jacobin-lat/scripts/audit_columna.py`) |
 
 ---
 
@@ -234,6 +262,7 @@ The following legacy skill surfaces are deprecated as of Wave C5. Calls to these
 > - `political-economy-research`
 > - `umass-applied-econometrics`
 > - `heterodox-economics-review`
+> - `public-scholarship`
 > - `profiles/`
 > - `shared/`
 > - `tools/`
