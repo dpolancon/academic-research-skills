@@ -1,0 +1,32 @@
+schema_version: 1
+
+architecture:
+  canonical: "{{ARCHITECTURE_KEY}}"
+  status: PROPOSED
+
+paragraphs:
+  P01: NOT_STARTED
+  P02: NOT_STARTED
+
+cluster_layers:
+  batch1: IN_PROGRESS
+
+workflow:
+  current_stage: "{{INITIAL_STAGE}}"
+  next_stage: "{{NEXT_STAGE}}"
+  next_human_gate: "{{HUMAN_GATE}}"
+
+permissions:
+  corpus_expansion: HUMAN_ONLY
+  architecture_change: HUMAN_ONLY
+  scholarly_lock: HUMAN_ONLY
+  novelty_priority: HUMAN_ONLY
+  contribution_hierarchy: HUMAN_ONLY
+  prose_without_locked_ledger: FORBIDDEN
+  commit: HUMAN_ONLY
+  push: HUMAN_ONLY
+
+backend_config:
+  backend_type: "{{BACKEND_TYPE}}" # e.g. local_notes, mock, notebooklm
+  enabled: true
+  auth_required: false

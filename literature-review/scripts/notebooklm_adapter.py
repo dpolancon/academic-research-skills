@@ -2,7 +2,8 @@
 Replaceable Extraction Backend & NotebookLM Adapter for Literature-Review Skill.
 
 This module defines a generic ExtractionBackend interface and provides an
-isolated, robust NotebookLM implementation around notebooklm-py.
+isolated, robust NotebookLM implementation around notebooklm-py, as well as
+offline LocalNotesBackend and MockExtractionBackend for zero-dependency operation.
 It enforces source scoping, query-pack bundling, comparative cluster passes,
 exception query trigger validation (Triggers A-F), and optimization metric calculation.
 """
@@ -155,6 +156,59 @@ def compute_optimization_metrics(
         "exception_rate": round(exception_queries_triggered / max(paragraph_ledgers_constructed, 1), 3),
         "requery_rate": round(requeried_saturated_sources / max(total_saturated_sources, 1), 3),
     }
+
+
+class MockExtractionBackend(ExtractionBackend):
+    """Offline mock backend for testing and zero-network execution."""
+
+    def __init__(self, sources: Optional[List[Dict[str, Any]]] = None, responses: Optional[Dict[str, Any]] = None):
+        self.sources = sources or [
+            {"id": "src_001", "title": "Mock Source A"},
+            {"id": "src_002", "title": "Mock Source B"}
+        ]
+        self.responses = responses or {}
+
+    def list_sources(self) -> List[Dict[str, Any]]:
+        return self.sources
+
+    def ask(self, question: str, source_ids: List[str], start_new_session: bool = True) -> Dict[str, Any]:
+        if not source_ids:
+            raise ValueError("Strict source scoping required: source_ids cannot be empty.")
+        # Return canned response if matching key, or structured mock output
+        for sid in source_ids:
+            if sid in self.responses:
+                return self.responses[sid]
+        return {
+            "answer": f"Mock extraction answer based on sources {source_ids}.",
+            "citations": [{"source_id": sid, "quote": f"Sample quote from {sid}", "page": 42} for sid in source_ids]
+        }
+
+
+class LocalNotesBackend(ExtractionBackend):
+    """Backend reading directly from local source notes without external API."""
+
+    def __init__(self, notes_dir: Path):
+        self.notes_dir = Path(notes_dir)
+
+    def list_sources(self) -> List[Dict[str, Any]]:
+        sources = []
+        if self.notes_dir.exists():
+            for p in self.notes_dir.glob("SRC_*.md"):
+                sources.append({"id": p.stem, "title": p.stem, "path": str(p)})
+        return sources
+
+    def ask(self, question: str, source_ids: List[str], start_new_session: bool = True) -> Dict[str, Any]:
+        if not source_ids:
+            raise ValueError("Strict source scoping required: source_ids cannot be empty.")
+        found_notes = []
+        for sid in source_ids:
+            note_path = self.notes_dir / f"{sid}.md"
+            if note_path.exists():
+                found_notes.append(sid)
+        return {
+            "answer": f"Extracted from local notes: {found_notes}",
+            "citations": [{"source_id": sid, "status": "SATURATED_LOCAL_NOTE"} for sid in found_notes]
+        }
 
 
 class NotebookLMAdapter(ExtractionBackend):

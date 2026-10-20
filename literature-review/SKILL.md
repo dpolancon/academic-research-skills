@@ -1,92 +1,137 @@
 ---
 name: literature-review
-description: Modular, grounded, source-and-cluster-first literature review workflow powered by replaceable extraction backends (e.g., NotebookLM), iterative question banks, query packs, canonical source notes, comparative cluster matrices, citation-chunk contracts, synthesis hinges, and paragraph ledgers.
-version: 1.1.0
+description: Governed, source-and-cluster-first academic literature review workflow. Transforms saturated primary texts and comparative citation contracts into paragraph ledgers, argument assembly, restrained staged prose, and publication-ready manuscript text with mandatory post-humanization claim-immobility auditing.
+version: 2.0.0
 author: Diego Polanco / Antigravity
 ---
 
-# Literature Review Skill (Source- & Cluster-First Grounded Architecture)
+# Literature Review Skill (Governed Evidence-to-Prose Architecture)
 
-## Overview
-This skill provides a rigorous, auditable, and pass-efficient workflow for producing academic literature reviews grounded in primary texts. It eliminates paragraph-by-paragraph source re-interrogation by operating extraction at the **Source Level** (via bundled **Query Packs**) and the **Cluster / Comparative Level** (via **Comparative Evidence Matrices** and **Citation-Chunk Contracts**). Manuscript paragraphs ($P_1 \dots P_J$) are downstream consumers of a saturated local evidence vault.
+## 1. Overview & Core Philosophy
 
-## Core Production Workflow
-```
-PROJECT GOVERNANCE / AUTHORITY MAP (Loop A)
-        ↓
-CORPUS REGISTRY + SOURCE TIERING (Tiers A, B, C, D)
-        ↓
-ITERATIVE QUESTION BANK (Loop B: Q_project ∪ Q_legacy ∪ Q_source)
-        ↓
-QUERY PACKS (Execution Bundles over Atomic Question IDs)
-        ↓
-SOURCE PASSES (Loop C: Bounded Extraction)
-        ↓
-CANONICAL SOURCE NOTES (EXTRACTION-SATURATED)
-        ↓
-CLUSTER PASSES (Loop D: Comparative Extraction)
-        ↓
-COMPARATIVE EVIDENCE MATRICES
-        ↓
-CLUSTER NOTES + CITATION-CHUNK CONTRACTS (ADJUDICATION-SATURATED)
-        ↓
-SYNTHESIS / HINGE NOTES
-        ↓
-PARAGRAPH LEDGERS P1...PJ (Loop E)
-        ↓
-HUMAN RATIFICATION GATE
-        ↓
-MANUSCRIPT PROSE
-```
-*Exception Loop:* After source/cluster saturation, the extraction backend may re-enter **only** via a formally logged **Exception Query** (Triggers A–F), which updates the canonical source or cluster note before consumption in a paragraph ledger.
+This skill provides a rigorous, auditable, and pass-efficient workflow for producing academic literature reviews grounded in primary texts. It eliminates paragraph-by-paragraph source re-interrogation by organizing evidence consolidation across distinct, verifiable layers.
+
+> **CENTRAL SCHOLARLY PRINCIPLES:**
+> 1. **Evidence Precedes Writing:** Manuscript paragraphs ($P_1 \dots P_J$) are downstream consumers of a saturated local evidence vault.
+> 2. **Cluster Membership $\neq$ Common Claim Membership:** Co-occurrence in a theme never warrants joint attribution without an explicit citation contract.
+> 3. **Intermediate Representations Insulate Evidentiary Bounds:** Paragraph ledgers answer *what may be claimed*; Argument Assembly answers *why each claim is here, in what order, and what must remain separate*; Staged Prose answers *what is the simplest restrained scholarly expression with boundaries stabilized*; Manuscript Prose answers *how the author expresses it in target journal register*.
+> 4. **The Claim-Immobility Law:** Stylistic humanization and polishing may vary rhythm, syntax, and cadence, but may **NEVER** alter empirical bounds or strengthen claims.
+> 5. **Human Sovereignty:** The human author approves changes to the epistemic perimeter, not every mechanical transformation within it.
 
 ---
 
-## The Five Interacting Loops
+## 2. Complete Governed Lifecycle (L0 through L13)
 
-### Loop A — Governance & Authority Map (`00_contract/`)
-Routes claims to their canonical source of truth without sending internal project authorities through external-literature validation loops:
-- **External Literature Claims (`TIER_A` / `TIER_B` / `TIER_C`):** Original primary text.
-- **Author Methodological Reformulation (`TIER_D_INTERNAL_AUTHORITY`):** Project's foundational methodology text/monograph.
-- **Executable Data / Code Implementation (`TIER_D_INTERNAL_AUTHORITY`):** Active data/code repository.
-- **Paper Analytical Architecture (`TIER_D_INTERNAL_AUTHORITY`):** Ratified project design and empirical contracts.
+```mermaid
+flowchart TD
+    L0["L0: Project Governance & Authority Map"] --> L1["L1: Corpus & Source Tiering"]
+    L1 --> L2["L2: Question Bank & Query Packs"]
+    L2 --> L3["L3: Source Extraction & Saturation"]
+    L3 --> L4["L4: Cluster Comparative Matrices"]
+    L4 --> L5["L5: Citation-Chunk Contracts (CCC)"]
+    L5 --> L6["L6: Paragraph Ledgers (Proposition Slots)"]
+    L6 --> L7["L7: Argument Assembly (Choreography)"]
+    L7 --> L8["L8: Staged Academic Prose (Boundary Stabilization)"]
+    L8 --> L9["L9: Manuscript Prose (Disciplinary Styling)"]
+    L9 --> L10["L10: Provenance & Style-Risk Audit"]
+    L10 --> L11["L11: Disciplinary Register / Humanization"]
+    L11 --> L12["L12: Post-Humanization Claim-Immobility Audit"]
+    L12 --> L13["L13: Human Ratification Gate & Freeze"]
+```
 
-### Loop B — Iterative Question Discovery & Query Packs (`02_questions/`)
-Maintains an iterative Question Bank combining three streams:
-$$Q_{\text{bank}} = Q_{\text{project}} \cup Q_{\text{legacy}} \cup Q_{\text{source}}$$
-- **Atomic Question IDs (`Q_XXX_001`):** Irreducible unit of provenance; every extracted answer maps to an atomic ID.
-- **Query Packs (`QP_<FAMILY>`):** Execution bundles grouping related atomic questions so a source can be interrogated in 1–2 bounded passes.
-
-### Loop C — Source Extraction & Saturation (`01_corpus/`, `03_source_notes/`)
-Schedules interrogation depth using **Source Tiers**:
-- **`TIER_A_CORE`:** Supports multiple themes/sections; receives comprehensive Query Packs (1–2 passes).
-- **`TIER_B_SUPPORTING`:** Serves one primary theme or cluster; receives targeted Query Packs (1 pass).
-- **`TIER_C_CONTEXTUAL`:** Serves bounded contextual framing; receives lightweight identity + targeted claim pack (1 pass).
-- **`TIER_D_INTERNAL_AUTHORITY`:** Internal authority; exempt from external extraction loops.
-
-A source note (`SRC_<KEY>.md`) reaches **`EXTRACTION-SATURATED`** when all assigned atomic questions hold `EXPLICIT`, `PARTIAL`, or `NOT LOCATED` with verbatim anchors, preserved author terminology, and explicit negative boundaries (`Does NOT Establish`). Once saturated, default re-querying is locked.
-
-### Loop D — Cluster Comparative Matrices, Citation-Chunk Contracts & Synthesis (`04_cluster_notes/`, `05_synthesis_notes/`)
-- **Comparative Evidence Matrix:** Cross-tabulates saturated source notes (and bounded multi-source comparative passes when needed) across shared atomic questions.
-- **Citation-Chunk Contract (`CITATION_CHUNK_CONTRACT`):** Enforces `Cluster Membership ≠ Common Claim Membership`. Specifies source-by-source support, common denominator, internal divergences, permitted joint citation strings `(Author1, Year; Author2, Year)`, excluded members when claims narrow, and prohibited overclaims.
-- **`ADJUDICATION-SATURATED`:** Reached when all common propositions, divergences, and citation chunks for a cluster are locked.
-- **Synthesis / Hinge Notes (`SYNTH_<KEY>.md`):** Adjudicates connections across distinct literature traditions against 4 criteria: (1) Conceptual Proximity, (2) Interpretive Value, (3) Non-Inflationary Boundary, and (4) Paragraph Necessity.
-
-### Loop E — Manuscript Ledgers, Exception Queries & Recalibrated Human Gates (`06_paragraph_ledgers/`)
-- **Paragraph Ledgers (`LEDGER_P<XX>.md`):** Map every planned sentence to provenance tags (`DIRECT SOURCE CLAIM`, `CLUSTER CITATION CHUNK`, `ADJUDICATED CROSS-LITERATURE HINGE`, `AUTHORIAL SYNTHESIS`, `TRANSITION`).
-- **Exception Query Protocol:** Backend re-entry is allowed **only** under Triggers A–F (`REQUIRED_CLAIM_NOT_LOCATED`, `CONFLICT`, `PROVENANCE_GAP`, `CLAIM_EXCEEDS_NOTE`, `ATTRIBUTION_AMBIGUITY`, `NEW_QUESTION`) and must update the durable `SRC_*` or `CLUS_*` note first.
-- **Recalibrated Human Gates:** Human ratification is concentrated at consequential checkpoints: (1) Cluster/Citation-Chunk Adjudication, (2) Novel Synthesis Hinges, (3) Paragraph Ledgers, (4) Manuscript Prose Insertion, and (5) Contribution/Novelty Claims.
+Projects may halt at any meaningful intermediate state (e.g., stopping at locked ledgers or argument assembly). The pipeline never forces premature progression to prose.
 
 ---
 
-## Optimization Metrics & Regression Fixture
-Tracks efficiency subject to strict grounding and negative-boundary preservation:
-- **Source Reuse ($R_{\text{source}}$):** Downstream themes/ledgers served per canonical source pass.
-- **Query Reuse ($R_{\text{query}}$):** Downstream claims/matrix cells populated per query pack execution.
-- **Cluster Reuse ($R_{\text{cluster}}$):** Citation chunks/hinges/ledgers served per cluster pass.
-- **Exception Rate ($E_{\text{rate}}$):** Exception queries divided by total paragraph ledgers.
-- **Requery Rate ($Q_{\text{re}}$):** Saturated sources re-queried divided by total saturated sources.
-- **Regression Fixture Validation:** Any workflow update must reproduce existing gold-standard calibration ledgers (e.g., `P01`) purely from canonical source and synthesis notes without new paragraph-specific extraction passes.
+## 3. The 14 Governed Stages
 
-## Replaceable Backend Adapter
-External extraction is mediated via an abstract `ExtractionBackend` interface in `scripts/notebooklm_adapter.py` (with `NotebookLMAdapter` as the default implementation). Durable scholarly state lives exclusively in local version-controlled Markdown, CSV, JSON, and YAML artifacts.
+### L0 — Project Governance & Authority Map (`00_control_bundle/`)
+- Declares the **Authority Hierarchy**:
+  - *External Scholarly Literature:* Original primary texts (`TIER_A`, `TIER_B`, `TIER_C`).
+  - *Internal Methodological Predecessors:* Foundational dissertations/monographs (`TIER_D`).
+  - *Executable Data / Code Repositories:* Active empirical pipelines (`TIER_D`).
+  - *Current Manuscript Governance:* Paper analytical architecture and paper-owned constructs.
+- Declares the machine-readable state machine (`08_CURRENT_STATE.yaml`).
+
+### L1 — Corpus Registry & Source Tiering (`01_corpus/`)
+- Assigns literature to tiers: `TIER_A_CORE` (multi-theme anchors), `TIER_B_SUPPORTING` (single-cluster contributors), `TIER_C_CONTEXTUAL` (framing), `TIER_D_INTERNAL_AUTHORITY` (exempt from external extraction).
+
+### L2 — Iterative Question Discovery & Query Packs (`02_questions/`)
+- Synthesizes atomic questions: $Q_{\text{bank}} = Q_{\text{project}} \cup Q_{\text{legacy}} \cup Q_{\text{source}}$.
+- Bundles atomic questions into reusable **Query Packs** (`QP_<FAMILY>`) to extract maximum evidence in minimum passes.
+
+### L3 — Bounded Source Passes & Extraction Saturation (`03_source_notes/`)
+- Interrogates primary texts using replaceable backends (or local reading).
+- Records canonical source notes (`SRC_<KEY>.md`) with exact locators, verbatim anchors, preserved author terms, and negative boundaries (`Does NOT Establish`).
+- Evaluates `EXTRACTION-SATURATED` status, locking sources against routine re-interrogation.
+
+### L4 — Cluster Comparative Matrices (`04_cluster_notes/`)
+- Cross-tabulates saturated source notes into comparative matrices across shared atomic questions.
+
+### L5 — Citation-Chunk Contracts (`04_cluster_notes/`)
+- Locks binding **Citation-Chunk Contracts** (`CCC_*`) defining common denominators, internal divergences, permitted joint citations, excluded members, and prohibited overclaims.
+
+### L6 — Paragraph Ledgers (`06_paragraph_ledgers/`)
+- Maps intended paragraphs to proposition slots ($S_1 \dots S_n$). Answers: **What may be claimed?**
+- Classifies slots into canonical provenance classes: `DIRECT SOURCE CLAIM`, `AUTHORIAL SYNTHESIS`, `ADJUDICATED CROSS-LITERATURE HINGE`, `TRANSITION`.
+- Attaches explicit `prohibited_stronger_claim` guardrails.
+
+### L7 — Argument Assembly (`07_argument_assembly/`)
+- First-class intermediate representation answering: **Why is each claim here? In what order? How may sources be related? What must remain separate?**
+- Governed by `literature-review/schemas/argument_assembly_schema.json`.
+- Enforces cross-literature weave decisions and strict do-not-weave boundaries.
+
+### L8 — Staged Academic Prose (`08_staged_prose/`)
+- Restrained academic prose used to stabilize claim boundaries, order, and citations before publication styling.
+- Follows plain subject-verb syntax, transparent attribution, and zero ornament.
+- Governed by `literature-review/schemas/staged_prose_schema.json`.
+
+### L9 — Manuscript Prose (`sections/` or `09_manuscript_prose/`)
+- Transforms Staged Prose into publication-ready disciplinary text based on locked ledgers and target journal registers.
+- Permitted to compress syntax, combine sentences, and vary cadence; strictly forbidden from inventing claims, adding evidence, or strengthening causality.
+- Governed by `literature-review/schemas/manuscript_prose_contract_schema.json`.
+
+### L10 — Provenance & Style-Risk Audit (`07_reports/`)
+- Verifies that every sentence traces back to locked ledger slots.
+- Deterministically audits prose against the **18 Structural Style-Risk Families** using `literature-review/scripts/style_risk_auditor.py`.
+
+### L11 — Disciplinary Register / Humanization
+- Smooths syntax, rhythm, and flow to eliminate robotic cadences while observing the **Claim-Immobility Law**.
+
+### L12 — Post-Humanization Claim-Immobility Audit (`07_reports/`)
+- Mandatory sentence-by-sentence verification using `literature-review/scripts/claim_immobility_auditor.py`.
+- Classifies sentences: `SUPPORTED`, `TRANSITION`, `PURE_RHETORICAL_CONNECTIVE`, `UNSUPPORTED`.
+- Any `UNSUPPORTED` sentence or causal escalation triggers immediate audit **FAIL**.
+
+### L13 — Human Ratification Gate & Freeze (`00_control_bundle/09_HUMAN_RATIFICATION_LEDGER.md`)
+- Authorial review and explicit human lock across Class A artifacts, ledgers, and manuscript text.
+
+---
+
+## 4. Human-Sovereign Governance & Autonomous Repair
+
+### 4.1 Seven Exclusive Human Reserved Powers
+1. Corpus admission;
+2. Architecture modification;
+3. Scholarly lock ratification;
+4. Contribution hierarchy adjudication;
+5. Novelty and priority claims;
+6. Manuscript prose acceptance;
+7. Irreversible version control actions (commit/push).
+
+### 4.2 Bounded Autonomous Local Repair
+Agents autonomously execute up to **4 repair iterations** between human gates following:
+$$\text{AUDIT} \longrightarrow \text{IDENTIFY DEFECT} \longrightarrow \text{SMALLEST VALID REPAIR} \longrightarrow \text{RE-AUDIT} \longrightarrow \text{CONVERGENCE CHECK}$$
+
+Loops halt and escalate immediately if an uncataloged source is required, an existing lock is affected, or two iterations yield zero progress.
+
+---
+
+## 5. Replaceable Backend Adapters & Offline Execution
+
+The skill is completely decoupled from any single proprietary retrieval API:
+- **`MockExtractionBackend`:** Zero-network offline testing and deterministic synthetic regression.
+- **`LocalNotesBackend`:** Direct extraction from local Markdown source notes.
+- **`NotebookLMAdapter`:** Optional CLI adapter for Google NotebookLM workspaces.
+
+Personal executable paths and credentials must **NEVER** enter Git.

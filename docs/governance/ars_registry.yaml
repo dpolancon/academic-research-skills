@@ -281,6 +281,17 @@ components:
     provenance_source: "Diego Polanco (Local creation, Wave D4)"
     notes: "Claim-relative historical source criticism standard (14 diagnostic dimensions, 4 canonical verdicts: SUPPORTS, UNDERMINES, SILENT, INDETERMINATE; no universal hierarchy; no causal inference leak). Governing shared standard, not an autonomous executable skill; consumed conditionally within requesting workflows (e.g. political-economy-research or deep-research)."
 
+  - component_id: "literature-review"
+    display_name: "Governed Literature Review"
+    runtime_path: "literature-review"
+    current_implementation_type: "SKILL"
+    semantic_role: "CORE_SKILL"
+    lifecycle_status: "ACTIVE"
+    mode_bearing: false
+    target_path: "skills/core/literature-review"
+    provenance_source: "Diego Polanco / Antigravity"
+    notes: "Governed source-and-cluster-first academic literature review workflow transforming saturated primary evidence into ledgers, argument assembly, staged prose, and publication-ready manuscript text with claim immobility auditing."
+
 # ==============================================================================
 # SECTION 2: CAPABILITIES (What responsibilities are owned)
 # ==============================================================================
@@ -590,3 +601,20 @@ capabilities:
     forbidden_duplicate_owners: true
     provenance: "Acknowledged absence (Wave D2 / D4.1 / D5.1 / D6); CANDIDATE FUTURE CAPABILITY GAP — NOT AUTHORIZED"
     notes: "NO CURRENT CANONICAL OWNER. Bounded out of umass-applied-econometrics (which owns time-series methods only) and econ-write (which owns writing only). Requests for causal identification must acknowledge this gap and not misroute to existing skills."
+
+  - capability_id: "governed_literature_review_synthesis"
+    description: "Source extraction, comparative cluster adjudication, proposition ledgers, argument assembly, staged prose, and claim-immobility auditing."
+    current_owner: "literature-review"
+    current_owner_type: "CORE_SKILL"
+    target_owner: "skills/core/literature-review"
+    target_owner_type: "CORE_SKILL"
+    migration_status: "CURRENT"
+    consumers:
+      - "academic-paper"
+      - "econ-write"
+      - "political-economy-research"
+      - "heterodox-economics-review"
+    forbidden_duplicate_owners:
+      - "deep-research"
+      - "academic-paper"
+    provenance: "Literature-Review Skill Consolidation (v2.0.0)"

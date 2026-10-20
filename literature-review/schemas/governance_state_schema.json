@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "GovernanceStateSchema",
+  "description": "Schema for machine-readable literature review state machine (e.g., CURRENT_STATE.yaml).",
+  "type": "object",
+  "properties": {
+    "schema_version": { "type": "integer", "minimum": 1 },
+    "architecture": {
+      "type": "object",
+      "properties": {
+        "canonical": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["DRAFT", "PROPOSED", "RATIFICATION_READY", "LOCK"]
+        }
+      },
+      "required": ["canonical", "status"]
+    },
+    "paragraphs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["NOT_STARTED", "DRAFT", "PROPOSED", "RATIFICATION_READY", "LOCK"]
+      }
+    },
+    "cluster_layers": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["IN_PROGRESS", "ADJUDICATION_SATURATED", "EXCEPTION_PENDING", "LOCK"]
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "properties": {
+        "current_stage": { "type": "string" },
+        "next_stage": { "type": "string" },
+        "next_human_gate": { "type": "string" }
+      },
+      "required": ["current_stage", "next_human_gate"]
+    },
+    "permissions": {
+      "type": "object",
+      "properties": {
+        "corpus_expansion": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "architecture_change": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "scholarly_lock": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "novelty_priority": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "contribution_hierarchy": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "prose_without_locked_ledger": { "type": "string", "enum": ["FORBIDDEN"] },
+        "commit": { "type": "string", "enum": ["HUMAN_ONLY"] },
+        "push": { "type": "string", "enum": ["HUMAN_ONLY"] }
+      },
+      "required": [
+        "corpus_expansion",
+        "architecture_change",
+        "scholarly_lock",
+        "novelty_priority",
+        "contribution_hierarchy",
+        "prose_without_locked_ledger",
+        "commit",
+        "push"
+      ]
+    },
+    "backend_config": {
+      "type": "object",
+      "properties": {
+        "backend_type": { "type": "string" },
+        "enabled": { "type": "boolean" },
+        "auth_required": { "type": "boolean" }
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "architecture",
+    "paragraphs",
+    "workflow",
+    "permissions"
+  ]
+}

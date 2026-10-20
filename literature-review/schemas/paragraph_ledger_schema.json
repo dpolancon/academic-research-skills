@@ -1,0 +1,85 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ParagraphLedgerSchema",
+  "description": "Schema governing Proposition Slots and Provenance Classification for Paragraph Ledgers.",
+  "type": "object",
+  "properties": {
+    "paragraph_key": {
+      "type": "string",
+      "description": "Unique ledger identifier (e.g., LEDGER_P01, LEDGER_P02)."
+    },
+    "paragraph_theme": { "type": "string" },
+    "governing_clusters": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "governing_contracts": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
+    "human_gate_status": {
+      "type": "string",
+      "enum": ["DRAFT", "PROPOSED", "RATIFICATION_READY", "LOCK"]
+    },
+    "proposition_slots": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "properties": {
+          "slot_id": { "type": "string" },
+          "proposition": { "type": "string" },
+          "provenance_class": {
+            "type": "string",
+            "enum": [
+              "DIRECT_SOURCE_CLAIM",
+              "AUTHORIAL_SYNTHESIS",
+              "ADJUDICATED_CROSS_LITERATURE_HINGE",
+              "TRANSITION"
+            ]
+          },
+          "primary_warrant": {
+            "type": "object",
+            "properties": {
+              "authority_type": {
+                "type": "string",
+                "enum": [
+                  "EXTERNAL_SOURCE",
+                  "INTERNAL_METHODOLOGY",
+                  "DATA_IMPLEMENTATION",
+                  "PAPER_GOVERNANCE",
+                  "AUTHORIAL_SYNTHESIS"
+                ]
+              },
+              "authority_keys": {
+                "type": "array",
+                "items": { "type": "string" }
+              },
+              "locators": { "type": "string" }
+            },
+            "required": ["authority_type", "authority_keys"]
+          },
+          "prohibited_stronger_claim": { "type": "string" },
+          "scholarly_status": {
+            "type": "string",
+            "enum": ["DRAFT", "PROPOSED", "RATIFICATION_READY", "LOCK"]
+          }
+        },
+        "required": [
+          "slot_id",
+          "proposition",
+          "provenance_class",
+          "primary_warrant",
+          "prohibited_stronger_claim",
+          "scholarly_status"
+        ]
+      }
+    }
+  },
+  "required": [
+    "paragraph_key",
+    "paragraph_theme",
+    "human_gate_status",
+    "proposition_slots"
+  ]
+}
