@@ -1,123 +1,225 @@
-# Academic Research Skills (ARS) Standalone Pipeline
+# Academic Research Skills (ARS)
 
-Academic Research Skills (ARS) is Diego Polanco's maintained fork and research copilot infrastructure, evolved from Cheng-I Wu's upstream agent framework with economics research specializations from Lu Han and original political economy workflows. It provides a standalone, cross-model, and repository-agnostic Python pipeline designed to automate and verify the academic research lifecycle across CLI, Codex, and Antigravity environments.
+[![Version](https://img.shields.io/badge/version-v3.12.0-blue)](CHANGELOG.md)
 
----
+ARS is a set of agent skills for economics and political-economy research: framing questions, reviewing literature, running and reporting econometrics, writing papers, simulating peer review, building slides, and writing for public audiences. You load the skills into an AI coding agent (Google Antigravity or Claude Code) and work with them in conversation. A standalone Python pipeline is also included for running the full research → write → review cycle from the terminal.
 
-## Key Features
+This is Diego Polanco's maintained fork of Cheng-I Wu's [academic-research-skills](https://github.com/Imbad0202/academic-research-skills), extended with economics workflows from Lu Han and original political-economy, econometrics, and literature-review skills. It's used by Diego and collaborators; a public release is pending a licensing review (see [License](#license)).
 
-- **Orchestration Agnostic**: Run the research pipeline from any terminal or environment as a direct Python command.
-- **Multi-Model Gateway**: Seamlessly route queries to Together AI (e.g. Qwen models) and native Google Gemini APIs with built-in structured function/tool-calling support.
-- **Obsidian Vault UI Integration**: Turns any Obsidian Vault into your front-end UI. Real-time file watching (`watchdog`) listens for saves to `ARS_Active_Task.md` and automatically runs pipeline stages. Delivers outputs organized by category with automatic Obsidian Wikilink (`[[Link]]`) connections for graph visualization.
-- **Cross-Repo Execution & Fencing**: Run the pipeline against *any* directory on your system using the `--target-dir` flag. Scoped-write directory fencing prevents any file access or edits from leaking outside your target workspace.
+ARS is a **copilot, not an autopilot**. It does not propose research questions for you, run experiments on its own, or carry a paper from idea to submission without your sign-off at each step. The scope boundaries are written down in [POSITIONING.md](POSITIONING.md).
 
 ---
 
-## Unified Agent Skills Suite (14 Skills)
+## Two ways to use ARS
 
-This repository serves as the single canonical monorepo housing the full 14-skill suite for academic economics research, empirical econometrics, paper writing, peer review, and Beamer presentations. All skills are compatible with the open [Agent Skills](https://agentskills.io) standard, Google Antigravity, Claude Code, and OpenAI Codex.
-
-| Skill | Trigger / Command | Focus & Capabilities |
+| | **A. Agent skills** (most users) | **B. Standalone pipeline** |
 |---|---|---|
-| **`econ-write`** | `/econ-write` | Flagship economics paper writing assistant synthesizing 50+ guides by leading economists (Cochrane, McCloskey, Shapiro, Bellemare). |
-| **`umass-applied-econometrics`** | `/umass-applied-econometrics` | Applied econometrics in political economy (forensic replication, visual-first data, Marglin macro grounding, Toda–Yamamoto Amiri & Ventelou 2012 benchmark, cointegration audit). |
-| **`advisor-reviewer`** | `/advisor-reviewer` | Michael Ash advisor feedback standards, dissertation rewrite guidance, and IZA applied econometrics standards. |
-| **`PE-phd-committee`** | `/PE-phd-committee` | Dissertation committee defense simulator in political economy at UMass Amherst (Ash, Basu, Young personas). |
-| **`heterodox-economics-review`** | `/heterodox-economics-review` | Heterodox macroeconomics review & drafting guidelines (Post-Keynesian, Sraffian Supermultiplier, dynamic consistency). |
-| **`prose-register-critic`** | `/prose-register-critic` | Academic editing auditor & lexical discipline protocol (v2.1.0) purging LLM metadata leakage, throat-clearing, moralizing policy rhetoric, and translation calques. |
-| **`deep-research`** | `/deep-research` | Universal deep research agent team (13-agent pipeline for literature search, synthesis, PRISMA, meta-analysis). |
-| **`academic-paper-reviewer`** | `/academic-paper-reviewer` | Multi-perspective peer review (5-reviewer panel: EIC, field expert, methodologist, cross-disciplinary, devil's advocate). |
-| **`academic-pipeline`** | `/academic-pipeline` | Full academic research workflow orchestrator (research → write → integrity check → review → revise → finalize). |
-| **`academic-paper`** | `/academic-paper` | 12-agent academic paper writing pipeline with style calibration and writing quality checks. |
-| **`irf-plotting`** | `/irf-plotting` | Publication-grade Impulse Response Function (IRF & GIRF) plotting and reporting engine (linear VAR/SVAR & TVAR with endogenous threshold crossing). |
-| **`editor-jacobin-lat`** | `/editor-jacobin-lat` | Political economy opinion column & essay editorial revision system (Jacobin América Latina, Martín Arboleda criteria). |
-| **`latex-compilation`** | `/latex-compilation` | LaTeX workspace setup, compilation workflow (latexmk/pdflatex), and markdown backup protocol. |
-| **`econ-slides`** | `/econ-slides` | Academic economics Beamer presentation suite (turn papers into seminar, conference, or job-market talks; discussant slides; speaker scripts). |
+| What it is | Skill folders your agent reads (`SKILL.md` + references) | `scripts/run_pipeline.py`, a 10-stage state machine |
+| You interact via | Chat in Antigravity or Claude Code | Terminal, or an Obsidian note that triggers runs on save |
+| Models | Whatever your agent uses | Together AI or Google Gemini via API key |
+| Start here | [Install the skills](#install-the-skills) | [Standalone pipeline](#standalone-pipeline) |
 
-### One-Command Local Installation
+---
 
-To install or sync all 14 skills into your global Antigravity configuration (`C:\Users\<User>\.gemini\config\skills`) and Claude Desktop/Code (`AppData\Local\Claude\skills`), run:
+## Install the skills
+
+### 1. Clone the repo
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File .\install-local.ps1
+git clone https://github.com/dpolancon/academic-research-skills.git
+cd academic-research-skills
 ```
+
+Clone it somewhere permanent. The install links point back into this folder, so moving or deleting it breaks them.
+
+### 2. Link the skills into your agent
+
+Each agent looks for skills in a specific folder. Every skill is a subfolder containing a `SKILL.md`.
+
+| Agent | Skill folder | Scope |
+|---|---|---|
+| Google Antigravity | `%USERPROFILE%\.gemini\config\skills\` | All workspaces |
+| Claude Code | `%USERPROFILE%\.claude\skills\` | All projects |
+| Claude Code | `<your-project>\.claude\skills\` | That project only |
+
+**Windows (PowerShell).** Run from the repo root. It creates directory junctions (links, not copies) and skips anything that already exists:
+
+```powershell
+$repo   = (Resolve-Path .).Path
+$target = "$env:USERPROFILE\.gemini\config\skills"     # Antigravity
+# $target = "$env:USERPROFILE\.claude\skills"          # Claude Code, all projects
+
+$skills = 'deep-research','literature-review','political-economy-research',
+          'umass-applied-econometrics','irf-plotting','heterodox-economics-review',
+          'academic-paper','econ-write','latex-compilation',
+          'academic-paper-reviewer','econ-slides','academic-pipeline',
+          'skills\dissemination\public-scholarship'
+
+New-Item -ItemType Directory -Force -Path $target | Out-Null
+foreach ($s in $skills) {
+    $name = Split-Path $s -Leaf
+    $link = Join-Path $target $name
+    if (Test-Path $link) { Write-Host "skip (exists): $name"; continue }
+    New-Item -ItemType Junction -Path $link -Target (Join-Path $repo $s) | Out-Null
+    Write-Host "linked: $name"
+}
+```
+
+Install only the skills you need by trimming the `$skills` list.
+
+**macOS / Linux:**
+
+```bash
+repo="$(pwd)"
+target="$HOME/.claude/skills"        # or your agent's skill folder
+mkdir -p "$target"
+for s in deep-research literature-review political-economy-research \
+         umass-applied-econometrics irf-plotting heterodox-economics-review \
+         academic-paper econ-write latex-compilation academic-paper-reviewer \
+         econ-slides academic-pipeline skills/dissemination/public-scholarship; do
+  name="$(basename "$s")"
+  [ -e "$target/$name" ] && { echo "skip (exists): $name"; continue; }
+  ln -s "$repo/$s" "$target/$name" && echo "linked: $name"
+done
+```
+
+**To remove one link** without touching the repo files (Windows):
+
+```powershell
+[System.IO.Directory]::Delete("$env:USERPROFILE\.gemini\config\skills\<skill-name>")
+```
+
+On macOS/Linux, use `rm "$target/<skill-name>"` (no trailing slash, no `-r`).
+
+> **About the bundled installers.** `install-local.ps1` (repo root) is the original installer. It only works if the repo is cloned to `C:\ReposGitHub\academic-research-skills`, installs an older list that includes the deprecated names below, leaves out `literature-review` and `political-economy-research`, and also writes to `AppData\Local\Claude\skills`, a location Claude Code doesn't currently read. `scripts/install-local.ps1` is its replacement and currently handles only `public-scholarship` (`-DryRun` and `-Uninstall` supported). It will cover the remaining skills as the layout migration continues. Until then, use the snippet above.
+
+### 3. Check that it worked
+
+Start a **new** session after linking. Agents load skills at startup.
+
+- **Antigravity:** open a new conversation; the skills should appear in the available-skills list.
+- **Claude Code:** run `claude` in any folder, type `/`, and look for the skill names in the menu. Press `Esc` and exit with `/exit`. You don't need to send a prompt.
 
 ---
 
-## Installation & Prerequisites
+## Pick a skill
 
-To run the pipeline locally, install the required Python packages:
+You don't usually need to name a skill. Describe the task and the agent picks one. Naming it explicitly ("use literature-review to…") helps when two could fit.
 
-```bash
-pip install openai google-generativeai watchdog pyyaml
-```
+### Frame and research
 
-*Note: Ensure your Python environment is version 3.8 or higher.*
+| I want to… | Skill |
+|---|---|
+| Turn a vague idea into a research question, through guided questioning | `deep-research` (socratic mode) |
+| Get a quick brief, an annotated bibliography, a fact-check, or a PRISMA systematic review | `deep-research` (quick / lit-review / fact-check / systematic-review modes) |
+| Build a governed literature review: source notes → citation contracts → paragraph ledgers → staged prose → manuscript text | `literature-review` |
+| Design comparative-historical political-economy research: periodization, mechanisms, process tracing, rival explanations | `political-economy-research` |
+
+### Empirics and modeling
+
+| I want to… | Skill |
+|---|---|
+| Plan or audit applied econometrics: replication, integration order, Toda–Yamamoto, small-sample bootstrap | `umass-applied-econometrics` |
+| Produce publication-grade impulse response plots (VAR/SVAR/TVAR, IRF and GIRF) | `irf-plotting` |
+| Work on formal heterodox macro models: closures, stability, stock-flow consistency | `heterodox-economics-review` |
+
+### Write
+
+| I want to… | Skill |
+|---|---|
+| Draft, plan, outline, or revise a paper; write an abstract; convert citation formats | `academic-paper` |
+| Apply economics writing conventions (Cochrane, McCloskey, and others) | `econ-write` |
+| Set up and compile LaTeX cleanly | `latex-compilation` |
+
+### Review
+
+| I want to… | Skill |
+|---|---|
+| Get a simulated referee panel (editor, three reviewers, devil's advocate) | `academic-paper-reviewer` |
+| …calibrated to a specific advisor or committee | `academic-paper-reviewer` with a profile from [profiles/](profiles/) (for example `profiles/advisors/michael-ash.md`, `profiles/committees/umass-pe.md`) |
+
+### Present and disseminate
+
+| I want to… | Skill |
+|---|---|
+| Turn a paper into a Beamer talk, discussant slides, or a job-market deck | `econ-slides` |
+| Write an op-ed, essay, policy brief, or explainer from research | `public-scholarship` (venue calibration via `profiles/venues/jacobin-lat.md`) |
+
+### Run the whole cycle
+
+| I want to… | Skill |
+|---|---|
+| Go research → write → integrity check → review → revise → finalize, with a checkpoint at every stage | `academic-pipeline` |
+
+The full list of callable modes for `deep-research`, `academic-paper`, `academic-paper-reviewer`, and `academic-pipeline` is in [MODE_REGISTRY.md](MODE_REGISTRY.md). The authoritative component list is the governance registry, [docs/governance/ars_registry.yaml](docs/governance/ars_registry.yaml).
 
 ---
 
-## Credential & Configuration Management
+## Deprecated names
 
-ARS resolves model, provider, and endpoint configurations using a strict priority-based hierarchy.
+These names still work as redirects so old prompts don't break, but new work should use the replacement.
 
-### Configuration Priority Resolution
-1. **CLI Flags (Highest Priority)**:
-   - `--model` / `--override-model`: Specify the LLM model ID.
-   - `--provider` / `--override-provider`: Specify the API provider (`together` or `gemini`).
-   - `--base-url`: Specify Together AI (OpenAI-compatible) endpoint URL.
-2. **Environment Variables**:
-   - `DEFAULT_MODEL`: Fallback model ID.
-   - `DEFAULT_PROVIDER`: Fallback provider ID.
-3. **Configuration File**:
-   - Parsed from `agent_config.yaml` if it exists in the repository root or passed via `--config`.
-4. **Hardcoded Fallbacks (Lowest Priority)**:
-   - Default Provider: `together`
-   - Default Model: `Qwen/Qwen3.5-9B`
-   - Default Together base URL: `https://api.together.ai/v1`
-
-### Setting API Keys
-Set your provider API keys in your environment variables:
-
-```bash
-export TOGETHER_API_KEY="your-together-api-key"
-export GEMINI_API_KEY="your-gemini-api-key"
-```
-
-#### Gitignored Key Fallback
-For local testing convenience, if `TOGETHER_API_KEY` is not present in the environment, the gateway will attempt to read keys from `docs/together_AI_baseURL_APIKEY.txt`. Ensure this file is formatted as:
-```text
-TOGETHER_API_KEY=your-api-key
-TOGETHER_BASE_URL=https://api.together.ai/v1
-```
-*Note: This file is protected and listed in `.gitignore` to prevent key leakage.*
+| Old name | Use instead |
+|---|---|
+| `advisor-reviewer` | `academic-paper-reviewer` + `profiles/advisors/michael-ash.md` |
+| `PE-phd-committee` | `academic-paper-reviewer` + `profiles/committees/umass-pe.md` |
+| `editor-jacobin-lat` | `public-scholarship` + `profiles/venues/jacobin-lat.md` |
+| `prose-register-critic` | `shared/protocols/prose_discipline_protocol.md` and `tools/prose_checks/check_prose_patterns.py` |
 
 ---
 
-## Usage Examples
+## Standalone pipeline
 
-### 1. Run the Pipeline Dashboard (Interactive CLI)
-Runs the interactive dashboard where you can check status, start stages, jump to specific points, or pause execution:
+### Install
 
-```bash
-python scripts/run_pipeline.py --target-dir C:\Users\User\Projects\MacroeconomicsRepo
-```
-
-### 2. Pointing to an External Workspace
-Execute the pipeline against a different directory path:
+Requires Python 3 (development and tests use 3.14).
 
 ```bash
-python scripts/run_pipeline.py --target-dir C:\Users\User\Projects\ChileanInequalityRepo
+pip install -r requirements.txt
 ```
 
-### 3. Run in Obsidian Vault Mode
-Watches the vault and triggers automatically when the active note is saved:
+### API keys
+
+Set the key for the provider you'll use. `.env.example` lists the variables, but the scripts **do not load `.env` files automatically**; set them in your shell.
+
+```powershell
+# PowerShell
+$env:TOGETHER_API_KEY = "your-together-key"
+$env:GEMINI_API_KEY   = "your-gemini-key"
+```
 
 ```bash
-python scripts/run_pipeline.py --target-dir C:\Users\User\Obsidian\MyResearchVault --obsidian-vault
+# bash / zsh
+export TOGETHER_API_KEY="your-together-key"
+export GEMINI_API_KEY="your-gemini-key"
 ```
 
-#### Obsidian Active Task Format
-Write prompts and configure settings in `ARS/ARS_Active_Task.md` inside the target directory:
+If `TOGETHER_API_KEY` isn't set, the gateway falls back to `docs/together_AI_baseURL_APIKEY.txt` (gitignored) with lines `TOGETHER_API_KEY=...` and `TOGETHER_BASE_URL=https://api.together.ai/v1`.
+
+### Configuration precedence
+
+1. CLI flags: `--provider` (`together` or `gemini`), `--model`, `--base-url`, `--config`
+2. Environment: `DEFAULT_PROVIDER`, `DEFAULT_MODEL`
+3. `agent_config.yaml` in the repo root (or the file passed with `--config`)
+4. Built-in defaults: provider `together`, model `Qwen/Qwen3.5-9B`, base URL `https://api.together.ai/v1`
+
+### Run it
+
+```bash
+# Interactive dashboard against a project folder
+python scripts/run_pipeline.py --target-dir "C:\path\to\your\project"
+
+# Use Gemini instead of the default
+python scripts/run_pipeline.py --target-dir "C:\path\to\your\project" --provider gemini --model <gemini-model-id>
+
+# Obsidian mode: watch a vault and run a stage whenever the task note is saved
+python scripts/run_pipeline.py --target-dir "C:\path\to\your\vault" --obsidian-vault
+```
+
+`--target-dir` also fences writes: the pipeline won't write outside that folder. Pipeline state is kept in `passport.yaml` inside the target folder.
+
+**Obsidian task note.** Write your request in `ARS/ARS_Active_Task.md` inside the target folder:
+
 ```markdown
 ---
 stage: 1
@@ -125,66 +227,66 @@ mode: socratic
 run_on_save: true
 ---
 
-I want to review the literature regarding AI-driven central banking tools and financial stability.
+I want to review the literature on AI-driven central banking tools and financial stability.
 ```
-When `run_on_save: true` is present in the frontmatter, saving the file will automatically trigger the pipeline. The runner will update the frontmatter to the next stage and toggle `run_on_save` to `false` upon completion to prevent execution loops.
 
-### 4. Overriding Models on the Fly
-Use CLI overrides to bypass configuration files:
+Saving with `run_on_save: true` triggers the stage. When it finishes, the runner advances `stage` and sets `run_on_save` back to `false` so it doesn't loop.
+
+### Stages
+
+```
+1    RESEARCH      research question brief + methodology blueprint
+2    WRITE         manuscript draft
+2.5  INTEGRITY     citation, reference and claim checks (mandatory gate)
+3    REVIEW        peer-review reports + editor decision
+4    REVISE        revised draft + response to reviewers
+3'   RE-REVIEW     editor verification (may route to 4')
+4'   RE-REVISE     final round of revisions, if requested
+4.5  FINAL CHECK   citation and reference integrity (mandatory gate)
+5    FINALIZE      final manuscript layout
+6    COMPLETED
+```
+
+Details: [academic-pipeline/references/pipeline_state_machine.md](academic-pipeline/references/pipeline_state_machine.md) and [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
+
+### Companion tools
 
 ```bash
-python scripts/run_pipeline.py \
-  --target-dir C:\Users\User\Projects\MacroeconomicsRepo \
-  --provider gemini \
-  --model gemini-1.5-pro
+# Check a reference against Crossref, OpenAlex, Semantic Scholar and arXiv
+python scripts/cross_model_client.py verify --reference "Walters, W. H. (2023). Fabrication in ChatGPT citations. Scientific Reports, 13, 14045." --context "ChatGPT citations are often fabricated (Walters, 2023)."
+
+# Devil's-advocate critique of a draft or outline
+python scripts/cross_model_client.py critique --material "Your draft or outline text"
 ```
 
 ---
 
-## Pipeline Overview (10-Stage State Machine)
+## Repository map
 
-The orchestrator enforces the 10-stage lifecycle defined in [pipeline_state_machine.md](file:///c:/ReposGitHub/academic-research-skills/academic-pipeline/references/pipeline_state_machine.md). State data, timestamps, and history are recorded atomically inside `passport.yaml` at your target workspace:
+| Path | What it is |
+|---|---|
+| `deep-research/`, `literature-review/`, `academic-paper/`, … | **Skills.** One folder per skill, each with a `SKILL.md`. |
+| `skills/` | New skill layout, being migrated in stages. `skills/dissemination/public-scholarship/` is the first skill moved; the other entries are compatibility links. |
+| `profiles/` | Calibration profiles (advisors, committees, scholars, venues) used by the review and dissemination skills. |
+| `shared/`, `agents/` | Protocols, contracts and agent definitions shared across skills. |
+| `tools/` | Deterministic helper scripts (prose checks, column audit). |
+| `commands/`, `.claude-plugin/`, `hooks/` | Claude Code slash commands and plugin packaging. |
+| `scripts/` | Standalone pipeline, model gateway, installers, validators. |
+| `docs/` | Setup, architecture, governance registry, design records. |
+| `evals/`, `tests/`, `examples/` | Evaluation sets, tests, example artifacts (see [examples/showcase/](examples/showcase/)). |
 
-```
-  Stage 1 (RESEARCH)      -> Generates RQ Brief & Methodology Blueprint
-         ↓
-  Stage 2 (WRITE)         -> Generates Manuscript Draft
-         ↓
-  Stage 2.5 (INTEGRITY)   -> Pre-Review citation, reference & claim checks (Mandatory Gate)
-         ↓
-  Stage 3 (REVIEW)        -> Generates Peer Review reports & EIC Decision
-         ↓
-  Stage 4 (REVISE)        -> Generates Revised Draft & Response to Reviewers
-         ↓
-  Stage 3' (RE-REVIEW)    -> EIC verification. Can route to Stage 4' if decision is Major
-         ↓
-  Stage 4' (RE-REVISE)    -> Performs last round of revisions (if requested)
-         ↓
-  Stage 4.5 (FINAL CHECK) -> Final citation & reference integrity checks (Mandatory Gate)
-         ↓
-  Stage 5 (FINALIZE)      -> Converts draft to final manuscript layout
-         ↓
-  Stage 6 (COMPLETED)     -> Final paper produced successfully
-```
+**Status.** The repository is partway through a layout migration ("Wave F"). The first pilot (moving `public-scholarship` into `skills/dissemination/`) is complete; the remaining skills will move in later batches. Old paths keep working throughout.
 
 ---
 
-## Companion Tools
+## Further reading
 
-1. **Verify Citation**:
-   Verify an academic reference against online databases (Crossref, OpenAlex, Semantic Scholar, arXiv):
-   ```bash
-   python scripts/cross_model_client.py verify \
-     --reference "Walters, W. H. (2023). Fabrication in ChatGPT citations. Scientific Reports, 13, 14045." \
-     --context "ChatGPT citations are often fabricated (Walters, 2023)."
-   ```
-
-2. **Devil's Advocate Critique**:
-   Stress-test your research arguments and retrieve counter-arguments:
-   ```bash
-   python scripts/cross_model_client.py critique \
-     --material "Your manuscript draft or outline content here."
-   ```
+- [QUICKSTART.md](QUICKSTART.md): the shortest path to a first session
+- [POSITIONING.md](POSITIONING.md): what ARS will and won't do
+- [MODE_REGISTRY.md](MODE_REGISTRY.md): callable modes
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): pipeline architecture
+- [CHANGELOG.md](CHANGELOG.md): release history
+- [CONTRIBUTING.md](CONTRIBUTING.md) and [SECURITY.md](SECURITY.md)
 
 ---
 

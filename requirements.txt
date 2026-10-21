@@ -1,0 +1,8 @@
+# Runtime dependencies for the standalone pipeline (scripts/run_pipeline.py,
+# scripts/cross_model_client.py, scripts/llm_gateway.py).
+# Agent-skill use (Antigravity / Claude Code) needs none of these.
+# Development and CI tooling: requirements-dev.txt.
+openai
+google-generativeai
+watchdog
+pyyaml

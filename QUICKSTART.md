@@ -1,82 +1,69 @@
 # Quick Start
 
-Get from zero to your first AI-assisted research in 3 steps.
+From zero to a first ARS session in about five minutes. For details, see the [README](README.md).
 
-## Step 1: Install
+## 1. Clone and link
 
-```bash
-# Install Claude Code
-curl -fsSL https://claude.ai/install.sh | bash
-
-# Clone this repo somewhere stable
-git clone https://github.com/Imbad0202/academic-research-skills.git ~/academic-research-skills
-
-# Install each of the four skills into your project's .claude/skills/
-cd /path/to/your/project
-mkdir -p .claude/skills
-ln -s ~/academic-research-skills/deep-research .claude/skills/deep-research
-ln -s ~/academic-research-skills/academic-paper .claude/skills/academic-paper
-ln -s ~/academic-research-skills/academic-paper-reviewer .claude/skills/academic-paper-reviewer
-ln -s ~/academic-research-skills/academic-pipeline .claude/skills/academic-pipeline
+```powershell
+git clone https://github.com/dpolancon/academic-research-skills.git
+cd academic-research-skills
 ```
 
-Each skill must sit at `.claude/skills/<skill-name>/SKILL.md` for Claude Code to discover it. See [docs/SETUP.md](docs/SETUP.md) for the copy-based alternative, global `~/.claude/skills/` install, and the other installation methods (Claude Code plugin, Cowork via zip upload, claude.ai). Note that Cowork and claude.ai do not read `~/.claude/skills/` — they install skills through their own settings upload, not this path.
+Then link the skills into your agent using the snippet in [README → Install the skills](README.md#install-the-skills). Antigravity reads `%USERPROFILE%\.gemini\config\skills\`; Claude Code reads `%USERPROFILE%\.claude\skills\` or `<project>\.claude\skills\`.
 
-## Step 2: Launch
+## 2. Start a new session
 
-```bash
-claude
-```
+Open a new Antigravity conversation, or run `claude` in your project folder. Skills are loaded when a session starts.
 
-## Step 3: Start researching
+## 3. Ask for what you need
 
-Tell Claude what you want to do. It will automatically pick the right skill and mode.
+Describe the task. The agent picks the skill. Some starting points:
 
-### Example: Guided research (Socratic mode)
+**Find a research question**
+> "I'm interested in why Chile's capital stock series diverge after 1973, but I don't have a sharp question yet. Help me think it through."
 
-```
-You: "I have a vague idea about AI's impact on higher education quality assurance,
-      but I'm not sure how to frame the research question. Can you guide me?"
-```
+`deep-research` asks questions instead of giving answers, and ends with a research plan you wrote.
 
-Claude will enter Socratic mode — asking questions to help you clarify your thinking, not giving you answers directly. After 5-15 rounds of dialogue, you'll have a focused research question and methodology direction.
+**Build a literature review**
+> "Use literature-review to set up a control bundle for a section on capital measurement debates."
 
-### Example: Write a paper
+**Audit an econometric strategy**
+> "Here's my VAR specification and unit-root results. Check integration order and whether Toda–Yamamoto applies."
 
-```
-You: "Help me write a paper about the impact of declining birth rates
-      on private universities in Taiwan"
-```
+`umass-applied-econometrics`; add `irf-plotting` for the figures.
 
-### Example: Review an existing paper
+**Get a referee report**
+> "Review this draft as a five-person referee panel." (attach the paper)
 
-```
-You: "Review this paper" (then paste or attach the paper)
-```
+`academic-paper-reviewer`. Add "calibrated to my committee" to use `profiles/committees/umass-pe.md`.
 
-### Example: Full pipeline (research → write → review → revise → publish)
+**Make slides**
+> "Turn this paper into a 20-minute seminar talk in Beamer."
 
-```
-You: "I want to produce a complete research paper about how agentic AI
-      is reshaping student learning outcome measurement"
-```
+**Write for the public**
+> "Turn section 3 into a 1,200-word op-ed for a general audience."
 
-This triggers the full 10-stage pipeline. Budget ~$4-6 in API costs and 2-4 hours of collaborative work.
+`public-scholarship`.
 
-## Which mode should I use?
+**Run the full cycle**
+> "I want to take this project from research question to a finished, reviewed paper."
 
-| I want to... | Use this |
-|-------------|----------|
-| Explore a vague idea | `deep-research` socratic mode — just describe your interest |
-| Get a quick literature summary | `deep-research` quick mode |
-| Do a systematic review (PRISMA) | `deep-research` systematic-review mode |
-| Write a paper from scratch | `academic-paper` full mode |
-| Plan a paper chapter by chapter | `academic-paper` plan mode |
-| Get my paper reviewed | `academic-paper-reviewer` full mode |
-| Do everything end-to-end | `academic-pipeline` — say "I want a complete research paper" |
+`academic-pipeline` runs ten stages and stops for your confirmation after each one.
 
-## What's next?
+## Which skill when?
 
-- [Full README](README.md) — all features, modes, installation options, and changelog
-- [中文版](README.zh-TW.md) — Traditional Chinese version
-- [Pipeline showcase](examples/showcase/) — real artifacts from a complete pipeline run
+| I want to… | Skill |
+|---|---|
+| Explore a vague idea | `deep-research` (socratic) |
+| Quick literature summary or fact-check | `deep-research` (quick / fact-check) |
+| Systematic review (PRISMA) | `deep-research` (systematic-review) |
+| Governed literature-review section | `literature-review` |
+| Political-economy research design | `political-economy-research` |
+| Applied econometrics | `umass-applied-econometrics` |
+| Write or revise a paper | `academic-paper` + `econ-write` |
+| Referee report | `academic-paper-reviewer` |
+| Slides | `econ-slides` |
+| Op-ed, essay, policy brief | `public-scholarship` |
+| Everything, end to end | `academic-pipeline` |
+
+The full table, with deprecated names and the standalone Python pipeline, is in the [README](README.md#pick-a-skill).
