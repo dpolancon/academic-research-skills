@@ -42,3 +42,8 @@ build/
 # Client skill mirror views (generated locally via install-local.ps1)
 .agents/skills/
 .claude/skills/
+# Personal research projects and testing workspaces (kept locally, not published)
+/user_testings/
+/writings_testing/
+/editing_memos/
+/paper_refutation_SSM/
