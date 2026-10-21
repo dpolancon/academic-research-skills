@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0.0",
+  "governing_wave": "Wave F",
+  "authorized_envelope": "Batch 0 + Narrow Batch 1 + Batch 2 (Pilot)",
+  "components": {
+    "public-scholarship": {
+      "state": "MIGRATED_TARGET",
+      "canonical_runtime_path": "skills/dissemination/public-scholarship",
+      "allowed_compatibility_entries": [
+        {
+          "path": "public-scholarship/SKILL.md",
+          "type": "FORWARDING_STUB",
+          "target": "skills/dissemination/public-scholarship/SKILL.md"
+        }
+      ],
+      "migrated_in_batch": "Batch 2 (Pilot)",
+      "transition_authorized_by": "Diego Polanco"
+    },
+    "editor-jacobin-lat": {
+      "state": "DEPRECATED_ALIAS",
+      "canonical_runtime_path": "editor-jacobin-lat",
+      "allowed_compatibility_entries": [
+        {
+          "path": "editor-jacobin-lat/scripts/audit_columna.py",
+          "type": "FORWARDING_WRAPPER",
+          "target": "tools/audit_columna/audit_columna.py"
+        }
+      ],
+      "migrated_in_batch": "Batch 2 (Pilot)",
+      "transition_authorized_by": "Diego Polanco"
+    }
+  }
+}

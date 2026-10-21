@@ -64,9 +64,9 @@ cases:
       - "GENRE_FLEXIBILITY"
       - "DESPECIALIZATION_WITHOUT_BANALIZATION"
     runtime_anchors:
-      - path: "public-scholarship/SKILL.md"
+      - path: "skills/dissemination/public-scholarship/SKILL.md"
         contains: "is venue-neutral by default"
-      - path: "public-scholarship/references/public_genres.md"
+      - path: "skills/dissemination/public-scholarship/references/public_genres.md"
         contains: "Two-Part Colon Titles (New York Times, Boston Review)"
     required_behaviors:
       - id: "includes_headline_and_subtitle"
@@ -128,7 +128,7 @@ cases:
       - "SUBSTANTIVE_WARRANT"
       - "NO_TOPICAL_LEAK"
     runtime_anchors:
-      - path: "public-scholarship/SKILL.md"
+      - path: "skills/dissemination/public-scholarship/SKILL.md"
         contains: "Available Approaches vs. Universal Obligations"
       - path: "profiles/venues/jacobin-lat.md"
         contains: "Isabella Weber's *sellers' inflation* framework serves as an approved theoretical reference point"
@@ -184,9 +184,9 @@ cases:
       - "FAITHFUL_SIMPLIFICATION"
       - "EPISTEMIC_INTEGRITY"
     runtime_anchors:
-      - path: "public-scholarship/SKILL.md"
+      - path: "skills/dissemination/public-scholarship/SKILL.md"
         contains: "Never strengthen a causal claim beyond what the source research warrants"
-      - path: "public-scholarship/references/epistemic_integrity.md"
+      - path: "skills/dissemination/public-scholarship/references/epistemic_integrity.md"
         contains: "Correlation is Not Causation"
     required_behaviors:
       - id: "preserves_correlation_uncertainty"

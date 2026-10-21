@@ -20,9 +20,9 @@ metadata:
 
 ## Canonical Replacements
 
-* **Canonical Dissemination Skill:** [`public-scholarship`](file:///c:/ReposGitHub/academic-research-skills/public-scholarship)
+* **Canonical Dissemination Skill:** [`skills/dissemination/public-scholarship`](file:///c:/ReposGitHub/academic-research-skills/skills/dissemination/public-scholarship)
 * **Venue Profile (Jacobin AL):** [`profiles/venues/jacobin-lat.md`](file:///c:/ReposGitHub/academic-research-skills/profiles/venues/jacobin-lat.md)
-* **Deterministic Auditor Tool:** [`editor-jacobin-lat/scripts/audit_columna.py`](file:///c:/ReposGitHub/academic-research-skills/editor-jacobin-lat/scripts/audit_columna.py)
+* **Deterministic Auditor Tool:** [`tools/audit_columna/audit_columna.py`](file:///c:/ReposGitHub/academic-research-skills/tools/audit_columna/audit_columna.py) (legacy wrapper: [`editor-jacobin-lat/scripts/audit_columna.py`](file:///c:/ReposGitHub/academic-research-skills/editor-jacobin-lat/scripts/audit_columna.py))
 
 ---
 

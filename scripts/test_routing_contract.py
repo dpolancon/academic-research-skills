@@ -55,10 +55,25 @@ def validate_single_case(
     elif owner not in components:
         errors.append(f"primary_owner '{owner}' does not exist in registry components.")
     else:
+        # Check migration state for Wave F authorized relocations
+        migration_state_path = repo_root / "docs" / "governance" / "migration_state.json"
+        migrated_components = set()
+        if migration_state_path.exists():
+            try:
+                import json
+                with open(migration_state_path, "r", encoding="utf-8") as mf:
+                    m_data = json.load(mf)
+                for mc, m_info in m_data.get("components", {}).items():
+                    if m_info.get("state") == "MIGRATED_TARGET":
+                        migrated_components.add(mc)
+            except Exception:
+                pass
+
         owner_comp = components[owner]
         rpath = owner_comp.get("runtime_path", "")
         if any(rpath.startswith(p) for p in TARGET_PATH_PREFIXES):
-            errors.append(f"primary_owner '{owner}' uses future target path format as runtime_path: '{rpath}'.")
+            if owner not in migrated_components:
+                errors.append(f"primary_owner '{owner}' uses future target path format as runtime_path: '{rpath}'.")
         if owner in deprecated_components:
             errors.append(f"primary_owner '{owner}' is a deprecated component; deprecated aliases cannot be primary owners.")
         if owner_comp.get("semantic_role") == "SHARED_PROTOCOL":
@@ -74,7 +89,8 @@ def validate_single_case(
             else:
                 d_rpath = components[d].get("runtime_path", "")
                 if any(d_rpath.startswith(p) for p in TARGET_PATH_PREFIXES):
-                    errors.append(f"delegated component '{d}' has future target path: '{d_rpath}'.")
+                    if d not in migrated_components:
+                        errors.append(f"delegated component '{d}' has future target path: '{d_rpath}'.")
 
     # 3. Calibration input check
     if calib:

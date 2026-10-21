@@ -124,3 +124,58 @@ def test_assignment_specific_flags(tmp_path):
     failures = [f["check"] for f in flagged_res["mechanical_failures"]]
     assert "assignment-latam-comparisons" in failures
     assert "assignment-weber-citation" in failures
+
+
+def test_legacy_wrapper_and_canonical_auditor_equivalence(tmp_path):
+    """Verifies that the legacy wrapper and canonical auditor produce identical results via CLI and import."""
+    import subprocess
+    import json
+
+    repo_root = Path(__file__).resolve().parent.parent
+    legacy_script = repo_root / "editor-jacobin-lat" / "scripts" / "audit_columna.py"
+    canonical_script = repo_root / "tools" / "audit_columna" / "audit_columna.py"
+
+    assert legacy_script.exists(), f"Legacy wrapper missing: {legacy_script}"
+    assert canonical_script.exists(), f"Canonical auditor missing: {canonical_script}"
+
+    # Create test sample column
+    title = "The Cost of Credit: Why Central Banks Overcorrected"
+    paras = [
+        make_paragraph("Recent interest rate hikes in 2024 have tightened credit conditions across domestic markets.", 120),
+        make_paragraph("Commercial banks responded by restricting small business lending while expanding liquidity reserves.", 150),
+    ] + [make_paragraph("Inflation cooled due to supply stabilization rather than demand suppression.", 100)] * 17
+    col_path = create_temp_column(tmp_path, title, paras)
+
+    # 1. Run legacy wrapper from unrelated cwd
+    res_legacy = subprocess.run(
+        [sys.executable, str(legacy_script), str(col_path), "--venue", "generic", "--json"],
+        capture_output=True,
+        text=True,
+        cwd=str(tmp_path)
+    )
+
+    # 2. Run canonical auditor from unrelated cwd
+    res_canonical = subprocess.run(
+        [sys.executable, str(canonical_script), str(col_path), "--venue", "generic", "--json"],
+        capture_output=True,
+        text=True,
+        cwd=str(tmp_path)
+    )
+
+    # Verify identical exit codes
+    assert res_legacy.returncode == res_canonical.returncode == 0
+
+    # Verify identical JSON payload
+    data_legacy = json.loads(res_legacy.stdout)
+    data_canonical = json.loads(res_canonical.stdout)
+    assert data_legacy == data_canonical
+    assert data_legacy["verdict"] == "PASS"
+
+    # 3. Direct import from canonical script
+    canonical_dir = canonical_script.parent
+    if str(canonical_dir) not in sys.path:
+        sys.path.insert(0, str(canonical_dir))
+    import audit_columna as canonical_mod
+
+    direct_result = canonical_mod.auditar_columna(str(col_path), venue="generic", as_json=True)
+    assert direct_result == data_legacy

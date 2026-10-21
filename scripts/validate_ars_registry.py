@@ -57,6 +57,24 @@ def validate_registry_data(data: dict, repo_root: Path) -> list[str]:
     components_by_id = {}
     deprecated_component_ids = set()
 
+    # Load optional migration state for Wave F physical directory harmonization
+    migration_state_path = repo_root / "docs" / "governance" / "migration_state.json"
+    migration_state = {}
+    if migration_state_path.exists():
+        try:
+            import json
+            with open(migration_state_path, "r", encoding="utf-8") as mf:
+                m_data = json.load(mf)
+            migration_state = m_data.get("components", {})
+        except Exception as e:
+            errors.append(f"Failed to parse migration_state.json: {e}")
+
+    # Negative assertion: Only authorized pilot components permitted in migration_state
+    AUTHORIZED_PILOT_COMPONENTS = {"public-scholarship", "editor-jacobin-lat"}
+    for mc_id in migration_state:
+        if mc_id not in AUTHORIZED_PILOT_COMPONENTS:
+            errors.append(f"Component '{mc_id}' found in migration_state.json but is outside the authorized pilot envelope.")
+
     for idx, comp in enumerate(components_list):
         if not isinstance(comp, dict):
             errors.append(f"Component at index {idx} is not a dictionary.")
@@ -99,18 +117,53 @@ def validate_registry_data(data: dict, repo_root: Path) -> list[str]:
         if sem_role not in ALLOWED_SEMANTIC_ROLES:
             errors.append(f"Component '{cid}' has invalid semantic_role '{sem_role}'. Allowed: {ALLOWED_SEMANTIC_ROLES}")
 
-        # Rule 4 & 12: runtime_path exists on disk and does not use future target path format
+        # Rule 4 & 12: runtime_path exists on disk, reconciled with migration_state
         r_path = comp.get("runtime_path")
         if not r_path:
             errors.append(f"Component '{cid}' missing runtime_path.")
         else:
-            # Check for accidental future target paths (Wave F owns skills/ and orchestrator/ reorganization)
-            if any(r_path.startswith(prefix) for prefix in ("skills/", "orchestrator/")):
-                errors.append(f"Component '{cid}' has future target path format as runtime_path: '{r_path}'.")
-
             disk_path = repo_root / r_path
-            if not disk_path.exists():
-                errors.append(f"Component '{cid}' runtime_path '{r_path}' does not exist on disk at {disk_path}.")
+            if cid in migration_state:
+                c_info = migration_state[cid]
+                c_state = c_info.get("state")
+                expected_canonical = c_info.get("canonical_runtime_path")
+                if c_state == "MIGRATED_TARGET":
+                    if r_path != expected_canonical:
+                        errors.append(f"Component '{cid}' has state MIGRATED_TARGET but runtime_path '{r_path}' does not match canonical '{expected_canonical}'.")
+                    if not disk_path.exists():
+                        errors.append(f"Component '{cid}' migrated target path '{r_path}' does not exist on disk.")
+                    if cid == "public-scholarship":
+                        baseline_root = repo_root / "public-scholarship"
+                        if baseline_root.is_dir():
+                            ref_dir = baseline_root / "references"
+                            skill_file = baseline_root / "SKILL.md"
+                            is_substantive = False
+                            if ref_dir.is_dir() and any(ref_dir.iterdir()):
+                                is_substantive = True
+                            elif skill_file.exists():
+                                content = skill_file.read_text(encoding="utf-8")
+                                if "COMPATIBILITY_TRANSITION_STUB" not in content:
+                                    is_substantive = True
+                            if is_substantive:
+                                errors.append(f"Forbidden duplicate: baseline root path '{baseline_root}' still exists as a substantive skill directory after MIGRATED_TARGET.")
+                elif c_state == "DEPRECATED_ALIAS":
+                    if r_path != expected_canonical:
+                        errors.append(f"Component '{cid}' has state DEPRECATED_ALIAS but runtime_path '{r_path}' does not match canonical '{expected_canonical}'.")
+                    if not disk_path.exists():
+                        errors.append(f"Component '{cid}' alias runtime_path '{r_path}' does not exist on disk.")
+
+                # Validate required compatibility entries
+                for entry in c_info.get("allowed_compatibility_entries", []):
+                    entry_p = repo_root / entry["path"]
+                    if not entry_p.exists():
+                        errors.append(f"Component '{cid}' required compatibility entry '{entry['path']}' missing on disk.")
+            else:
+                # Rule 12: Check for accidental future target paths
+                if any(r_path.startswith(prefix) for prefix in ("skills/", "orchestrator/")):
+                    errors.append(f"Component '{cid}' has future target path format as runtime_path: '{r_path}', but is not MIGRATED_TARGET.")
+
+                if not disk_path.exists():
+                    errors.append(f"Component '{cid}' runtime_path '{r_path}' does not exist on disk at {disk_path}.")
 
         # Check replacement_path if present
         rep_path = comp.get("replacement_path")

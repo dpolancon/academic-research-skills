@@ -122,7 +122,7 @@ components:
 
   - component_id: "public-scholarship"
     display_name: "Public Scholarship"
-    runtime_path: "public-scholarship"
+    runtime_path: "skills/dissemination/public-scholarship"
     current_implementation_type: "SKILL"
     semantic_role: "DISSEMINATION_SKILL"
     lifecycle_status: "ACTIVE"
